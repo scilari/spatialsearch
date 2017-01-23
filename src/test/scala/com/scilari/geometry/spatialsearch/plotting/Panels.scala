@@ -57,14 +57,10 @@ object Panels {
 
     def minScale = min(getWidth/boundingBox.width, getHeight/boundingBox.height)
 
-    def scaleX = minScale //maxScale
+    def scaleX = minScale
 
-    def scaleY = minScale // maxScale
+    def scaleY = minScale
 
-
-    //def scaleX = minAxisPanel / maxAxisBox
-
-    //def scaleY = minAxisPanel / maxAxisBox
 
     def transLateX = -scaleX * boundingBox.minX
 
