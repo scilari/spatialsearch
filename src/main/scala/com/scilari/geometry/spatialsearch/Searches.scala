@@ -1,8 +1,9 @@
 package com.scilari.geometry.spatialsearch
 
 
-import com.scilari.geometry.models.{Float2, MetricObject, HalfPlaneObject}
+import com.scilari.geometry.models.{Float2, HalfPlaneObject, MetricObject}
 import com.scilari.geometry.spatialsearch.IncrementallySearchable.State
+import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 import com.scilari.math._
 
 /**
@@ -16,7 +17,7 @@ object Searches {
   }
 
   class Range[P, N <: Tree[P], E <: MetricObject[P]](r: Float) extends IncrementallySearchable[P, N, E]{
-    val rSq = r*r
+    val rSq: Float = r*r
     val parameters = new IncrementallySearchable.SearchParameters[P, N, E](
       endCondition = (s: State[P, N, E]) => s.elemDistSq > rSq && s.nodeDistSq > rSq
     )
@@ -30,7 +31,7 @@ object Searches {
   }
 
   class RangeUntilFirstFound[P, N <: Tree[P], E <: MetricObject[P]](r: Float) extends IncrementallySearchable[P, N, E]{
-    val rSq = r*r
+    val rSq: Float = r*r
     val parameters = new IncrementallySearchable.SearchParameters[P, N, E](
       endCondition = (s: State[P, N, E]) => {
         s.foundElements.nonEmpty || s.elemDistSq > rSq && s.nodeDistSq > rSq

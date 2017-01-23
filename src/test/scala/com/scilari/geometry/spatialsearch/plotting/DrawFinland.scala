@@ -5,9 +5,9 @@ import java.io.File
 import javax.imageio.ImageIO
 
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
-import com.scilari.geometry.spatialsearch.QuadTreeEntry
 import com.scilari.geometry.spatialsearch.TestResources._
 import com.scilari.geometry.spatialsearch.plotting.Panels.{FlippedDrawingPanel, Frame}
+import com.scilari.geometry.spatialsearch.quadtree.QuadTreeEntry
 
 /**
   * Created by Ilari.Vallivaara on 1/20/2017.

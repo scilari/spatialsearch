@@ -1,10 +1,13 @@
-package com.scilari.geometry.spatialsearch
+package com.scilari.geometry.spatialsearch.quadtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import QuadTreeUtils._
+import com.scilari.geometry.spatialsearch._
+import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
 
 /**
-  * Created by iv on 1/17/2017.
+  * Concrete QuadTree implementation of SearchTree
+  * @param bb Initial bounding box describing the root
+  * @tparam T Element type
   */
 class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
   var root: QuadTree[T] = new QuadLeaf[T](bb)
@@ -29,7 +32,7 @@ class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
     this
   }
 
-  def isEmpty = root.isEmpty
+  def isEmpty: Boolean = root.isEmpty
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[T] = {
     val knn = new Searches.Knn[Float2, QuadTree[T], T] (k)
@@ -41,7 +44,7 @@ class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
     range.search(queryPoint, root)
   }
 
-  override def polygonalSearch(queryPoint: Float2) = {
+  override def polygonalSearch(queryPoint: Float2): Seq[T] = {
     val poly = new Searches.Polygonal[T]()
     poly.search(queryPoint, root)
   }

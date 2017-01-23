@@ -1,6 +1,7 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
+import com.scilari.geometry.spatialsearch.quadtree.QuadTreeEntry
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers._
 
