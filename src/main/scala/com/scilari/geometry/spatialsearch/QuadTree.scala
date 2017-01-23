@@ -48,7 +48,7 @@ class QuadLeaf[T <: Float2](
   val children: mutable.Buffer[T] = ListBuffer[T]()
 
 
-  import QuadTree._
+  import Parameters._
   def add(elem: T): QuadTree[T] = {
     children += elem
     if(children.size > nodeElementCapacity && width >= minNodeSize ) split() else this
@@ -61,7 +61,7 @@ class QuadLeaf[T <: Float2](
   }
 
 
-  object QuadTree{
+  object Parameters{
     var nodeElementCapacity = 16
     var minNodeSize = 0.0000001f
   }
