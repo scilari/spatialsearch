@@ -35,7 +35,7 @@ class QuadNode[E <: Float2](
   bb: AABB,
   parent: QuadNode[E] = null
 ) extends QuadTree[E](bb, parent) with Node[Float2, QuadTree[E]]{
-  val children: Array[QuadTree[E]] = Array[QuadTree[E]](
+  val children: mutable.Seq[QuadTree[E]] = mutable.ArraySeq[QuadTree[E]](
     new QuadLeaf(topLeftAABB(this), this),
     new QuadLeaf(topRightAABB(this), this),
     new QuadLeaf(bottomLeftAABB(this), this),

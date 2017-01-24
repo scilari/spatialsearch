@@ -19,9 +19,6 @@ trait SearchTree[T <: Float2] {
     rangeSearch(queryPoint, r).isEmpty
   }
 
-  def nonEmptyRange(queryPoint: Float2, r: Float): Boolean ={
-    val knn1 = knnSearch(queryPoint, 1)
-    knn1.nonEmpty && knn1.head.distanceSq(queryPoint) < r*r
-  }
+  def nonEmptyRange(queryPoint: Float2, r: Float): Boolean = !isEmptyRange(queryPoint, r)
 
 }

@@ -54,6 +54,11 @@ class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
     knnCond.search(queryPoint, root)
   }
 
+  override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
+    val rangeOrFirst = new Searches.RangeUntilFirstFound[Float2, QuadTree[T], T](r)
+    rangeOrFirst.search(queryPoint, root).isEmpty
+  }
+
 }
 
 object QuadTreeEntry{
