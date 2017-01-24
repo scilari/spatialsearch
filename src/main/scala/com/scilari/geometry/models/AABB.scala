@@ -2,6 +2,7 @@ package com.scilari.geometry.models
 
 
 /**
+  * Axis-aligned bounding box
  * Created by iv on 25.2.2014.
  */
 
@@ -38,6 +39,8 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
     getCorner(top, left)
   }
 
+  def isSquare: Boolean = width == height
+
   // Returns the corner that is deepest inside the half-plane defined by the normal of the separating line
   def pointDeepestInHalfPlane(normal: Float2): Float2 = {
     val left = normal.x >= 0f
@@ -56,6 +59,7 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
   def x: Float = centerX
   def y: Float = centerY
   def closestBorderPoint(p: Float2): Float2 = p.clamp(minPoint, maxPoint)
+
 
   def enclose(p: Float2): Unit = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p)}
   def enclose(ps: Seq[Float2]): Unit = ps.foreach(enclose)
@@ -95,11 +99,14 @@ object AABB{
     apply(bottomLeft - Float2(margin), topRight + Float2(margin))
   }
 
-  def Square(points: Seq[Float2], margin: Float = 0f): AABB = {
+  def EnclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
     val fitBox = AABB.apply(points, margin)
     new AABB(center = fitBox.center, halfWidth = Math.max(fitBox.width, fitBox.height)/2)
   }
 
+  def EnclosingSquare(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB ={
+    EnclosingSquare(Seq(Float2(minX, minY), Float2(maxX, maxY)))
+  }
 
   val unit: AABB = AABB(0, 0, 1, 1)
   def zero: AABB = AABB(0, 0, 0, 0)
