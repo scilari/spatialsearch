@@ -9,7 +9,7 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
   * @param bb Initial bounding box describing the root
   * @tparam T Element type
   */
-class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
+class QuadTreeEntry[T <: Float2] private (bb: AABB) extends SearchTree[T] {
   var root: QuadTree[T] = new QuadLeaf[T](bb)
 
   def add(elem: T): Unit = root = root.add(elem)
@@ -24,12 +24,6 @@ class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
       root = newRoot
       addEnclose(elem)
     }
-  }
-
-  def fitToElements(elems: Seq[T]): QuadTreeEntry[T] = {
-    root = new QuadNode[T](AABB.Square(elems))
-    elems.foreach(add)
-    this
   }
 
   def isEmpty: Boolean = root.isEmpty
@@ -62,10 +56,17 @@ class QuadTreeEntry[T <: Float2](bb: AABB = AABB.unit) extends SearchTree[T] {
 }
 
 object QuadTreeEntry{
+
   def apply[T <: Float2](bb: AABB = AABB.unit) = new QuadTreeEntry[T](bb)
+
   def apply[T <: Float2](elems: Seq[T]): QuadTreeEntry[T] = {
-    val q = QuadTreeEntry[T]()
-    q.fitToElements(elems)
+    require(elems.size > 1, "At least two elements required for creating the initial node.")
+    val square = AABB.EnclosingSquare(elems)
+    require(square.width > 0 && square.height > 0,
+      "At least two spatially distinct elements required for creating the initial node.")
+    val q = QuadTreeEntry[T](square)
+    elems.foreach(q.add)
+    q
   }
 
 

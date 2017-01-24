@@ -18,7 +18,7 @@ object DrawFinland extends App{
   val panelW = 1000
 
 
-  val box = AABB.Square(cityData, margin = 100)
+  val box = AABB.EnclosingSquare(cityData, margin = 100)
   val cityTree = QuadTreeEntry(cityData)
 
   println(box)
@@ -42,7 +42,7 @@ object DrawFinland extends App{
     new DataPoint(p, color)
   }
 
-  def surfaceGrid(box: AABB, pixelSize: Float) = {
+  def surfaceGrid(box: AABB, pixelSize: Float): Seq[Float2] = {
     val halfSize = pixelSize/2
     for{
       x <- box.minX + halfSize until box.maxX by pixelSize
@@ -88,15 +88,15 @@ object DrawFinland extends App{
   ImageIO.write(animatedImg.image, "png", new File("suomi.png"))
 
   class BoxToBufferedImage(val bb: AABB, val pixelSize: Float){
-    val imageWidth = (bb.width/pixelSize).toInt
-    val imageHeight = (bb.height/pixelSize).toInt
+    val imageWidth: Int = (bb.width/pixelSize).toInt
+    val imageHeight: Int = (bb.height/pixelSize).toInt
     val scaleBBtoImg = Float2(imageWidth/bb.width, imageHeight/bb.height)
     val image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB)
     println("Image dimensions: " + imageWidth + " " + imageHeight)
 
     def updatePixel(p: Float2, color: Color): Unit ={
       val p0 = p - bb.minPoint
-      val pSc = (p0 * scaleBBtoImg)
+      val pSc = p0 * scaleBBtoImg
       val i = pSc.x.toInt
       val j = pSc.y.toInt
       //println(i + " " + j )
@@ -104,7 +104,7 @@ object DrawFinland extends App{
     }
 
 
-    def drawBitmap(g2d: Graphics2D) = {
+    def drawBitmap(g2d: Graphics2D): Unit = {
       g2d.drawImage(image,
         0, 0, imageWidth, imageHeight,
         null)
