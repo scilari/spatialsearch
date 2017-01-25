@@ -14,14 +14,14 @@ class QuadTreeEntryTests extends FlatSpec{
   val queryPoints = Seq.fill(200000)(Float2.random())
 
   "QuadTreeEntry" should "be nonEmpty after adding points" in {
-    val quadTree = new QuadTreeEntry[Float2](AABB.unit)
+    val quadTree = QuadTreeEntry[Float2](AABB.unit)
     assert(quadTree.isEmpty)
-    points.foreach{quadTree.add(_)}
+    points.foreach{quadTree.add}
     assert(!quadTree.isEmpty)
   }
 
-  val quadTree = new QuadTreeEntry[Float2](AABB.unit)
-  points.foreach(quadTree.add(_))
+  val quadTree = QuadTreeEntry[Float2](AABB.unit)
+  points.foreach(quadTree.add)
   //val queryPoint = Float2(0.33, 0.33)
 
 

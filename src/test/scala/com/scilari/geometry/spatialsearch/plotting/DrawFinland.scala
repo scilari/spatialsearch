@@ -10,6 +10,7 @@ import com.scilari.geometry.spatialsearch.plotting.Panels.{FlippedDrawingPanel, 
 import com.scilari.geometry.spatialsearch.quadtree.QuadTreeEntry
 
 /**
+  * Test visualization with Finnish city population data
   * Created by Ilari.Vallivaara on 1/20/2017.
   */
 object DrawFinland extends App{
@@ -58,7 +59,7 @@ object DrawFinland extends App{
   println("Evaluating " + colors.size + " pixels took " + t + " milliseconds (" + t.toDouble/colors.size + " ms/px).")
 
 
-  val animatedTree = new QuadTreeEntry[DataPoint[City]](box)
+  val animatedTree = QuadTreeEntry[DataPoint[City]](box)
   var animatedImg = new BoxToBufferedImage(box, pixelSize)
 
   val pixBox = AABB(0, 0, animatedImg.imageWidth, animatedImg.imageHeight)
