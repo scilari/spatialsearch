@@ -3,6 +3,7 @@ import com.scilari.math._
 
 
 /**
+  * Two-dimensional point represented by Float coordinates
  * Created by iv on 10.2.2014.
  */
 class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] with HalfPlaneObject {
@@ -66,7 +67,7 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def direction: Float = atan2(y, x)
   def manhattan: Float = abs(x + y)
 
-  override def pointDeepestInHalfPlane(normal: Float2) = this
+  override def pointDeepestInHalfPlane(normal: Float2): Float2 = this
 
   def clamp(floor: Float2, ceil: Float2) = Float2(com.scilari.math.clamp(x, floor.x, ceil.x), com.scilari.math.clamp(y, floor.y, ceil.y))
 
@@ -155,6 +156,6 @@ object Float2{
     a.dot(b)*com.scilari.math.invSqrt(a.lengthSq*b.lengthSq)
   }
 
-  implicit def Float2asDataPoint(x: Float2): DataPoint[Unit] = new DataPoint[Unit](0, 0, ())
+  implicit def Float2asDataPoint(p: Float2): DataPoint[Unit] = new DataPoint[Unit](p.x, p.y, ())
 
 }
