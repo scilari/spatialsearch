@@ -34,7 +34,7 @@ object Searches {
     val rSq: Float = r*r
     val parameters = new IncrementallySearchable.SearchParameters[P, N, E](
       endCondition = (s: State[P, N, E]) => {
-        s.foundElements.nonEmpty || s.elemDistSq > rSq && s.nodeDistSq > rSq
+        s.foundElements.nonEmpty || (s.elemDistSq > rSq && s.nodeDistSq > rSq)
       }
     )
   }
