@@ -108,6 +108,12 @@ object Float2{
   def directed(angle: Float, length: Float = 1f) = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
   def random(minX: Float, minY: Float, maxX: Float, maxY: Float): Float2 = Float2(minX, minY) + Float2.random*Float2(maxX - minX, maxY - minY)
 
+  def linSpace(start: Float2, end: Float2, n: Int): Seq[Float2] = {
+    val diff = end - start
+    val ts = (0 until n).map(_.toFloat/(n-1))
+    ts.map{ t => start + diff*t}
+  }
+
   @inline
   def diffLengthSq(p1: Float2, p2: Float2): Float = {
     val dx = p1.x - p2.x
