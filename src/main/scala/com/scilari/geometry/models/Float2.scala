@@ -7,22 +7,10 @@ import com.scilari.math._
  * Created by iv on 10.2.2014.
  */
 class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] with HalfPlaneObject {
-
   def this(x: Double, y: Double) = this(x.toFloat, y.toFloat)
   def apply(x: Float = this.x, y: Float = this.y): Float2 = { this.x = x; this.y = y; this }
 
   def unary_- = Float2(-x, -y)
-
-  override def equals(that: Any): Boolean = {
-    val b = that.asInstanceOf[Float2]
-    this.x == b.x && this.y == b.y
-  }
-
-  override def hashCode(): Int = 23*java.lang.Float.floatToIntBits(x) + java.lang.Float.floatToIntBits(y)
-
-
-  def ~=(that: Float2, toleranceSq: Float = 0.0000000001f): Boolean = this.distanceSq(that) <= toleranceSq
-
 
   def +(that: Float2): Float2 = Float2(x + that.x, y + that.y)
   def -(that: Float2): Float2 = Float2(x - that.x, y - that.y)
@@ -44,17 +32,6 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def *=(c: Float): Float2 = {x *= c; y *= c; this}
   def /=(c: Float): Float2 = {x /= c; y /= c; this}
 
-  def rotate(angle: Float): Float2 = {
-    val s = sin(angle)
-    val c = cos(angle)
-    val xx = x*c - y*s
-    val yy = x*s + y*c
-    x = xx; y = yy
-    this
-  }
-
-  def rotated(angle: Float): Float2 = Float2(this).rotate(angle)
-
   def dot(that: Float2): Float = x*that.x + y*that.y
   def perpDot(that: Float2): Float = y*that.x - x*that.y
   def normal: Float2 = Float2(y, -x)
@@ -69,6 +46,17 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
 
   override def pointDeepestInHalfPlane(normal: Float2): Float2 = this
 
+  def rotate(angle: Float): Float2 = {
+    val s = sin(angle)
+    val c = cos(angle)
+    val xx = x*c - y*s
+    val yy = x*s + y*c
+    x = xx; y = yy
+    this
+  }
+
+  def rotated(angle: Float): Float2 = Float2(this).rotate(angle)
+
   def clamp(floor: Float2, ceil: Float2) = Float2(com.scilari.math.clamp(x, floor.x, ceil.x), com.scilari.math.clamp(y, floor.y, ceil.y))
 
   def copy = Float2(this)
@@ -76,6 +64,15 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def toArray = Array(x, y)
   def toDoubleArray = Array(x.toDouble, y.toDouble)
   def toIntArray = Array(x.toInt, y.toInt)
+
+  override def equals(that: Any): Boolean = {
+    that.isInstanceOf[Float2] && sameCoordinates(that.asInstanceOf[Float2])
+  }
+
+  override def hashCode(): Int = 23*java.lang.Float.floatToIntBits(x) + java.lang.Float.floatToIntBits(y)
+
+  def ~=(that: Float2, toleranceSq: Float = 0.0000000001f): Boolean = this.distanceSq(that) <= toleranceSq
+  def sameCoordinates(that: Float2): Boolean = x == that.x && y == that.y
 
   override def toString: String = "[" + x + ", " + y + "]"
 
