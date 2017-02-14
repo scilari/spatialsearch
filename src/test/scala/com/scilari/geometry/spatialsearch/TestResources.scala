@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.DataPoint
+import com.scilari.geometry.models.{AABB, DataPoint}
 import com.scilari.geometry.spatialsearch.TestUtils._
 
 /**
@@ -17,5 +17,7 @@ object TestResources {
 
     new DataPoint[City](x, y, City(name, pop))
   }
+
+  val cityAABB = AABB(cityData)
 
 }
