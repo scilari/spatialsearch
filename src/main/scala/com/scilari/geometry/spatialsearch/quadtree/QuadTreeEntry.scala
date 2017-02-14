@@ -9,7 +9,8 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
   * @param bb Initial bounding box describing the root
   * @tparam T Element type
   */
-class QuadTreeEntry[T <: Float2] private (bb: AABB) extends SearchTree[T] {
+class QuadTreeEntry[T <: Float2] private (bb: AABB)
+  extends SearchTree[T] with Traversable[T] {
   var root: QuadTree[T] = new QuadLeaf[T](bb)
 
   def add(elem: T): Unit = root = root.add(elem)
@@ -26,7 +27,7 @@ class QuadTreeEntry[T <: Float2] private (bb: AABB) extends SearchTree[T] {
     }
   }
 
-  def isEmpty: Boolean = root.isEmpty
+  def foreach[U](f: T => U): Unit = root.foreach(f)
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[T] = {
     val knn = new Searches.Knn[Float2, QuadTree[T], T] (k)
