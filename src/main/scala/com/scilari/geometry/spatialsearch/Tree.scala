@@ -4,23 +4,26 @@ import com.scilari.geometry.models.MetricObject
 
 /**
   * Tree with metric children
-  * @tparam P Type of query point
+  * @tparam P Query point type
+  * @tparam E Element type
   */
-trait Tree[P] extends MetricObject[P]{
+trait Tree[P, E] extends MetricObject[P] with Traversable[E]{
   def children: Seq[MetricObject[P]]
-  def isEmpty: Boolean = children.isEmpty
-  def nonEmpty: Boolean = children.nonEmpty
+  def getElements: Seq[E]
+  override def foreach[U](f: E => U): Unit = getElements.foreach(f)
 }
 
 object Tree{
 
   /**
     * Node with metric children nodes
-    * @tparam P Type of query point
-    * @tparam N Type of children nodes
+    * @tparam P Query point type
+    * @tparam E Element type
+    * @tparam N Node type
     */
-  trait Node[P, N <: Tree[P]] extends Tree[P]{
+  trait Node[P, E, N <: Tree[P, E]] extends Tree[P, E]{
     override def children: Seq[N]
+    override def getElements: Seq[E] = children.flatMap(_.getElements)
   }
 
   /**
@@ -28,9 +31,11 @@ object Tree{
     * @tparam P Type of query point
     * @tparam E Element type
     */
-  trait Leaf[P, E <: MetricObject[P]] extends Tree[P]{
+  trait Leaf[P, E <: MetricObject[P]] extends Tree[P, E]{
     override def children: Seq[E]
+    override def getElements: Seq[E] = children
   }
+
 }
 
 
