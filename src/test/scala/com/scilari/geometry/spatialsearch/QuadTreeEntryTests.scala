@@ -22,7 +22,6 @@ class QuadTreeEntryTests extends FlatSpec{
 
   val quadTree = QuadTreeEntry[Float2](AABB.unit)
   points.foreach(quadTree.add)
-  //val queryPoint = Float2(0.33, 0.33)
 
 
   it should "find k neighbors" in {
@@ -130,6 +129,17 @@ class QuadTreeEntryTests extends FlatSpec{
     val names = cities.map{_.data.name}
     println("Polygonal neighborhood: " + names.mkString(", "))
 
+  }
+
+  it should "contain all elements" in {
+    cityTree.size should be (cityData.size)
+  }
+
+  it should "contain large and small cities" in {
+    val L = cityTree.filter(_.data.population > 50000).size
+    val S = cityTree.filter(_.data.population <= 50000).size
+    (L + S) should be (cityData.size)
+    L should be (14)
   }
 
 
