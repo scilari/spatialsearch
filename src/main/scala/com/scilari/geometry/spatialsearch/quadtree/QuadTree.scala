@@ -15,13 +15,11 @@ import scala.collection.mutable.ListBuffer
 /**
   * Base class for the Node and Leaf subclasses
   * @param bb Bounding box representing the tree boundaries
-  * @param parent Reference to parent node
   * @tparam E Element type
   */
-abstract class QuadTree[E <: Float2](
-  bb: AABB,
-  val parent: QuadNode[E] = null
-) extends AABB(bb) with Tree[Float2]{
+abstract class QuadTree[E <: Float2](bb: AABB)
+  extends AABB(bb) with Tree[Float2, E] {
+  val parent: QuadNode[E]
   def add(elem: E): QuadTree[E]
 }
 
@@ -33,8 +31,9 @@ abstract class QuadTree[E <: Float2](
   */
 class QuadNode[E <: Float2](
   bb: AABB,
-  parent: QuadNode[E] = null
-) extends QuadTree[E](bb, parent) with Node[Float2, QuadTree[E]]{
+  val parent: QuadNode[E] = null
+) extends QuadTree[E](bb) with Node[Float2, E, QuadTree[E]]{
+
   val children: mutable.Seq[QuadTree[E]] = mutable.ArraySeq[QuadTree[E]](
     new QuadLeaf(topLeftAABB(this), this),
     new QuadLeaf(topRightAABB(this), this),
@@ -48,6 +47,7 @@ class QuadNode[E <: Float2](
     setChild(q, child)
     this
   }
+
 
   def isRoot: Boolean = parent == null
 
@@ -64,8 +64,8 @@ class QuadNode[E <: Float2](
   */
 class QuadLeaf[E <: Float2](
   bb: AABB,
-  parent: QuadNode[E] = null
-) extends QuadTree[E](bb, parent) with Leaf[Float2, E]{
+  val parent: QuadNode[E] = null
+) extends QuadTree[E](bb) with Leaf[Float2, E]{
   val children: mutable.Buffer[E] = ListBuffer[E]()
 
 
@@ -75,18 +75,17 @@ class QuadLeaf[E <: Float2](
     if(children.size > nodeElementCapacity && width >= minNodeSize ) split() else this
   }
 
+
   def split(): QuadNode[E] = {
     val newParent = new QuadNode[E](this)
     children.foreach(newParent.add)
     newParent
   }
 
-
   object Parameters{
     var nodeElementCapacity = 16
-    var minNodeSize = 0.0000001f
+    var minNodeSize = 0.01f
   }
-
 
 }
 
