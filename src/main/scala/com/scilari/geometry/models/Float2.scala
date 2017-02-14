@@ -66,13 +66,13 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def toIntArray = Array(x.toInt, y.toInt)
 
   override def equals(that: Any): Boolean = {
-    that.isInstanceOf[Float2] && sameCoordinates(that.asInstanceOf[Float2])
+    that.isInstanceOf[Float2] && equalCoordinates(that.asInstanceOf[Float2])
   }
 
   override def hashCode(): Int = 23*java.lang.Float.floatToIntBits(x) + java.lang.Float.floatToIntBits(y)
 
   def ~=(that: Float2, toleranceSq: Float = 0.0000000001f): Boolean = this.distanceSq(that) <= toleranceSq
-  def sameCoordinates(that: Float2): Boolean = x == that.x && y == that.y
+  def equalCoordinates(that: Float2): Boolean = x == that.x && y == that.y
 
   override def toString: String = "[" + x + ", " + y + "]"
 
@@ -158,6 +158,8 @@ object Float2{
   def cosBetween(a: Float2, b: Float2): Float ={
     a.dot(b)*com.scilari.math.invSqrt(a.lengthSq*b.lengthSq)
   }
+
+  import scala.language.implicitConversions
 
   implicit def Float2asDataPoint(p: Float2): DataPoint[Unit] = new DataPoint[Unit](p.x, p.y, ())
 
