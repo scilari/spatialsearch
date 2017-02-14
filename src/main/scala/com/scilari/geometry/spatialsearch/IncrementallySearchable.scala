@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.{MetricObject}
+import com.scilari.geometry.models.MetricObject
 import com.scilari.geometry.spatialsearch.IncrementallySearchable._
 import com.scilari.geometry.spatialsearch.Tree._
 
@@ -14,7 +14,7 @@ import scala.collection.mutable
   * Provides highly versatile searches via modifiable SearchParameters
   * Created by iv on 1/17/2017.
   */
-trait IncrementallySearchable[P, N <: Tree[P], E <: MetricObject[P]] {
+trait IncrementallySearchable[P, N <: Tree[P, E], E <: MetricObject[P]] {
   val parameters: SearchParameters[P, N, E]
 
   def search(queryPoint: P, tree: N): Seq[E] = search(queryPoint, tree, parameters)
@@ -50,7 +50,7 @@ trait IncrementallySearchable[P, N <: Tree[P], E <: MetricObject[P]] {
           case l: (Leaf[P, E]) => {
             l.children.foreach{ c => if (params.filterElements(c, state)) elements.enqueue((c.distanceSq(queryPoint), c))}
           }
-          case n: Node[P, N] => {
+          case n: Node[P, E, N] => {
             n.children.foreach{ c => if (params.filterNodes(c, state)) nodes.enqueue((c.distanceSq(queryPoint), c)) }
           }
         }
@@ -63,22 +63,22 @@ trait IncrementallySearchable[P, N <: Tree[P], E <: MetricObject[P]] {
 }
 
 object IncrementallySearchable{
-  class State[P, N <: Tree[P], E <: MetricObject[P]](
+  class State[P, N <: Tree[P, E], E <: MetricObject[P]](
     val queryPoint: P,
     val elements: mutable.PriorityQueue[(Float, E)],
     val nodes: mutable.PriorityQueue[(Float, N)],
     val foundElements: mutable.Buffer[E]
   ){
 
-    def elemDistSq = if(elements.nonEmpty) elements.head._1 else Float.PositiveInfinity
-    def nodeDistSq = if(nodes.nonEmpty) nodes.head._1 else Float.PositiveInfinity
+    def elemDistSq: Float = if(elements.nonEmpty) elements.head._1 else Float.PositiveInfinity
+    def nodeDistSq: Float = if(nodes.nonEmpty) nodes.head._1 else Float.PositiveInfinity
 
   }
 
-  class SearchParameters[P, N <: Tree[P], E <: MetricObject[P]](
+  class SearchParameters[P, N <: Tree[P, E], E <: MetricObject[P]](
     val endCondition: State[P, N, E] => Boolean = (_: State[P, N, E]) => false,
     val filterElements: (E, State[P, N, E]) => Boolean = (_: E, _: State[P, N, E]) => true,
-    val filterNodes: (N, State[P, N, E]) => Boolean = (_: Tree[P], _: State[P, N, E]) => true,
+    val filterNodes: (N, State[P, N, E]) => Boolean = (_: Tree[P, E], _: State[P, N, E]) => true,
     val modifyState: State[P, N, E] => Unit = (_: State[P, N, E]) => ()
   )
 
