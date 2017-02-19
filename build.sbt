@@ -4,7 +4,7 @@ organization := "com.scilari"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.11.8"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
@@ -17,6 +17,9 @@ publishTo := {
   else
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
+
+javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+scalacOptions += "-target:jvm-1.7"
 
 publishArtifact in Test := false
 
