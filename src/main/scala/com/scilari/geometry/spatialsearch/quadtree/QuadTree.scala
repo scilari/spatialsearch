@@ -130,6 +130,7 @@ object QuadTreeUtils {
 
 
   def findQuadrant(point: Float2, centerPoint: Float2): Int = {
+    // This branch prediction friendly implementation seems to be over three times faster than simple if-based one
     val rowIncrement = if(point.x <= centerPoint.x) 0 else 1
     val columnIncrement = if(point.y <= centerPoint.y) 2 else 0
     rowIncrement + columnIncrement
