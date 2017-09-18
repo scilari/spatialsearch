@@ -1,26 +1,26 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeEntry
+import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers._
 
 /**
   * Created by iv on 1/17/2017.
   */
-class QuadTreeEntryTests extends FlatSpec{
+class QuadTreeTests extends FlatSpec{
   val pointCount = 100
   val points = Seq.fill(pointCount)(Float2.random)
   val queryPoints = Seq.fill(200000)(Float2.random())
 
-  "QuadTreeEntry" should "be nonEmpty after adding points" in {
-    val quadTree = QuadTreeEntry[Float2](AABB.unit)
+  "QuadTree" should "be nonEmpty after adding points" in {
+    val quadTree = QuadTree[Float2](AABB.unit)
     assert(quadTree.isEmpty)
     points.foreach{quadTree.add}
-    assert(!quadTree.isEmpty)
+    assert(!quadTree.nonEmpty)
   }
 
-  val quadTree = QuadTreeEntry[Float2](AABB.unit)
+  val quadTree = QuadTree[Float2](AABB.unit)
   points.foreach(quadTree.add)
 
 
@@ -97,7 +97,7 @@ class QuadTreeEntryTests extends FlatSpec{
 
 
   import TestResources._
-  val cityTree = QuadTreeEntry(cityData)
+  val cityTree = QuadTree(cityData)
 
   it should "find the five nearest cities to WGS 65.0 25.0 (ENU origo there)" in {
     val cities = cityTree.knnSearch(Float2(0, 0), 5)
@@ -136,8 +136,8 @@ class QuadTreeEntryTests extends FlatSpec{
   }
 
   it should "contain large and small cities" in {
-    val L = cityTree.filter(_.data.population > 50000).size
-    val S = cityTree.filter(_.data.population <= 50000).size
+    val L = cityTree.count(_.data.population > 50000)
+    val S = cityTree.count(_.data.population <= 50000).size
     (L + S) should be (cityData.size)
     L should be (14)
   }
