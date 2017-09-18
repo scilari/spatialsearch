@@ -10,17 +10,17 @@ import org.scalatest.Matchers._
   */
 class QuadTreeTests extends FlatSpec{
   val pointCount = 100
-  val points = Seq.fill(pointCount)(Float2.random)
-  val queryPoints = Seq.fill(200000)(Float2.random())
+  val points: Seq[Float2] = Seq.fill(pointCount)(Float2.random)
+  val queryPoints: Seq[Float2] = Seq.fill(200000)(Float2.random())
 
   "QuadTree" should "be nonEmpty after adding points" in {
     val quadTree = QuadTree[Float2](AABB.unit)
     assert(quadTree.isEmpty)
     points.foreach{quadTree.add}
-    assert(!quadTree.nonEmpty)
+    assert(quadTree.nonEmpty)
   }
 
-  val quadTree = QuadTree[Float2](AABB.unit)
+  val quadTree: QuadTree[Float2] = QuadTree[Float2](AABB.unit)
   points.foreach(quadTree.add)
 
 
@@ -50,7 +50,7 @@ class QuadTreeTests extends FlatSpec{
   it should "find all and no additional neighbors" in {
     for(queryPoint <- queryPoints.take(10)) {
       val k = pointCount + 2
-      quadTree.knnSearch(queryPoint, k) should have size (pointCount)
+      quadTree.knnSearch(queryPoint, k) should have size pointCount
     }
   }
 
@@ -59,13 +59,13 @@ class QuadTreeTests extends FlatSpec{
     for(queryPoint <- queryPoints) {
       val pointsInRange = quadTree.rangeSearch(queryPoint, range)
       val filteredPoints = points.filter(queryPoint.distance(_) <= range)
-      pointsInRange should have size (filteredPoints.size)
+      pointsInRange should have size filteredPoints.size
     }
   }
 
   it should "find all neighbors when radius is infinite" in {
     for(queryPoint <- queryPoints.take(10)) {
-      quadTree.rangeSearch(queryPoint, Float.PositiveInfinity) should have size (points.size)
+      quadTree.rangeSearch(queryPoint, Float.PositiveInfinity) should have size points.size
     }
   }
 
@@ -102,7 +102,7 @@ class QuadTreeTests extends FlatSpec{
   it should "find the five nearest cities to WGS 65.0 25.0 (ENU origo there)" in {
     val cities = cityTree.knnSearch(Float2(0, 0), 5)
     val names = cities.map{_.data.name}
-    names should contain theSameElementsAs(List("Oulu", "Kempele", "Muhos", "Raahe", "Haukipudas"))
+    names should contain theSameElementsAs List("Oulu", "Kempele", "Muhos", "Raahe", "Haukipudas")
   }
 
   it should "find the five nearest cities with population over 50,000" in {
@@ -110,7 +110,7 @@ class QuadTreeTests extends FlatSpec{
       Float2(0,0), 5, (p: DataPoint[City]) => p.data.population > 50000)
 
     val names = cities.map{_.data.name}
-    names should contain theSameElementsAs(List("Oulu", "Vaasa", "Kuopio", "Jyvaskyla", "Joensuu"))
+    names should contain theSameElementsAs List("Oulu", "Vaasa", "Kuopio", "Jyvaskyla", "Joensuu")
 
   }
 
@@ -119,7 +119,7 @@ class QuadTreeTests extends FlatSpec{
       Float2(0,0), 5, (p: DataPoint[City]) => p.data.population < 50000)
 
     val names = cities.map{_.data.name}
-    names should contain theSameElementsAs(List("Oulainen", "Kempele", "Muhos", "Raahe", "Haukipudas"))
+    names should contain theSameElementsAs List("Oulainen", "Kempele", "Muhos", "Raahe", "Haukipudas")
 
   }
 
