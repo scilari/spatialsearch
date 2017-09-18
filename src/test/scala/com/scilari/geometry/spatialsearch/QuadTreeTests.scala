@@ -137,7 +137,7 @@ class QuadTreeTests extends FlatSpec{
 
   it should "contain large and small cities" in {
     val L = cityTree.count(_.data.population > 50000)
-    val S = cityTree.count(_.data.population <= 50000).size
+    val S = cityTree.count(_.data.population <= 50000)
     (L + S) should be (cityData.size)
     L should be (14)
   }
