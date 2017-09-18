@@ -3,7 +3,7 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{Float2, HalfPlaneObject, MetricObject}
 import com.scilari.geometry.spatialsearch.IncrementallySearchable.State
-import com.scilari.geometry.spatialsearch.quadtree.QuadTree
+import com.scilari.geometry.spatialsearch.quadtree.QuadTreeBase
 import com.scilari.math._
 
 /**
@@ -39,13 +39,13 @@ object Searches {
     )
   }
 
-  class Polygonal[E <: Float2] extends IncrementallySearchable[Float2, QuadTree[E], E]{
-    val parameters = new IncrementallySearchable.SearchParameters[Float2, QuadTree[E], E](
-      filterElements = (e: E, s: State[Float2, QuadTree[E], E]) => {
+  class Polygonal[E <: Float2] extends IncrementallySearchable[Float2, QuadTreeBase[E], E]{
+    val parameters = new IncrementallySearchable.SearchParameters[Float2, QuadTreeBase[E], E](
+      filterElements = (e: E, s: State[Float2, QuadTreeBase[E], E]) => {
         !isDominatedBy(e, s.queryPoint, s.foundElements)
       },
 
-      filterNodes = (n: QuadTree[E], s: State[Float2, QuadTree[E], E]) => {
+      filterNodes = (n: QuadTreeBase[E], s: State[Float2, QuadTreeBase[E], E]) => {
         !isDominatedBy(n, s.queryPoint, s.foundElements)
       }
     )

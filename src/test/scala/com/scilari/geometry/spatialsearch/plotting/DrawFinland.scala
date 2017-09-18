@@ -7,7 +7,7 @@ import javax.imageio.ImageIO
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
 import com.scilari.geometry.spatialsearch.TestResources._
 import com.scilari.geometry.spatialsearch.plotting.Panels.{FlippedDrawingPanel, Frame}
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeEntry
+import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 
 /**
   * Test visualization with Finnish city population data
@@ -20,7 +20,7 @@ object DrawFinland extends App{
 
 
   val box = AABB.EnclosingSquare(cityData, margin = 100)
-  val cityTree = QuadTreeEntry(cityData)
+  val cityTree = QuadTree(cityData)
 
   println(box)
 
@@ -28,7 +28,7 @@ object DrawFinland extends App{
 
   val t0 = System.currentTimeMillis()
 
-  def colorMap(p: Float2, tree: QuadTreeEntry[DataPoint[City]]): DataPoint[Color] = {
+  def colorMap(p: Float2, tree: QuadTree[DataPoint[City]]): DataPoint[Color] = {
     val cities = tree.rangeSearch(p, paintRadius)
     val popSum = cities.map{_.data.population}.sum
     val color = if(cities.isEmpty){
@@ -59,7 +59,7 @@ object DrawFinland extends App{
   println("Evaluating " + colors.size + " pixels took " + t + " milliseconds (" + t.toDouble/colors.size + " ms/px).")
 
 
-  val animatedTree = QuadTreeEntry[DataPoint[City]](box)
+  val animatedTree = QuadTree[DataPoint[City]](box)
   var animatedImg = new BoxToBufferedImage(box, pixelSize)
 
   val pixBox = AABB(0, 0, animatedImg.imageWidth, animatedImg.imageHeight)
