@@ -29,6 +29,8 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
   def maxX: Float = maxPoint.x
   def maxY: Float = maxPoint.y
 
+  def area: Float = width * height
+
   def corners = Array(topLeft, topRight, bottomLeft, bottomRight)
 
   def distanceSq(p: Float2): Float = Float2.distanceSq(p, p.clamp(minPoint, maxPoint))
@@ -61,8 +63,8 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
   def closestBorderPoint(p: Float2): Float2 = p.clamp(minPoint, maxPoint)
 
 
-  def enclose(p: Float2): Unit = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p)}
-  def enclose(ps: Seq[Float2]): Unit = ps.foreach(enclose)
+  def enclose(p: Float2): AABB = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p); this}
+  def enclose(ps: Seq[Float2]): AABB = { ps.foreach(enclose); this }
 
   def contains(p: Float2): Boolean = {
     p.x >= minPoint.x && p.y >= minPoint.y && p.x <= maxPoint.x && p.y <= maxPoint.y
