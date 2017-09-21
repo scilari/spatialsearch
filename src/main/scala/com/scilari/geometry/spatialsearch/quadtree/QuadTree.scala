@@ -11,7 +11,12 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
   */
 class QuadTree[T <: Float2] private (bb: AABB)
   extends SearchTree[T] with Traversable[T] {
-  var root: QuadTreeBase[T] = new QuadLeaf[T](bb)
+
+  type Base = QuadTreeBase[T]
+  type Leaf = QuadLeaf[T]
+  type Node = QuadNode[T]
+
+  var root: Base = new Leaf(bb)
 
   def add(elem: T): Unit = root = root.add(elem)
 
@@ -20,7 +25,7 @@ class QuadTree[T <: Float2] private (bb: AABB)
       add(elem)
     else{
       val newAABB = enclosingAABB(elem, root)
-      val newRoot = new QuadNode[T](newAABB)
+      val newRoot = new Node(newAABB)
       newRoot.setChild(findQuadrant(root.center, newRoot), root)
       root = newRoot
       addEnclose(elem)
@@ -30,12 +35,12 @@ class QuadTree[T <: Float2] private (bb: AABB)
   def foreach[U](f: T => U): Unit = root.foreach(f)
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[T] = {
-    val knn = new Searches.Knn[Float2, QuadTreeBase[T], T] (k)
+    val knn = new Searches.Knn[Float2, Base, T] (k)
     knn.search(queryPoint, root)
   }
 
   def rangeSearch(queryPoint: Float2, r: Float): Seq[T] = {
-    val range = new Searches.Range[Float2, QuadTreeBase[T], T](r)
+    val range = new Searches.Range[Float2, Base, T](r)
     range.search(queryPoint, root)
   }
 
@@ -45,12 +50,12 @@ class QuadTree[T <: Float2] private (bb: AABB)
   }
 
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: T => Boolean): Seq[T] = {
-    val knnCond = new Searches.KnnWithCondition[Float2, QuadTreeBase[T], T](k, condition)
+    val knnCond = new Searches.KnnWithCondition[Float2, Base, T](k, condition)
     knnCond.search(queryPoint, root)
   }
 
   override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
-    val rangeOrFirst = new Searches.RangeUntilFirstFound[Float2, QuadTreeBase[T], T](r)
+    val rangeOrFirst = new Searches.RangeUntilFirstFound[Float2, Base, T](r)
     rangeOrFirst.search(queryPoint, root).isEmpty
   }
 
