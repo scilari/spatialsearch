@@ -15,3 +15,5 @@ e.g. the search state is manipulated on the fly (e.g. filter elements and prune 
 * Improve this document (usage, visualization etc.)
 * Implement r-tree functionality
 * Refactor
+* Find out common functionality in QuadTree and RTree and factor out
+* Separate traits for addable etc.
