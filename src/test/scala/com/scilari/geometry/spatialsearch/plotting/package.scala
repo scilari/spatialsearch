@@ -85,8 +85,8 @@ package object plotting {
 
   def flippedImage(image: BufferedImage): BufferedImage = {
     val at = new AffineTransform()
-    at.concatenate(AffineTransform.getScaleInstance(1, -1));
-    at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+    at.concatenate(AffineTransform.getScaleInstance(1, -1))
+    at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()))
     return createTransformedImage(image, at)
   }
 
