@@ -41,6 +41,8 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
 
   def distanceSq(that: Float2): Float = Float2.distanceSq(this, that)
 
+  override def zeroDistance(point: Float2): Boolean = equalCoordinates(point)
+
   def direction: Float = atan2(y, x)
   def manhattan: Float = abs(x + y)
 
@@ -104,6 +106,7 @@ object Float2{
   def randomMinusOneToOne: Float2 = Float2(1f) - Float2.random*2f
   def directed(angle: Float, length: Float = 1f) = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
   def random(minX: Float, minY: Float, maxX: Float, maxY: Float): Float2 = Float2(minX, minY) + Float2.random*Float2(maxX - minX, maxY - minY)
+  def random(minPoint: Float2, maxPoint: Float2): Float2 = random(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y)
 
   def linSpace(start: Float2, end: Float2, n: Int): Seq[Float2] = {
     val diff = end - start
@@ -149,8 +152,12 @@ object Float2{
     points
   }
 
+  @inline
   def distanceSq(a: Float2, b: Float2): Float = { val dx = a.x - b.x; val dy = a.y - b.y; dx*dx + dy*dy}
+
   def distance(a: Float2, b: Float2): Float = Math.sqrt(distanceSq(a, b)).toFloat
+
+
   def angleBetween(a: Float2, b: Float2): Float = {
     Math.acos(cosBetween(a, b)).toFloat
   }
