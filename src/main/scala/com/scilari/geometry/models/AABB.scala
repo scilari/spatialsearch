@@ -60,22 +60,18 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
 
   def x: Float = centerX
   def y: Float = centerY
-  def closestBorderPoint(p: Float2): Float2 = p.clamp(minPoint, maxPoint)
 
+  def closestBorderPoint(p: Float2): Float2 = p.clamp(minPoint, maxPoint)
 
   def enclose(p: Float2): AABB = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p); this}
   def enclose(ps: Seq[Float2]): AABB = { ps.foreach(enclose); this }
 
-  def contains(p: Float2): Boolean = {
-    p.x >= minPoint.x && p.y >= minPoint.y && p.x <= maxPoint.x && p.y <= maxPoint.y
-  }
+  def contains(p: Float2): Boolean = p.x >= minX && p.y >= minY && p.x <= maxX && p.y <= maxY
 
   def contains(box: AABB): Boolean = contains(box.minPoint) && contains(box.maxPoint)
 
-  def intersects(box: AABB): Boolean = {
-    maxPoint.x >= box.minPoint.x && maxPoint.y >= box.minPoint.y &&
-      minPoint.x <= box.minPoint.x && maxPoint.y <= box.maxPoint.y
-  }
+  def intersects(box: AABB): Boolean = maxX >= box.minX && maxY >= box.minY && minX <= box.minX && maxX <= box.maxY
+
 
   def +(p: Float2) = AABB(minPoint + p, maxPoint + p)
   def -(p: Float2) = AABB(minPoint - p, maxPoint - p)
@@ -91,13 +87,16 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
 }
 
 object AABB{
+  def apply(): AABB = empty()
   def apply(minPoint: Float2, maxPoint: Float2) = new AABB(minPoint, maxPoint)
   def apply(minX: Float, minY: Float, maxX: Float, maxY: Float) = new AABB(minX, minY, maxX, maxY)
   def apply(box: AABB): AABB = AABB(box.minPoint, box.maxPoint)
 
   def apply(points: Seq[Float2], margin: Float = 0f): AABB = {
-    val bottomLeft = Float2(points.minBy{_.x}.x, points.minBy{_.y}.y)
-    val topRight =  Float2(points.maxBy{_.x}.x, points.maxBy{_.y}.y)
+    val xs = points.map{_.x}
+    val ys = points.map{_.y}
+    val bottomLeft = Float2(xs.min, ys.min)
+    val topRight =  Float2(xs.max, ys.max)
     apply(bottomLeft - Float2(margin), topRight + Float2(margin))
   }
 
