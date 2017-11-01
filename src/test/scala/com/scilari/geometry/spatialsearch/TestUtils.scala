@@ -15,7 +15,7 @@ object TestUtils {
 
   }
 
-  def readCsvColumns(filename: String) = {
+  def readCsvColumns(filename: String): List[List[String]] = {
     readCsvRows(filename).transpose
   }
 
@@ -50,15 +50,15 @@ object TestUtils {
 
     val defaultWarmupCount = 1
 
-    def warmUpAndMeasureTimeWithInit[T, U](initBlock: => T, block: => U, count: Int = 1, warmupCount: Int = defaultWarmupCount): Double = {
-      for (i <- 0 until warmupCount) BlackHole.consumeDouble(measureTimeWithInit(initBlock, block, count))
+    def warmUpAndMeasureTimeWithInit[T, U](initBlock: => T, block: => U, count: Int = 1, warmUpCount: Int = defaultWarmupCount): Double = {
+      for (i <- 0 until warmUpCount) BlackHole.consumeDouble(measureTimeWithInit(initBlock, block, count))
       measureTimeWithInit(initBlock, block, count)
     }
 
 
 
-    def warmUpAndMeasureTime(block: => Any, count: Int, warmupCount: Int = defaultWarmupCount): Double = {
-      for (i <- 0 until warmupCount) BlackHole.consumeDouble(measureTime(block, count))
+    def warmUpAndMeasureTime(block: => Any, count: Int, warmUpCount: Int = defaultWarmupCount): Double = {
+      for (i <- 0 until warmUpCount) BlackHole.consumeDouble(measureTime(block, count))
       measureTime(block, count)
     }
 
