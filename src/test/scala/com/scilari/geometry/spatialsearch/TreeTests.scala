@@ -1,7 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{DataPoint, Float2}
-import com.scilari.geometry.spatialsearch.SearchTree.Concrete
 import TestResources._
 import org.csdgn.util.KDTree
 import org.scalatest.{FlatSpec, Matchers}
@@ -15,9 +14,9 @@ abstract class TreeTests extends FlatSpec with Matchers {
   val points: Seq[Float2] = Seq.fill(pointCount)(Float2.random)
   val queryPoints: Seq[Float2] = Seq.fill(20000)(Float2.random())
 
-  def createEmptyUnitTree: Concrete[Float2]
-  def createFilledTree: Concrete[Float2]
-  def createCityTree: Concrete[DataPoint[City]]
+  def createEmptyUnitTree: SearchTree[Float2]
+  def createFilledTree: SearchTree[Float2]
+  def createCityTree: SearchTree[DataPoint[City]]
   def treeName: String
 
 
@@ -127,7 +126,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
 
 
-  val cityTree: Concrete[DataPoint[City]] = createCityTree
+  val cityTree: SearchTree[DataPoint[City]] = createCityTree
 
   it should "find the five nearest cities to WGS 65.0 25.0 (ENU origo there)" in {
     val cities = cityTree.knnSearch(Float2(0, 0), 5)
@@ -174,24 +173,33 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
   it should "have removal functionality" in {
     val cityTree = createCityTree
+    info("Tree size before removal: " + cityTree.size)
     val toBeRemoved = cityData.take(3)
+    info("to be removed: " + toBeRemoved.map{_.data.name})
     for(e <- toBeRemoved){
       cityTree.remove(e, e)
     }
 
     val treeNames = cityTree.toList.map{_.data.name}
     val names = cityData.drop(3).map{_.data.name}
+    info("Tree size: " + treeNames.size + " pruned size: " + names.size )
+    info("Difference: " + treeNames.toSet.diff(names.toSet))
     treeNames should contain theSameElementsAs names
 
   }
 
   it should "have simultaneous removal functionality" in {
     val cityTree = createCityTree
+    info("Tree size before removal: " + cityTree.size)
     val toBeRemoved = cityData.take(10)
+    info("to be removed: " + toBeRemoved.map{_.data.name})
     cityTree.remove(toBeRemoved)
     val treeNames = cityTree.toList.map{_.data.name}
     val names = cityData.drop(10).map{_.data.name}
+    info("Tree size: " + treeNames.size + " pruned size: " + names.size )
+    info("Difference: " + treeNames.toSet.diff(names.toSet))
     treeNames should contain theSameElementsAs names
+
 
   }
 
