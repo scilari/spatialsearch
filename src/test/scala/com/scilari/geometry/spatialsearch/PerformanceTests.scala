@@ -16,8 +16,10 @@ class PerformanceTests extends FlatSpec {
   val warmUpCount = 2
   val pointCount = 10000
   val queryCount = 1000
-  val range = 0.25f
+  val bb = AABB(1000f)
+  val range = 0.25f*bb.width
   val queryK = 100 //pointCount/10
+
 
   val totalQueryCount = runCount * queryCount
   val totalInsertCount = insertRunCount * pointCount
@@ -27,10 +29,11 @@ class PerformanceTests extends FlatSpec {
 
   // Data with two clusters and a small number of random points elsewhere
   val points  =
-    Seq.fill(pointCount/2)(Float2.random) ++
-      Seq.fill(pointCount/2)(Float2.random + 1.1f) ++ Seq.fill(pointCount/20)(Float2.random*(2.1f))
+    Seq.fill(pointCount/2)(Float2.random(0.4f*bb.width)) ++
+      Seq.fill(pointCount/2)(Float2.random(0.4f*bb.width) + 0.6f*bb.width) ++
+      Seq.fill(pointCount/20)(Float2.random(bb.width))
 
-  val bb = AABB(points)
+  //val bb = AABB(points)
 
 
 
@@ -48,7 +51,8 @@ class PerformanceTests extends FlatSpec {
 
 
   def testInfo: Unit ={
-    TreePlotter.plot(quadTree, "QuadTree"); TreePlotter.plot(rTree, "rTree")
+    TreePlotter.plot(quadTree, "QuadTree", elemRadius = bb.width/500)
+    TreePlotter.plot(rTree, "rTree", elemRadius = bb.width/500)
     info("== Test info == ")
     info("Point count: " + pointCount)
     info("Knn k: " + queryK)
@@ -101,13 +105,13 @@ class PerformanceTests extends FlatSpec {
       for(q <- queryArray){
         val kdRangeLow = Array(q(0) - range, q(1) - range)
         val kdRangeHigh = Array(q(0) + range, q(1) + range)
-        val neighbors = kdTree.getRange(kdRangeLow, kdRangeHigh)
+        kdTree.getRange(kdRangeLow, kdRangeHigh)
       }
     }, runCount, warmUpCount)
 
     val tQd = warmUpAndMeasureTime({
       for(q <- queryPoints){
-        val neighbors = quadTree.rangeSearch(q, range)
+        quadTree.rangeSearch(q, range)
       }
     }, runCount, warmUpCount)
 
@@ -137,7 +141,7 @@ class PerformanceTests extends FlatSpec {
 
     val tPolMax = warmUpAndMeasureTime({
       for(q <- queryPoints){
-        val neighbors = quadTree.polygonalMaxRangeSearch(q, 0.1f)
+        val neighbors = quadTree.polygonalMaxRangeSearch(q, bb.width/20)
       }
     }, runCount, warmUpCount)
 
