@@ -1,5 +1,6 @@
 package com.scilari.geometry.spatialsearch.queues
 
+// TODO: fix to use classTag
 final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
   private[this] var values = new Array[AnyRef](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
