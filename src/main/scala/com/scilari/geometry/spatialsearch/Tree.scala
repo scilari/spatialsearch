@@ -1,39 +1,111 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.MetricObject
+import com.scilari.geometry.models.{HalfPlaneObject, MetricObject}
 
-/**
-  * Tree with metric children
-  * @tparam P Query point type
-  * @tparam E Element type
-  */
-trait Tree[P, E] extends MetricObject[P] with Traversable[E]{
-  def children: Seq[MetricObject[P]]
-  def getElements: Seq[E]
-  override def foreach[U](f: E => U): Unit = getElements.foreach(f)
-}
 
-object Tree{
+import scala.collection.mutable
 
-  /**
-    * Node with metric children nodes
-    * @tparam P Query point type
-    * @tparam E Element type
-    * @tparam N Node type
-    */
-  trait Node[P, E, N <: Tree[P, E]] extends Tree[P, E]{
-    override def children: Seq[N]
-    override def getElements: Seq[E] = children.flatMap(_.getElements)
+
+trait Tree[P, E]{
+  type BaseType <: Base
+  type NodeType <: BaseType with Node
+  type LeafType <: BaseType with Leaf
+
+  trait Base extends MetricObject[P] with Traversable[E] with HalfPlaneObject {
+    def elements: Seq[E]
+
+    def nodes: Seq[BaseType]
+
+    def leaves: Seq[Leaf]
+
+    override def foreach[U](f: E => U): Unit = elements.foreach(f)
+
+    def depth: Int
+
+    def childCount: Int
+
+    def add(e: E): BaseType
+
+    def add(elems: Seq[E]): BaseType = {
+      var n: BaseType = null.asInstanceOf[BaseType]
+      elems.foreach(e => n = add(e))
+      n
+    }
+
+    def parent: BaseType
+
+    def isRoot: Boolean = parent != null
+
+    def isLeaf: Boolean
+
+    def nonLeaf: Boolean = !isLeaf
+
+    def contains(e: P): Boolean = zeroDistance(e)
+
   }
 
-  /**
-    * Leaf node with metric elements
-    * @tparam P Type of query point
-    * @tparam E Element type
-    */
-  trait Leaf[P, E <: MetricObject[P]] extends Tree[P, E]{
-    override def children: Seq[E]
-    override def getElements: Seq[E] = children
+
+  trait Node extends Base {
+    this: NodeType =>
+    val children: Array[BaseType]
+
+    def elements: Seq[E] = children.flatMap(_.elements)
+
+    def nodes: Seq[BaseType] = Seq(this) ++ children.flatMap{_.nodes}
+
+    def leaves: Seq[Leaf] = children.flatMap{_.leaves}
+
+    def depth: Int = children.map {
+      _.depth
+    }.max + 1
+
+    def childCount: Int = children.length
+
+    def isLeaf = false
+
+    def findChildIndex(e: E): Int
+
+    def getChild(i: Int): BaseType = children(i)
+
+    def setChild(i: Int, c: BaseType): Unit = children(i) = c
+
+    def add(e: E): NodeType = {
+      val ix = findChildIndex(e)
+      val child = getChild(ix)
+      val newChild = child.add(e)
+      setChild(ix, newChild)
+      this
+    }
+  }
+
+  trait Leaf extends Base {
+    this: LeafType =>
+    val elements: mutable.Buffer[E]
+
+    def nodes: Seq[BaseType] = Seq(this)
+
+    def leaves: Seq[Leaf] = Seq(this)
+
+    def depth = 1
+
+    def childCount: Int = elements.size
+
+    def isLeaf = true
+
+    def add(e: E): BaseType = {
+      elements += e
+      if (splitCondition) split() else this
+    }
+
+    def splitCondition: Boolean
+
+    def split(): NodeType = {
+      val newNode = toNode
+      elements.foreach(newNode.add)
+      newNode
+    }
+
+    def toNode: NodeType
   }
 
 }

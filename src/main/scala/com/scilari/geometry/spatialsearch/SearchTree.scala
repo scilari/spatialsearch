@@ -2,23 +2,66 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
 
-/**
-  * Created by Ilari.Vallivaara on 1/18/2017.
-  */
-trait SearchTree[T <: Float2] {
+trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E] with Traversable[E] {
+  val Tree: Tree[Float2, E]
+  var root: Tree.BaseType
 
-  def knnSearch(queryPoint: Float2, k: Int): Seq[T]
-
-  def rangeSearch(queryPoint: Float2, r: Float): Seq[T]
-
-  def polygonalSearch(queryPoint: Float2): Seq[T]
-
-  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: T => Boolean): Seq[T]
-
-  def isEmptyRange(queryPoint: Float2, r: Float):  Boolean = {
-    rangeSearch(queryPoint, r).isEmpty
+  def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
+    val knn = new Searches.Knn[Float2, E](k)
+    knn.search(queryPoint, root)
   }
 
-  def nonEmptyRange(queryPoint: Float2, r: Float): Boolean = !isEmptyRange(queryPoint, r)
+  def rangeSearch(queryPoint: Float2, r: Float): Seq[E] = rangeSearch(queryPoint, r, sizeHint = 32)
 
+  def rangeSearch(queryPoint: Float2, r: Float, sizeHint: Int): Seq[E] = {
+    val range = new Searches.Range[Float2, E](r, sizeHint)
+    range.search(queryPoint, root)
+  }
+
+  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] = {
+    val knnCond = new Searches.KnnWithCondition[Float2, E](k, condition)
+    knnCond.search(queryPoint, root)
+  }
+
+
+  override def polygonalSearch(queryPoint: Float2): Seq[E] = {
+    val poly = new Searches.Polygonal[Float2, E]()
+    poly.search(queryPoint, root)
+  }
+
+  def polygonalMaxRangeSearch(queryPoint: Float2, maxRange: Float): Seq[E] = {
+    val polyMax = new Searches.PolygonalMaxRange[Float2, E](maxRange)
+    polyMax.search(queryPoint, root)
+  }
+
+  def polygonalDynamicMaxRangeSearch(queryPoint: Float2, maxRangeFactor: Float = 3f): Seq[E] = {
+    val polyMax = new Searches.PolygonalDynamicMaxRange[Float2, E](maxRangeFactor)
+    polyMax.search(queryPoint, root)
+  }
+
+  override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
+    val rangeOrFirst = new Searches.RangeUntilFirstFound[Float2, E](r)
+    rangeOrFirst.search(queryPoint, root).isEmpty
+  }
+
+  def add(e: E): Unit = root = root.add(e)
+
+  def addEnclose(e: E): Unit
+
+  def depth: Int = root.depth
+
+  def remove(e: E): Unit = remove(Seq(e))
+
+  def remove(queryPoint: Float2, e: E): Unit = {
+    val removal = new Searches.Removal[Float2, E](e)
+    removal.search(queryPoint, root)
+  }
+
+  override def remove(elems: Seq[E]): Unit = for(l <- root.leaves) l.elements --= elems.filter(l.contains)
+
+  def foreach[U](f: E => U): Unit = root.foreach(f)
+
+  override def toString(): String = root.toString()
 }
+
+
