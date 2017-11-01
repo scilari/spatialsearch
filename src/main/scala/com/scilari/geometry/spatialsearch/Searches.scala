@@ -15,7 +15,7 @@ object Searches {
 
 
   final class Knn[P, E <: MetricObject[P]](k: Int) extends IncrementallySearchable[P, E]{
-    protected val parameters: SearchParameters[P, E] = KnnParameters
+    val parameters: SearchParameters[P, E] = KnnParameters
     private final object KnnParameters extends SearchParameters[P, E]{
       override def endCondition(s: State[P, E]): Boolean = s.foundElements.size >= k
       override val foundElemSizeHint: Int = k
