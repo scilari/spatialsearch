@@ -91,6 +91,7 @@ object AABB{
   def apply(minPoint: Float2, maxPoint: Float2) = new AABB(minPoint, maxPoint)
   def apply(minX: Float, minY: Float, maxX: Float, maxY: Float) = new AABB(minX, minY, maxX, maxY)
   def apply(box: AABB): AABB = AABB(box.minPoint, box.maxPoint)
+  def apply(scale: Float): AABB = apply(Float2.zero, Float2(scale))
 
   def apply(points: Seq[Float2], margin: Float = 0f): AABB = {
     val xs = points.map{_.x}

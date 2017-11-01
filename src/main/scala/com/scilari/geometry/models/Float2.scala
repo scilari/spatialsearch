@@ -102,6 +102,7 @@ object Float2{
   def fromDoubleArray(a: Array[Double]) = Float2(a(0).toFloat, a(1).toFloat)
 
   def random: Float2 = randomZeroToOne
+  def random(scale: Float): Float2 = random(Float2.zero, Float2(scale))
   def randomZeroToOne = Float2(scala.util.Random.nextFloat(), scala.util.Random.nextFloat())
   def randomMinusOneToOne: Float2 = Float2(1f) - Float2.random*2f
   def directed(angle: Float, length: Float = 1f) = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
