@@ -2,75 +2,46 @@ package com.scilari.geometry.spatialsearch.quadtree
 
 import com.scilari.geometry.models.{AABB, Float2}
 import com.scilari.geometry.spatialsearch._
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
 
 /**
   * Concrete QuadTree implementation of SearchTree
   * @param bb Initial bounding box describing the root
-  * @tparam T Element type
+  * @tparam E Element type
   */
-class QuadTree[T <: Float2] private (bb: AABB)
-  extends SearchTree[T] with Traversable[T] {
+final class QuadTree[E <: Float2] private (bb: AABB, parameters: Parameters = Parameters())
+  extends SearchTree[E] with QuadTreeLike[E]{
 
-  type Base = QuadTreeBase[T]
-  type Leaf = QuadLeaf[T]
-  type Node = QuadNode[T]
+  import Tree.{BaseType, NodeType, LeafType}
 
-  var root: Base = new Leaf(bb)
+  var root: BaseType = new LeafType(bb, null, parameters)
 
-  def add(elem: T): Unit = root = root.add(elem)
-
-  def addEnclose(elem: T): Unit = {
-    if(root.contains(elem))
-      add(elem)
+  def addEnclose(e: E): Unit = {
+    if(root.contains(e))
+      add(e)
     else{
-      val newAABB = enclosingAABB(elem, root)
-      val newRoot = new Node(newAABB)
-      newRoot.setChild(findQuadrant(root.center, newRoot), root)
+      val newAABB = QuadTreeUtils.expandAABB(e, root)
+      val newRoot = new NodeType(newAABB, parameters = parameters)
+      newRoot.setChild(QuadTreeUtils.findQuadrant(root.center, newRoot), root)
       root = newRoot
-      addEnclose(elem)
+      addEnclose(e)
     }
-  }
-
-  def foreach[U](f: T => U): Unit = root.foreach(f)
-
-  def knnSearch(queryPoint: Float2, k: Int): Seq[T] = {
-    val knn = new Searches.Knn[Float2, Base, T] (k)
-    knn.search(queryPoint, root)
-  }
-
-  def rangeSearch(queryPoint: Float2, r: Float): Seq[T] = {
-    val range = new Searches.Range[Float2, Base, T](r)
-    range.search(queryPoint, root)
-  }
-
-  override def polygonalSearch(queryPoint: Float2): Seq[T] = {
-    val poly = new Searches.Polygonal[T]()
-    poly.search(queryPoint, root)
-  }
-
-  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: T => Boolean): Seq[T] = {
-    val knnCond = new Searches.KnnWithCondition[Float2, Base, T](k, condition)
-    knnCond.search(queryPoint, root)
-  }
-
-  override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
-    val rangeOrFirst = new Searches.RangeUntilFirstFound[Float2, Base, T](r)
-    rangeOrFirst.search(queryPoint, root).isEmpty
   }
 
 }
 
 object QuadTree{
 
-  def apply[T <: Float2](bb: AABB = AABB.unit) = new QuadTree[T](bb)
+  def apply[T <: Float2](bb: AABB, parameters: Parameters): QuadTree[T] = new QuadTree[T](bb, parameters)
+  def apply[T <: Float2](bb: AABB = AABB.unit): QuadTree[T] = apply(bb, Parameters())
 
-  def apply[T <: Float2](elems: Seq[T]): QuadTree[T] = {
+  def apply[T <: Float2](elems: Seq[T]): QuadTree[T] = apply(elems, Parameters())
+
+  def apply[T <: Float2](elems: Seq[T], parameters: Parameters): QuadTree[T] = {
     require(elems.size > 1, "At least two elements required for creating the initial node.")
     val square = AABB.EnclosingSquare(elems)
-    require(square.width > 0 && square.height > 0,
+    require(square.area > 0,
       "At least two spatially distinct elements required for creating the initial node.")
-    val q = QuadTree[T](square)
+    val q = QuadTree[T](square, parameters)
     elems.foreach(q.add)
     q
   }
