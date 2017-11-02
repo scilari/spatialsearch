@@ -81,7 +81,7 @@ object TestUtils {
     }
 
 
-    def similarTime(t1: Double, t2: Double, similarityRatio: Double = 2): Boolean ={
+    def similarTime(t1: Double, t2: Double, similarityRatio: Double = 3): Boolean ={
       t1/t2 < similarityRatio && t2/t1 < similarityRatio
     }
 
