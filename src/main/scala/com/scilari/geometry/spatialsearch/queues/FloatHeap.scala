@@ -1,9 +1,11 @@
 package com.scilari.geometry.spatialsearch.queues
 
-// TODO: fix to use classTag
 final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
-  private[this] var values = new Array[AnyRef](initialCapacity)
+  private[this] var values = new Array[Any](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
+  @inline
+  private[this] implicit def anyToE(a: Any): E = a.asInstanceOf[E]
+
   private[this] var maxIndex = 0
   private[this] var capacity = initialCapacity
 
@@ -15,11 +17,10 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     values(i) = values(j)
   }
 
-  private[this] def update(i: Int, key: Float, value: AnyRef): Unit ={
+  private[this] def update(i: Int, key: Float, value: E): Unit ={
     keys(i) = key
     values(i) = value
   }
-
 
   override def enqueue(key: Float, value: E): Unit = {
     if(maxIndex == capacity - 1) doubleCapacity()
@@ -27,9 +28,9 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     bubbleUp(key, value)
   }
 
-  def doubleCapacity(): Unit ={
+  private[this] def doubleCapacity(): Unit ={
     capacity *= 2
-    val newValues = new Array[AnyRef](capacity)
+    val newValues = new Array[Any](capacity)
     val newKeys = new Array[Float](capacity)
     Array.copy(values, 1, newValues, 1, maxIndex)
     Array.copy(keys, 1, newKeys, 1, maxIndex)
@@ -38,7 +39,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   }
 
   override def dequeue(): FloatKey[E] = {
-    val floatKey = new FloatKey[E](keys(1), values(1).asInstanceOf[E])
+    val floatKey = new FloatKey[E](keys(1), values(1))
     popFirst()
     floatKey
   }
@@ -46,7 +47,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   override def dequeueValue(): E = {
     val headValue = values(1)
     popFirst()
-    headValue.asInstanceOf[E]
+    headValue
   }
 
   private def popFirst(): Unit ={
@@ -55,7 +56,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     bubbleDown()
   }
 
-  private def bubbleUp(key: Float, value: E): Unit ={
+  private[this] def bubbleUp(key: Float, value: E): Unit ={
     var pos = maxIndex
     var par = parent(pos)
     while(pos > 1 && key < keys(par)){
@@ -64,10 +65,10 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
       par = parent(pos)
     }
 
-    update(pos, key, value.asInstanceOf[AnyRef])
+    update(pos, key, value)
   }
 
-  private def bubbleDown(): Unit ={
+  private[this] def bubbleDown(): Unit ={
     val headKey = keys(1)
     val headValue = values(1)
     var k = 1
@@ -94,7 +95,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   }
 
 
-  override def head: FloatKey[E] = new FloatKey(keys(1), values(1).asInstanceOf[E])
+  override def head: FloatKey[E] = new FloatKey(keys(1), values(1))
 
   override def headKey: Float = keys(1)
 
