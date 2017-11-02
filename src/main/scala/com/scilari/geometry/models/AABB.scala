@@ -33,7 +33,7 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
 
   def corners = Array(topLeft, topRight, bottomLeft, bottomRight)
 
-  def distanceSq(p: Float2): Float = Float2.distanceSq(p, p.clamp(minPoint, maxPoint))
+  def distanceSq(p: Float2): Float = Float2.distanceSq(p, closestBorderPoint(p))
 
   def closestCorner(p: Float2): Float2 = {
     val left = p.x <= centerX
