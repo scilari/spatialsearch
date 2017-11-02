@@ -6,7 +6,7 @@ e.g. in Samet: Foundations of Multidimensional and Metric Data Structures.
 to build on: the incremental spatial search allows very flexible queries where
 e.g. the search state is manipulated on the fly (e.g. filter elements and prune nodes in the queues)
 * Currently only quadtree is implemented as a concrete and well-optimized class (QuadTree)
-* R-tree implemented as a proof-of-concept 
+* R-tree implemented as a proof-of-concept (RTree)
 * Work in progress
 
 ## Usage
