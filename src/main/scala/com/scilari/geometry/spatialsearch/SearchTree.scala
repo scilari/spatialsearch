@@ -6,7 +6,7 @@ trait SearchTree[E <: Float2]
   extends Searches[Float2, E] with PolygonalSearches[Float2, E]
     with Searchable[E] with SpatialContainer[E] with Traversable[E] {
 
-  val Tree: Tree[Float2, E]
+  val Tree: BoundedPlanarTree[E]
   var root: Tree.BaseType
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
