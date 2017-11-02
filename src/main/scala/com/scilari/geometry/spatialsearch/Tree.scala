@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.{AABB, Float2, HalfPlaneObject, MetricObject}
+import com.scilari.geometry.models.{HalfPlaneObject, MetricObject}
 
 import scala.collection.mutable
 
