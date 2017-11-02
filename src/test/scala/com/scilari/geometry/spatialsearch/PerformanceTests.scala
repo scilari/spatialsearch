@@ -29,11 +29,9 @@ class PerformanceTests extends FlatSpec {
 
   // Data with two clusters and a small number of random points elsewhere
   val points  =
-    Seq.fill(pointCount/2)(Float2.random(0.4f*bb.width)) ++
-      Seq.fill(pointCount/2)(Float2.random(0.4f*bb.width) + 0.6f*bb.width) ++
-      Seq.fill(pointCount/20)(Float2.random(bb.width))
-
-  //val bb = AABB(points)
+    Seq.fill(pointCount*9/20)(Float2.random(0.2f*bb.width)+ 0.1f*bb.width) ++
+      Seq.fill(pointCount*9/20)(Float2.random(0.5f*bb.width) + 0.45f*bb.width) ++
+      Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
 
 
 
