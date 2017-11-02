@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.{HalfPlaneObject, MetricObject}
+import com.scilari.geometry.models.MetricObject
 
 import scala.collection.mutable
 
@@ -10,7 +10,7 @@ trait Tree[P, E]{
   type NodeType <: BaseType with Node
   type LeafType <: BaseType with Leaf
 
-  trait Base extends MetricObject[P] with Traversable[E] with HalfPlaneObject {
+  trait Base extends MetricObject[P] with Traversable[E] {
     def elements: Seq[E]
 
     def nodes: Seq[BaseType]

@@ -2,45 +2,47 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
 
-trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E] with Traversable[E] {
+trait SearchTree[E <: Float2]
+  extends Searches[Float2, E] with PolygonalSearches[Float2, E]
+    with Searchable[E] with SpatialContainer[E] with Traversable[E] {
+
   val Tree: Tree[Float2, E]
   var root: Tree.BaseType
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
-    val knn = new Searches.Knn[Float2, E](k)
+    val knn = new Knn(k)
     knn.search(queryPoint, root)
   }
 
   def rangeSearch(queryPoint: Float2, r: Float): Seq[E] = rangeSearch(queryPoint, r, sizeHint = 32)
 
   def rangeSearch(queryPoint: Float2, r: Float, sizeHint: Int): Seq[E] = {
-    val range = new Searches.Range[Float2, E](r, sizeHint)
+    val range = new Range(r, sizeHint)
     range.search(queryPoint, root)
   }
 
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] = {
-    val knnCond = new Searches.KnnWithCondition[Float2, E](k, condition)
+    val knnCond = new KnnWithCondition(k, condition)
     knnCond.search(queryPoint, root)
   }
 
-
   override def polygonalSearch(queryPoint: Float2): Seq[E] = {
-    val poly = new Searches.Polygonal[Float2, E]()
+    val poly = new Polygonal()
     poly.search(queryPoint, root)
   }
 
   def polygonalMaxRangeSearch(queryPoint: Float2, maxRange: Float): Seq[E] = {
-    val polyMax = new Searches.PolygonalMaxRange[Float2, E](maxRange)
+    val polyMax = new PolygonalMaxRange(maxRange)
     polyMax.search(queryPoint, root)
   }
 
   def polygonalDynamicMaxRangeSearch(queryPoint: Float2, maxRangeFactor: Float = 3f): Seq[E] = {
-    val polyMax = new Searches.PolygonalDynamicMaxRange[Float2, E](maxRangeFactor)
+    val polyMax = new PolygonalDynamicMaxRange(maxRangeFactor)
     polyMax.search(queryPoint, root)
   }
 
   override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
-    val rangeOrFirst = new Searches.RangeUntilFirstFound[Float2, E](r)
+    val rangeOrFirst = new RangeUntilFirstFound(r)
     rangeOrFirst.search(queryPoint, root).isEmpty
   }
 
@@ -53,7 +55,7 @@ trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E] wit
   def remove(e: E): Unit = remove(Seq(e))
 
   def remove(queryPoint: Float2, e: E): Unit = {
-    val removal = new Searches.Removal[Float2, E](e)
+    val removal = new Removal(e)
     removal.search(queryPoint, root)
   }
 
