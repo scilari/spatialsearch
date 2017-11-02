@@ -1,9 +1,8 @@
 package com.scilari.geometry.spatialsearch
 
 
-import com.scilari.geometry.models.{Float2, HalfPlaneObject, MetricObject}
-import com.scilari.geometry.spatialsearch.IncrementallySearchable.{SearchParameters, State}
-import com.scilari.math._
+import com.scilari.geometry.models.MetricObject
+
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -15,20 +14,20 @@ import scala.collection.mutable.ArrayBuffer
 trait Searches[P, E <: MetricObject[P]]{
 
   final class Knn(k: Int) extends IncrementallySearchable[P, E]{
-    val parameters: SearchParameters[P, E] = KnnParameters
-    private final object KnnParameters extends SearchParameters[P, E]{
-      override def endCondition(s: State[P, E]): Boolean = s.foundElements.size >= k
+    val parameters: SearchParameters = KnnParameters
+    private final object KnnParameters extends SearchParameters{
+      override def endCondition(s: State): Boolean = s.foundElements.size >= k
       override val foundElemSizeHint: Int = k
     }
   }
 
   final class Range(r: Float, sizeHint: Int)
     extends IncrementallySearchable[P, E]{
-    val parameters: SearchParameters[P, E] = RangeParameters
+    val parameters: SearchParameters = RangeParameters
 
-    private final object RangeParameters extends SearchParameters[P, E]{
+    private final object RangeParameters extends SearchParameters{
       // Skipping the queues in favor of performance, as we do not need the elements in order
-      override def modifyState(s: State[P, E]): Unit =
+      override def modifyState(s: State): Unit =
         Range.range(s.queryPoint, s.nodes.dequeueValue(), r, s.foundElements)
 
       override val elemQueueSizeHint: Int = 0
@@ -69,17 +68,17 @@ trait Searches[P, E <: MetricObject[P]]{
 
   class KnnWithCondition(k: Int, condition: E => Boolean)
     extends IncrementallySearchable[P, E]{
-    val parameters: SearchParameters[P, E] = new SearchParameters[P, E] {
-      override def endCondition(s: State[P, E]): Boolean = s.foundElements.size >= k
-      override def filterElements(e: E, s: State[P, E]): Boolean = condition(e)
+    val parameters: SearchParameters = new SearchParameters {
+      override def endCondition(s: State): Boolean = s.foundElements.size >= k
+      override def filterElements(e: E, s: State): Boolean = condition(e)
     }
   }
 
   class RangeUntilFirstFound(r: Float)
     extends IncrementallySearchable[P, E]{
     val rSq: Float = r*r
-    val parameters: SearchParameters[P, E] = new SearchParameters[P, E] {
-      override def endCondition(s: State[P, E]): Boolean = {
+    val parameters: SearchParameters = new SearchParameters {
+      override def endCondition(s: State): Boolean = {
         s.foundElements.nonEmpty || (s.elemDistSq > rSq && s.nodeDistSq > rSq)
       }
     }
@@ -89,14 +88,14 @@ trait Searches[P, E <: MetricObject[P]]{
   final class Removal(e: E)
     extends IncrementallySearchable[P, E]{
 
-    val parameters: SearchParameters[P, E] = new SearchParameters[P, E] {
-      override def filterNodes(n: Tree[P, E]#BaseType, s: State[P, E]): Boolean =
+    val parameters: SearchParameters = new SearchParameters{
+      override def filterNodes(n: Tree[P, E]#BaseType, s: State): Boolean =
         n.zeroDistance(s.queryPoint)
 
-      override def filterElements(e: E, s: State[P, E]): Boolean =
+      override def filterElements(e: E, s: State): Boolean =
         e.zeroDistance(s.queryPoint)
 
-      override def modifyState(s: State[P, E]): Unit = {
+      override def modifyState(s: State): Unit = {
         if(s.nodeDistSq == 0)
           s.nodes.head.value match{
             case leaf: Tree[P, E]#Leaf =>
@@ -109,11 +108,5 @@ trait Searches[P, E <: MetricObject[P]]{
   }
 
 
-
-  def debugState(state: State[_, _]): Unit ={
-    println("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.nodeDistSq))
-    println("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq))
-    println("Found elements: " + state.foundElements.size)
-  }
 
 }

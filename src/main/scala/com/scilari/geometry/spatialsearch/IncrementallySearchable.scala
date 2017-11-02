@@ -1,8 +1,8 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.MetricObject
-import com.scilari.geometry.spatialsearch.IncrementallySearchable._
 import com.scilari.geometry.spatialsearch.queues._
+import com.scilari.math.sqrt
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -14,28 +14,32 @@ import scala.collection.mutable.ArrayBuffer
   * Provides highly versatile searches via modifiable SearchParameters
   * Created by iv on 1/17/2017.
   */
-trait IncrementallySearchable[P, E <: MetricObject[P]] {
-  private type B = Tree[P, E]#BaseType
-  private type N = Tree[P, E]#NodeType
-  private type L = Tree[P, E]#LeafType
+trait IncrementallySearchable[P, E <: MetricObject[P]/*, TreeType <: Tree[P, E]*/] {
+  //private type B = TreeType#BaseType
+  //private type N = TreeType#NodeType
+  //private type L = TreeType#LeafType
+  type BB = Tree[P, E]#BaseType
+  type NN = Tree[P, E]#NodeType
+  type LL = Tree[P, E]#LeafType
 
-  val parameters: SearchParameters[P, E]
 
-  def search(queryPoint: P, tree: B): Seq[E] = search(initialState(queryPoint, tree))
+  val parameters: SearchParameters
 
-  def search(queryPoint: P, trees: Seq[B]): Seq[E] = search(State(queryPoint, trees))
+  def search(queryPoint: P, tree: BB): Seq[E] = search(initialState(queryPoint, tree))
 
-  private[this] def initialState(queryPoint: P, tree: B): State[P, E] = {
-    new State[P, E](
+  def search(queryPoint: P, trees: Seq[BB]): Seq[E] = search(State(queryPoint, trees))
+
+  private[this] def initialState(queryPoint: P, tree: BB): State = {
+    new State(
       queryPoint,
-      new FloatHeap[B](parameters.nodeQueueSizeHint)(tree.distanceSq(queryPoint), tree),
+      new FloatHeap[Tree[P, E]#BaseType](parameters.nodeQueueSizeHint)(tree.distanceSq(queryPoint), tree),
       new FloatHeap[E](parameters.elemQueueSizeHint),
       new ArrayBuffer[E](parameters.foundElemSizeHint)
     )
   }
 
   @tailrec
-  final def search(state: State[P, E], params: SearchParameters[P, E] = parameters): Seq[E] = {
+  final def search(state: State, params: SearchParameters = parameters): Seq[E] = {
     import state._
     import params._
 
@@ -49,10 +53,12 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
         if (filterElements(candidate, state)) foundElements = foundElements += candidate
       } else {
         nodes.dequeueValue() match {
-          case node: Tree[P, E]#Node =>
+          case node: Tree[P, E]#Node /*if node.nonLeaf*/ =>
+            //println("found node: " + node.isLeaf )
             node.children.foreach{ c => if (filterNodes(c, state)) nodes.enqueue(c.distanceSq(queryPoint), c) }
 
           case leaf: Tree[P, E]#Leaf =>
+            //println("found LEAF")
             leaf.elements.foreach{ c => if (filterElements(c, state)) elements.enqueue(c.distanceSq(queryPoint), c)}
 
 
@@ -63,11 +69,7 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
 
   }
 
-}
-
-object IncrementallySearchable{
-
-  final class State[P, E](
+  final class State(
     val queryPoint: P,
     val nodes: FloatPriorityQueue[Tree[P, E]#BaseType],
     val elements: FloatPriorityQueue[E] = new FloatHeap[E](),
@@ -80,23 +82,28 @@ object IncrementallySearchable{
   }
 
   object State{
-    def apply[P, E](queryPoint: P, trees: Seq[Tree[P, E]#BaseType]): State[P, E] = {
-      val initialNodes = new FloatHeap[Tree[P, E]#BaseType]()
+    def apply(queryPoint: P, trees: Seq[BB]): State = {
+      val initialNodes = new FloatHeap[BB]()
       trees.foreach(tree => initialNodes.enqueue(tree.distanceSq(queryPoint), tree))
       new State(queryPoint, initialNodes)
     }
   }
 
-  class SearchParameters[P, E]{
-    def endCondition(s: State[P, E]): Boolean = false
-    def filterElements(e: E, s: State[P, E]): Boolean = true
-    def filterNodes(n: Tree[P, E]#BaseType, s: State[P, E]): Boolean = true
-    def modifyState(s: State[P, E]): Unit = ()
+  class SearchParameters{
+    def endCondition(s: State): Boolean = false
+    def filterElements(e: E, s: State): Boolean = true
+    def filterNodes(n: BB, s: State): Boolean = true
+    def modifyState(s: State): Unit = ()
     val nodeQueueSizeHint: Int = 32
     val elemQueueSizeHint: Int = 32
     val foundElemSizeHint: Int = 32
   }
 
+  def debugState(state: State): Unit ={
+    println("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.nodeDistSq))
+    println("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq))
+    println("Found elements: " + state.foundElements.size)
+  }
 
 
 }

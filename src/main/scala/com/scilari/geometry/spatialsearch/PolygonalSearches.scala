@@ -1,20 +1,20 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{Float2, HalfPlaneObject, MetricObject}
-import com.scilari.geometry.spatialsearch.IncrementallySearchable.{SearchParameters, State}
+
 
 trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
 
   final class Polygonal extends IncrementallySearchable[P, E]{
     import Polygonal._
-    val parameters: SearchParameters[P, E] = PolygonalParameters
+    val parameters: SearchParameters = PolygonalParameters
 
-    private final object PolygonalParameters extends SearchParameters[P, E]{
-      override def filterElements(e: E, s: State[P, E]): Boolean = {
+    private final object PolygonalParameters extends SearchParameters{
+      override def filterElements(e: E, s: State): Boolean = {
         !isDominatedBy(e, s.queryPoint, s.foundElements)
       }
 
-      override def filterNodes(n: Tree[P,E]#BaseType, s: State[P, E]): Boolean = {
+      override def filterNodes(n: BB, s: State): Boolean = {
         !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
       }
 
@@ -24,16 +24,16 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
 
   final class PolygonalMaxRange(r: Float) extends IncrementallySearchable[P, E]{
     import Polygonal._
-    val parameters: SearchParameters[P, E] = PolygonalParameters
+    val parameters: SearchParameters = PolygonalParameters
     private[this] val rSq = r*r
 
-    private[this] final object PolygonalParameters extends SearchParameters[P, E]{
+    private[this] final object PolygonalParameters extends SearchParameters{
 
-      override def filterElements(e: E, s: State[P, E]): Boolean = {
+      override def filterElements(e: E, s: State): Boolean = {
         s.queryPoint.distanceSq(e) <= rSq && !isDominatedBy(e, s.queryPoint, s.foundElements)
       }
 
-      override def filterNodes(n: Tree[P, E]#BaseType, s: State[P, E]): Boolean = {
+      override def filterNodes(n: BB, s: State): Boolean = {
         n.distanceSq(s.queryPoint) <= rSq && !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
       }
 
@@ -65,25 +65,25 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
 
   final class PolygonalDynamicMaxRange(maxRangeFactor: Float) extends IncrementallySearchable[P, E]{
     import Polygonal._
-    val parameters: SearchParameters[P, E] = PolygonalParameters
+    val parameters: SearchParameters = PolygonalParameters
     private[this] val rangeFactorSq = maxRangeFactor*maxRangeFactor
     private[this] var firstElementDistSq = Float.PositiveInfinity
     private[this] var maxRange = Float.PositiveInfinity
 
 
-    private[this] final object PolygonalParameters extends SearchParameters[P, E]{
-      override def modifyState(s: State[P, E]): Unit = {
+    private[this] final object PolygonalParameters extends SearchParameters{
+      override def modifyState(s: State): Unit = {
         if(firstElementDistSq > s.elemDistSq){
           firstElementDistSq = s.elemDistSq
           maxRange = firstElementDistSq*rangeFactorSq
         }
       }
 
-      override def filterElements(e: E, s: State[P, E]): Boolean = {
+      override def filterElements(e: E, s: State): Boolean = {
         e.distanceSq(s.queryPoint) <= maxRange && !isDominatedBy(e, s.queryPoint, s.foundElements)
       }
 
-      override def filterNodes(n: Tree[P, E]#BaseType, s: State[P, E]): Boolean = {
+      override def filterNodes(n: BB, s: State): Boolean = {
         n.distanceSq(s.queryPoint) <= maxRange && !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
       }
 
