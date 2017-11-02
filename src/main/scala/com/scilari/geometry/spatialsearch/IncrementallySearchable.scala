@@ -8,7 +8,6 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-
 /**
   * Functionality for the incremental knn search described e.g. in
   * Samet: "Multidimensional and Metric Data Structures".
@@ -30,7 +29,7 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
     new State[P, E](
       queryPoint,
       new FloatHeap[B](parameters.nodeQueueSizeHint)(tree.distanceSq(queryPoint), tree),
-      new FloatHeap[E](parameters.elemQueueSizeHint)(),
+      new FloatHeap[E](parameters.elemQueueSizeHint),
       new ArrayBuffer[E](parameters.foundElemSizeHint)
     )
   }
@@ -50,11 +49,12 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
         if (filterElements(candidate, state)) foundElements = foundElements += candidate
       } else {
         nodes.dequeueValue() match {
+          case node: Tree[P, E]#Node =>
+            node.children.foreach{ c => if (filterNodes(c, state)) nodes.enqueue(c.distanceSq(queryPoint), c) }
+
           case leaf: Tree[P, E]#Leaf =>
             leaf.elements.foreach{ c => if (filterElements(c, state)) elements.enqueue(c.distanceSq(queryPoint), c)}
 
-          case node: Tree[P, E]#Node =>
-            node.children.foreach{ c => if (filterNodes(c, state)) nodes.enqueue(c.distanceSq(queryPoint), c) }
 
         }
       }
