@@ -3,7 +3,6 @@ package com.scilari.geometry.spatialsearch.queues
 final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
   private[this] var values = new Array[Any](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
-  @inline
   private[this] implicit def anyToE(a: Any): E = a.asInstanceOf[E]
 
   private[this] var maxIndex = 0
