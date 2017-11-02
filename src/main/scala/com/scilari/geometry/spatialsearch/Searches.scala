@@ -5,8 +5,9 @@ import com.scilari.geometry.models.{Float2, HalfPlaneObject, MetricObject}
 import com.scilari.geometry.spatialsearch.IncrementallySearchable.{SearchParameters, State}
 import com.scilari.math._
 
+import scala.annotation.tailrec
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * Created by iv on 1/17/2017.
@@ -39,23 +40,29 @@ object Searches {
   }
 
   object Range{
-    def range[P, E <: MetricObject[P]](queryPoint: P, initialNode: Tree[P, E]#BaseType,
+    def range[P, E <: MetricObject[P]](queryPoint: P, rootNode: Tree[P, E]#BaseType,
       r: Float, foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()): Seq[E] = {
       val rSq = r * r
-      var nodes = List(initialNode)
-      //val nodes = ArrayBuffer(initialNode)
-      //nodes += initialNode
-      while (nodes.nonEmpty) {
-        val node = nodes.head
-        nodes = nodes.tail
-        //nodes.trimEnd(1)
-        node match {
-          case leaf: Tree[P, E]#Leaf =>
-            leaf.elements.foreach(e => if (e.distanceSq(queryPoint) <= rSq) foundElements += e)
-          case node: Tree[P, E]#Node =>
-            node.children.foreach(n => if (n.distanceSq(queryPoint) <= rSq) nodes = n :: nodes)
+
+      @tailrec
+      def rangeRec(nodes: List[Tree[P, E]#BaseType]): Unit ={
+        nodes match{
+          case (leaf: Tree[P, E]#Leaf) :: (tail: List[Tree[P, E]#BaseType]) =>
+            if(leaf.distanceSq(queryPoint) <= rSq)
+              leaf.elements.foreach(e => if(e.distanceSq(queryPoint) <= rSq) foundElements += e)
+            rangeRec(tail)
+          case (node: Tree[P, E]#Node) :: (tail: List[Tree[P, E]#BaseType]) =>
+            var ns = tail
+            if(node.distanceSq(queryPoint) <= rSq) {
+              var i = 0; val n = node.children.length
+              while (i < n) { ns = node.children(i) :: ns; i += 1}
+            }
+            rangeRec(ns)
+          case Nil => ()
         }
       }
+
+      rangeRec(List(rootNode))
       foundElements
     }
 
