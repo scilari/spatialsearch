@@ -19,6 +19,7 @@ trait FloatPriorityQueue[E] {
 
   def head: FloatKey[E]
   def headKey: Float = head.key
+  def headValue: E = head.value
   def isEmpty: Boolean
   def nonEmpty: Boolean = !isEmpty
   def size: Int
