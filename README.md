@@ -5,7 +5,8 @@ e.g. in Samet: Foundations of Multidimensional and Metric Data Structures.
 * The purpose is to offer very general framework
 to build on: the incremental spatial search allows very flexible queries where
 e.g. the search state is manipulated on the fly (e.g. filter elements and prune nodes in the queues)
-* Currently only quadtree is implemented as a concrete class (QuadTreeEntry)
+* Currently only quadtree is implemented as a concrete and well-optimized class (QuadTree)
+* R-tree implemented as a proof-of-concept 
 * Work in progress
 
 ## Usage
@@ -13,7 +14,4 @@ e.g. the search state is manipulated on the fly (e.g. filter elements and prune 
 
 ## TODO:
 * Improve this document (usage, visualization etc.)
-* Implement r-tree functionality
-* Refactor
-* Find out common functionality in QuadTree and RTree and factor out
-* Separate traits for addable etc.
+* Optimize r-tree (performance is not very good ATM)
