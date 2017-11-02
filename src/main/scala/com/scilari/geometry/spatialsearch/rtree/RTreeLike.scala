@@ -1,21 +1,16 @@
 package com.scilari.geometry.spatialsearch.rtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.Tree
+import com.scilari.geometry.spatialsearch.{BoundedPlanarTree, Tree}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 trait RTreeLike[E <: Float2] {
-  object Tree extends Tree[Float2, E]{
-    type BaseType = RTreeBase
+  object Tree extends BoundedPlanarTree[E]{
+    type BaseType = BoundedBase
     type NodeType = RTreeNode
     type LeafType = RTreeLeaf
-
-    abstract class RTreeBase(bb: AABB) extends AABB(bb) with Base{
-      override def contains(p: Float2): Boolean = super[AABB].contains(p)
-      override def toString(): String = "RTree: " + super[AABB].toString()
-    }
 
 
     class RTreeNode(
