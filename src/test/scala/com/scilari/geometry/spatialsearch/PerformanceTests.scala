@@ -77,6 +77,7 @@ class PerformanceTests extends FlatSpec {
     info("Insert time")
     info("KDTree: " + tKd  + " ms/insert: " + tKd/totalInsertCount)
     info("QuadTree: " + tQd + " ms/insert: " + tQd/totalInsertCount)
+    info("Ratio (Quad/KD): " + tQd/tKd )
     assert(similarTime(tKd, tQd))
   }
 
@@ -97,6 +98,7 @@ class PerformanceTests extends FlatSpec {
     info("Knn time")
     info("KDTree: " + tKd + " ms/query: " + tKd/totalQueryCount)
     info("QuadTree: " + tQd + " ms/query: " + tQd/totalQueryCount)
+    info("Ratio (Quad/KD): " + tQd/tKd )
     assert(similarTime(tKd, tQd))
   }
 
@@ -118,6 +120,7 @@ class PerformanceTests extends FlatSpec {
     info("Range time")
     info("KDTree: " + tKd + " ms/query: " + tKd/totalQueryCount)
     info("QuadTree: " + tQd + " ms/query: " + tQd/totalQueryCount)
+    info("Ratio (Quad/KD): " + tQd/tKd)
     assert(similarTime(tKd, tQd))
   }
 
@@ -163,7 +166,7 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    info("Polygonal vs. knn time")
+    info("Polygonal vs. range time")
     info("QuadTree (polygonal): " + tPol + " ms/query: " + tPol/totalQueryCount)
     info("QuadTree (poly max r): " + tPolMax + " ms/query: " + tPolMax/totalQueryCount)
     info("QuadTree (poly dyn max r): " + tPolDyn + " ms/query: " + tPolDyn/totalQueryCount)
@@ -182,29 +185,29 @@ class PerformanceTests extends FlatSpec {
 
     var quadTree: QuadTree[Float2] = null
 
-    def initBlock() = {
+    def initBlock(ps: Seq[Float2]) = {
       quadTree = QuadTree[Float2](bb)
-      points.foreach{quadTree.add}
+      ps.foreach{quadTree.add}
     }
 
     val tSingle = warmUpAndMeasureTimeWithInit(
-      initBlock,
+      initBlock(points),
       {
         removedPoints.foreach{e => quadTree.remove(e, e)}},
       insertRunCount, warmUpCount)
 
     val tSimult = warmUpAndMeasureTimeWithInit(
-      initBlock,
+      initBlock(points),
       quadTree.remove(removedPoints),
       insertRunCount, warmUpCount)
 
     val tRebuild = warmUpAndMeasureTime(
-      initBlock,
+      initBlock(remainingPoints),
       insertRunCount, warmUpCount)
 
     val tRebuildKd = warmUpAndMeasureTime({
       val kdTree1 = new KDTree[Float2](2, 48)
-      pointsArray.foreach(k => kdTree1.add(k, f2))
+      remainingPointsArray.foreach(k => kdTree1.add(k, f2))
     }, insertRunCount, warmUpCount)
 
     info("Removal vs. rebuild time")
@@ -216,7 +219,7 @@ class PerformanceTests extends FlatSpec {
   }
 
 
-  "RTree" should "have better insertion performance than KDTree" in {
+  "RTree" should "have even somewhat comparable insertion performance to KDTree" in {
     val tKd = warmUpAndMeasureTime({
       val kdTree = new KDTree[Float2](2, 48)
       pointsArray.foreach(k => kdTree.add(k, f2))
@@ -230,6 +233,7 @@ class PerformanceTests extends FlatSpec {
     info("Insert time")
     info("KDTree: " + tKd)
     info("RTree: " + tQd)
+    assert(similarTime(tKd, tQd, similarityRatio = 20))
   }
 
 
@@ -249,6 +253,8 @@ class PerformanceTests extends FlatSpec {
     info("Knn time")
     info("KDTree: " + tKd)
     info("RTree: " + tQd)
+    assert(similarTime(tKd, tQd))
+
   }
 
   it should "have similar range query performance to KDTree" in {
