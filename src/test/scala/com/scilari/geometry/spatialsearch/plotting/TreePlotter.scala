@@ -12,8 +12,8 @@ object TreePlotter {
   def plot[E <: Float2](
     tree: SearchTree[E],
     frameName: String = "Tree",
-    width: Int = 1000,
-    height: Int = 1000,
+    width: Int = 800,
+    height: Int = 800,
     elemRadius: Float = 5f
   ): Unit ={
     val panel = new FlippedDrawingPanel(width, height, Color.WHITE, (drawTree(tree, elemRadius) _, tree.root.asInstanceOf[AABB]))
