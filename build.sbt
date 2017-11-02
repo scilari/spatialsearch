@@ -2,7 +2,7 @@ name := "spatialsearch"
 
 organization := "com.scilari"
 
-version := "0.1-SNAPSHOT"
+version := "0.2-SNAPSHOT"
 
 scalaVersion := "2.11.8"
 
@@ -23,9 +23,11 @@ scalacOptions += "-target:jvm-1.7"
 
 publishArtifact in Test := false
 
+parallelExecution in Test := false
+
 pomIncludeRepository := { _ => false }
 
-pomExtra := (
+pomExtra :=
   <url>https://github.com/scilari/spatialsearch</url>
     <licenses>
       <license>
@@ -40,5 +42,5 @@ pomExtra := (
         <name>Ilari Vallivaara</name>
         <url>https://scilari.com/</url>
       </developer>
-    </developers> )
+    </developers>
     
