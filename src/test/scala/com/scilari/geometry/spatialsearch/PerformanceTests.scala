@@ -53,10 +53,14 @@ class PerformanceTests extends FlatSpec {
     TreePlotter.plot(rTree, "rTree", elemRadius = bb.width/500)
     info("== Test info == ")
     info("Point count: " + pointCount)
+    info("Run count: " + runCount)
+    info("Query count (per run): " + queryCount)
+    info("Insert run count: " + insertRunCount)
     info("Knn k: " + queryK)
     info("Range: " + range + " out of total point area of " + bb.width + " x " + bb.height)
     info("Quadtree. depth: " +  quadTree.depth + " nodeCount: " + quadTree.root.nodes.size)
-    info("======================")
+    info("RTree. depth: " +  rTree.depth + " nodeCount: " + rTree.root.nodes.size)
+    info("================")
   }
 
 
@@ -72,9 +76,9 @@ class PerformanceTests extends FlatSpec {
       points.foreach(quadTree.add)
     }, insertRunCount, warmUpCount)
 
-    info("Insert time")
-    info("KDTree: " + tKd  + " ms/insert: " + tKd/totalInsertCount)
-    info("QuadTree: " + tQd + " ms/insert: " + tQd/totalInsertCount)
+    info("\n== Insert time == ")
+    info("KDTree: " + tKd/totalInsertCount  + " (ms/insert)" )
+    info("QuadTree: " + tQd/totalInsertCount  + " (ms/insert)" )
     info("Ratio (Quad/KD): " + tQd/tKd )
     assert(similarTime(tKd, tQd))
   }
@@ -93,9 +97,9 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    info("Knn time")
-    info("KDTree: " + tKd + " ms/query: " + tKd/totalQueryCount)
-    info("QuadTree: " + tQd + " ms/query: " + tQd/totalQueryCount)
+    info("\n== Knn query time == ")
+    info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
+    info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
     info("Ratio (Quad/KD): " + tQd/tKd )
     assert(similarTime(tKd, tQd))
   }
@@ -115,9 +119,9 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    info("Range time")
-    info("KDTree: " + tKd + " ms/query: " + tKd/totalQueryCount)
-    info("QuadTree: " + tQd + " ms/query: " + tQd/totalQueryCount)
+    info("\n== Range query time ==")
+    info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
+    info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
     info("Ratio (Quad/KD): " + tQd/tKd)
     assert(similarTime(tKd, tQd))
   }
@@ -134,15 +138,18 @@ class PerformanceTests extends FlatSpec {
     val meanRange = maxRanges.sum/maxRanges.size
 
 
+
+
     val tPol = warmUpAndMeasureTime({
       for(q <- queryPoints){
         val neighbors = quadTree.polygonalSearch(q)
       }
     }, runCount, warmUpCount)
 
+    val maxRange = bb.width/20
     val tPolMax = warmUpAndMeasureTime({
       for(q <- queryPoints){
-        val neighbors = quadTree.polygonalMaxRangeSearch(q, bb.width/20)
+        val neighbors = quadTree.polygonalMaxRangeSearch(q, maxRange)
       }
     }, runCount, warmUpCount)
 
@@ -164,22 +171,20 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    info("Polygonal vs. range time")
-    info("QuadTree (polygonal): " + tPol + " ms/query: " + tPol/totalQueryCount)
-    info("QuadTree (poly max r): " + tPolMax + " ms/query: " + tPolMax/totalQueryCount)
-    info("QuadTree (poly dyn max r): " + tPolDyn + " ms/query: " + tPolDyn/totalQueryCount)
-    info("QuadTree (range): " + tR + " ms/query: " + tR/totalQueryCount)
-    info("QuadTree (range: " + meanRange +  "): " + tMeanRange + " ms/query: " + tMeanRange/totalQueryCount)
+    info("\n== Polygonal vs. range time ==")
+    info("QuadTree (polygonal):" + tPol/totalQueryCount + " (ms/query)")
+    info("QuadTree (poly max r: " + bb.width/20 + "): " + tPolMax/totalQueryCount + " (ms/query)")
+    info("QuadTree (poly dyn max r): " + tPolDyn/totalQueryCount + " (ms/query)")
+    info("QuadTree (range): " + tR/totalQueryCount + " (ms/query)")
+    info("QuadTree (range: " + meanRange +  "): " + tMeanRange/totalQueryCount + " (ms/query)")
   }
 
   it should "should have better removal performance than rebuilding the KdTree" in {
-    //info("Leaf count: " + quadTree.root.leaves.size)
     val removeCount = points.size/50
     val removedPoints = points.take(removeCount)
     val remainingPoints = points.drop(removeCount)
     val remainingPointsArray = remainingPoints.map{_.toDoubleArray}
     val totalRemovalCount = insertRunCount*removeCount
-    info("Removing " + removeCount + " points (" + removeCount.toDouble/points.size + ")")
 
     var quadTree: QuadTree[Float2] = null
 
@@ -208,11 +213,12 @@ class PerformanceTests extends FlatSpec {
       remainingPointsArray.foreach(k => kdTree1.add(k, f2))
     }, insertRunCount, warmUpCount)
 
-    info("Removal vs. rebuild time")
-    info("QuadTree (removal): " + tSingle + " ms/rem: " + tSingle/totalRemovalCount)
-    info("QuadTree (removal simult): " + tSimult + " ms/rem: " + tSimult/totalRemovalCount)
-    info("QuadTree (rebuild): " + tRebuild)
-    info("KdTree (rebuild): " + tRebuildKd)
+    info("\n== Removal vs. rebuild time ==")
+    info("Removing " + removeCount + " points (" + removeCount.toDouble/points.size + ")")
+    info("QuadTree (removal): " + tSingle + " (total time), "+ tSingle/totalRemovalCount +" (ms/rem)")
+    info("QuadTree (removal simult): " + tSimult + " (total time), "+ tSimult/totalRemovalCount +" (ms/rem)")
+    info("QuadTree (rebuild): " + tRebuild + " (total time)")
+    info("KdTree (rebuild): " + tRebuildKd + " (total time)")
     tSingle should be < tRebuildKd
   }
 
@@ -223,15 +229,16 @@ class PerformanceTests extends FlatSpec {
       pointsArray.foreach(k => kdTree.add(k, f2))
     }, insertRunCount, warmUpCount)
 
-    val tQd = warmUpAndMeasureTime({
+    val tRt = warmUpAndMeasureTime({
       val rTree = RTree[Float2]()
       points.foreach(rTree.add)
     }, insertRunCount, warmUpCount)
 
-    info("Insert time")
-    info("KDTree: " + tKd)
-    info("RTree: " + tQd)
-    assert(similarTime(tKd, tQd, similarityRatio = 20))
+    info("\n== Insert time == ")
+    info("KDTree: " + tKd/totalInsertCount  + " (ms/insert)" )
+    info("RTree: " + tRt/totalInsertCount  + " (ms/insert)" )
+    info("Ratio (Rtree/KD): " + tRt/tKd)
+    assert(similarTime(tKd, tRt, similarityRatio = 20))
   }
 
 
@@ -242,16 +249,17 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    val tQd = warmUpAndMeasureTime({
+    val tRt = warmUpAndMeasureTime({
       for(q <- queryPoints){
         val neighbors = rTree.knnSearch(q, queryK)
       }
     }, runCount, warmUpCount)
 
-    info("Knn time")
-    info("KDTree: " + tKd)
-    info("RTree: " + tQd)
-    assert(similarTime(tKd, tQd))
+    info("\n== Knn query time ==")
+    info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
+    info("RTree: " + tRt/totalQueryCount + " (ms/query)")
+    info("Ratio (Rtree/KD): " + tRt/tKd)
+    assert(similarTime(tKd, tRt))
 
   }
 
@@ -264,16 +272,17 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    val tQd = warmUpAndMeasureTime({
+    val tRt = warmUpAndMeasureTime({
       for(q <- queryPoints){
         val neighbors = rTree.rangeSearch(q, range)
       }
     }, runCount, warmUpCount)
 
-    info("Range time")
-    info("KDTree: " + tKd)
-    info("RTree: " + tQd)
-    assert(similarTime(tKd, tQd))
+    info("\n== Range query time ==")
+    info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
+    info("RTree: " + tRt/totalQueryCount + " (ms/query)")
+    info("Ratio (Rtree/KD): " + tRt/tKd)
+    assert(similarTime(tKd, tRt))
   }
 
 
