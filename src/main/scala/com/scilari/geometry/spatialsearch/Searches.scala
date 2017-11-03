@@ -45,11 +45,11 @@ trait Searches[P, E <: MetricObject[P]]{
       @tailrec
       def rangeRec(nodes: List[Tree[P, E]#BaseType]): Unit ={
         nodes match{
-          case (leaf: Tree[P, E]#Leaf) :: (tail: List[Tree[P, E]#BaseType]) =>
+          case (leaf: Tree[P, E]#Leaf) :: (tail: List[_]) =>
             if(leaf.distanceSq(queryPoint) <= rSq)
               leaf.elements.foreach(e => if(e.distanceSq(queryPoint) <= rSq) foundElements += e)
             rangeRec(tail)
-          case (node: Tree[P, E]#Node) :: (tail: List[Tree[P, E]#BaseType]) =>
+          case (node: Tree[P, E]#Node) :: (tail: List[Tree[P, E]#Base]) =>
             var ns = tail
             if(node.distanceSq(queryPoint) <= rSq) {
               var i = 0; val n = node.children.length
