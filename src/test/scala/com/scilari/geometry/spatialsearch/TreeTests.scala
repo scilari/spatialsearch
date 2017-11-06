@@ -43,7 +43,6 @@ abstract class TreeTests extends FlatSpec with Matchers {
       val knnPoints = tree.knnSearch(queryPoint, k)
       knnPoints should have size k
     }
-    //println(knnPoints.mkString("\n"))
   }
 
   it should "have working knn search" in {
@@ -119,7 +118,6 @@ abstract class TreeTests extends FlatSpec with Matchers {
     }
 
     val avg = neighborSum.toDouble/queryPoints.size
-    println("Average number of neighbors: " + avg)
     assert(avg > 3 && avg < 6)
   }
 
@@ -154,9 +152,8 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
   it should "find polygonal neighborhood around ENU origo" in {
     val cities = cityTree.polygonalSearch(Float2(0,0))
-
     val names = cities.map{_.data.name}
-    println("Polygonal neighborhood: " + names.mkString(", "))
+    names should contain theSameElementsAs List("Oulu", "Haukipudas", "Raahe")
 
   }
 
@@ -173,31 +170,23 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
   it should "have removal functionality" in {
     val cityTree = createCityTree
-    info("Tree size before removal: " + cityTree.size)
     val toBeRemoved = cityData.take(3)
-    info("to be removed: " + toBeRemoved.map{_.data.name})
     for(e <- toBeRemoved){
       cityTree.remove(e, e)
     }
 
     val treeNames = cityTree.toList.map{_.data.name}
     val names = cityData.drop(3).map{_.data.name}
-    info("Tree size: " + treeNames.size + " pruned size: " + names.size )
-    info("Difference: " + treeNames.toSet.diff(names.toSet))
     treeNames should contain theSameElementsAs names
 
   }
 
   it should "have simultaneous removal functionality" in {
     val cityTree = createCityTree
-    info("Tree size before removal: " + cityTree.size)
     val toBeRemoved = cityData.take(10)
-    info("to be removed: " + toBeRemoved.map{_.data.name})
     cityTree.remove(toBeRemoved)
     val treeNames = cityTree.toList.map{_.data.name}
     val names = cityData.drop(10).map{_.data.name}
-    info("Tree size: " + treeNames.size + " pruned size: " + names.size )
-    info("Difference: " + treeNames.toSet.diff(names.toSet))
     treeNames should contain theSameElementsAs names
 
 
