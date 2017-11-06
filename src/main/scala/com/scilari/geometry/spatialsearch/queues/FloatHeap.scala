@@ -1,5 +1,7 @@
 package com.scilari.geometry.spatialsearch.queues
 
+import scala.annotation.tailrec
+
 final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
   private[this] var values = new Array[Any](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
@@ -11,9 +13,9 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   private[this] def left(k: Int) = 2*k
   private[this] def parent(k: Int) = k/2
 
-  private[this] def move(i: Int, j: Int): Unit ={
-    keys(i) = keys(j)
-    values(i) = values(j)
+  private[this] def move(to: Int, from: Int): Unit ={
+    keys(to) = keys(from)
+    values(to) = values(from)
   }
 
   private[this] def update(i: Int, key: Float, value: E): Unit ={
@@ -56,41 +58,42 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   }
 
   private[this] def bubbleUp(key: Float, value: E): Unit ={
-    var pos = maxIndex
-    var par = parent(pos)
-    while(pos > 1 && key < keys(par)){
-      move(pos, par)
-      pos = parent(pos)
-      par = parent(pos)
+
+    @tailrec
+    def makeRoom(pos: Int): Int = {
+      val par = parent(pos)
+      if(pos > 1 && key < keys(par)){
+        move(pos, par)
+        makeRoom(par)
+      } else
+        pos
     }
 
-    update(pos, key, value)
+    update(makeRoom(maxIndex), key, value)
+
   }
 
   private[this] def bubbleDown(): Unit ={
     val headKey = keys(1)
     val headValue = values(1)
-    var k = 1
 
-    @inline def findUpdateIndex(): Int = {
-      var L = left(k)
-      var R = L+1
-      while (L <= maxIndex) {
+    @tailrec
+    def makeRoom(k: Int): Int = {
+      val L = left(k)
+      if(L > maxIndex)
+        k
+      else{
+        val R = L + 1
         val child = if(L != maxIndex && keys(L) > keys(R)) R else L
-        if (headKey > keys(child))
+        if (headKey > keys(child)){
           move(k, child)
-        else
-          return k
-
-        k = child
-        L = left(k)
-        R = L+1
+          makeRoom(child)
+        } else
+          k
       }
-      k
     }
 
-    update(findUpdateIndex(), headKey, headValue)
-
+    update(makeRoom(1), headKey, headValue)
   }
 
 
