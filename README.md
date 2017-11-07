@@ -10,7 +10,45 @@ e.g. the search state is manipulated on the fly (e.g. filter elements and prune 
 * Work in progress
 
 ## Usage
-* For now see test cases
+### Insertion
+#### If the points are known
+``` scala
+val points = Seq.fill(100)(Float2.random)
+val quadTree = QuadTree(points)
+```
+#### If the area is known
+``` scala
+val quadTree = QuadTree[Float2](AABB.unit)
+points.foreach(quadTree.add)
+```
+
+### If the area must expand base on incoming data
+``` scala
+val quadTree = QuadTree(points)
+val outsidePoints = Seq.fill(100)(Float2(1, 1) + Float2.random)
+outsidePoints.foreach(quadTree.addEnclose)
+
+```
+
+### Queries
+``` scala
+val queryPoint = Float2(0.5, 0.5)
+val knn = quadTree.knnSearch(queryPoint, 10)
+val range = quadTree.rangeSearch(queryPoint, 0.2)
+val poly = quadTree.polygonalSearch(queryPoint)
+
+```
+
+### Point removal
+``` scala
+val toBeRemoved = points.take(20)
+
+// Using coordinates to traverse straight to the leaf
+points.foreach(p => quadTree.remove(p))
+
+```
+
+For more detailed examples, see test cases.
 
 ## TODO:
 * Improve this document (usage, visualization etc.)
