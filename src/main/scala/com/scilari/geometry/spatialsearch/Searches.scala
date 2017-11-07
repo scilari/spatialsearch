@@ -21,14 +21,16 @@ trait Searches[P, E <: MetricObject[P]]{
     }
   }
 
-  final class Range(r: Float, sizeHint: Int)
+  final class Range(r: Float, sizeHint: Int = 32)
     extends IncrementallySearchable[P, E]{
     val parameters: SearchParameters = RangeParameters
 
     private final object RangeParameters extends SearchParameters{
       // Skipping the queues in favor of performance, as we do not need the elements in order
-      override def modifyState(s: State): Unit =
-        Range.range(s.queryPoint, s.nodes.dequeueValue(), r, s.foundElements)
+      override def modifyState(s: State): Unit = {
+        Range.range(s.queryPoint, s.nodes.dequeueAllValues(), r, s.foundElements)
+      }
+
 
       override val elemQueueSizeHint: Int = 0
       override val nodeQueueSizeHint: Int = 1
@@ -38,7 +40,7 @@ trait Searches[P, E <: MetricObject[P]]{
   }
 
   object Range{
-    def range(queryPoint: P, rootNode: Tree[P, E]#BaseType,
+    def range(queryPoint: P, rootNodes: Seq[Tree[P, E]#BaseType],
       r: Float, foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()): Seq[E] = {
       val rSq = r * r
 
@@ -60,7 +62,7 @@ trait Searches[P, E <: MetricObject[P]]{
         }
       }
 
-      rangeRec(List(rootNode))
+      rangeRec(rootNodes.toList)
       foundElements
     }
 

@@ -1,6 +1,7 @@
 package com.scilari.geometry.spatialsearch.queues
 
 import scala.annotation.tailrec
+import scala.collection.mutable
 
 final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
   private[this] var values = new Array[Any](initialCapacity)
@@ -49,6 +50,13 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     val headValue = values(1)
     popFirst()
     headValue
+  }
+
+  override def dequeueAllValues(): Seq[E] = {
+    val b = mutable.Buffer[E]()
+    for(i <- 1 to maxIndex) b += values(i)
+    clear()
+    b
   }
 
   private def popFirst(): Unit ={
