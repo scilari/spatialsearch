@@ -52,7 +52,7 @@ trait SearchTree[E <: Float2]
 
   def depth: Int = root.depth
 
-  def remove(e: E): Unit = remove(Seq(e))
+  def remove(e: E): Unit = remove(e, e)
 
   def remove(queryPoint: Float2, e: E): Unit = {
     val removal = new Removal(e)
