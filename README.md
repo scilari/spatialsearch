@@ -13,8 +13,11 @@ e.g. the search state is manipulated on the fly (e.g. filter elements and prune 
 ### Insertion
 #### If the points are known
 ``` scala
+class MyData()
 val points = Seq.fill(100)(Float2.random)
-val quadTree = QuadTree(points)
+// wrap your data with coordinates
+val dataPoints = points.map{p => DataPoint(p, new MyData())}
+val quadTree = QuadTree[DataPoint[MyData]](points)
 ```
 #### If the area is known
 ``` scala
