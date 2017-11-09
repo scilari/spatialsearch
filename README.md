@@ -25,7 +25,7 @@ val quadTree = QuadTree[Float2](AABB.unit)
 points.foreach(quadTree.add)
 ```
 
-### If the area must expand based on incoming data
+#### If the area must expand based on incoming data
 ``` scala
 val quadTree = QuadTree(points)
 val outsidePoints = Seq.fill(100)(Float2(1, 1) + Float2.random)
