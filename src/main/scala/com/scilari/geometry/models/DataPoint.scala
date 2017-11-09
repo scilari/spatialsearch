@@ -16,3 +16,8 @@ class DataPoint[E](x: Float, y: Float, var data: E = null) extends Float2(x, y) 
 
   override def hashCode(): Int = 37*super.hashCode() + data.hashCode()
 }
+
+object DataPoint{
+  def apply[E](x: Float, y: Float, data: E): DataPoint[E] = new DataPoint[E](x, y, data)
+  def apply[E](p: Float2, data: E): DataPoint[E] = new DataPoint[E](p, data)
+}
