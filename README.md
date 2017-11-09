@@ -55,4 +55,5 @@ For more detailed examples, see test cases.
 
 ## TODO:
 * Improve this document (usage, visualization etc.)
+* Describe how to define your own searches
 * Optimize r-tree (performance is not very good ATM)
