@@ -1,6 +1,8 @@
 # Incremental Spatial Search
 
-
+<p>
+  <img align="right" src="images/quadtree.png" width="350"/>
+</p>
 
 Scala implementation of the incremental spatial search implementation described
 e.g. in Samet: Foundations of Multidimensional and Metric Data Structures.
@@ -11,9 +13,7 @@ e.g. the search state is manipulated on the fly (e.g. filter elements and prune 
 * R-tree implemented as a proof-of-concept (RTree)
 * Work in progress
 
-<p align = "center">
-  <style="float: right;" img src="images/quadtree.png" width="350"/>
-</p>
+
 
 
 ## Usage
