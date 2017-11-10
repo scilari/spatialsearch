@@ -1,10 +1,9 @@
 # Incremental Spatial Search
 
-<p align="center">
+<p align="right">
   <img src="images/quadtree.png" width="350"/>
 </p>
 
-![Quadtree >](/images/quadtree.png)
 
 Scala implementation of the incremental spatial search implementation described
 e.g. in Samet: Foundations of Multidimensional and Metric Data Structures.
