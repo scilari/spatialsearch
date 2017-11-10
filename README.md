@@ -1,8 +1,8 @@
 # Incremental Spatial Search
 
-<p align = "center">
-  <style="float: right;" img src="images/quadtree.png" width="350"/>
-</p>
+
+<style="float: right;" img src="images/quadtree.png" width="350"/>
+
 
 
 Scala implementation of the incremental spatial search implementation described
