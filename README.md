@@ -1,7 +1,7 @@
 # Incremental Spatial Search
 
-<p align="right">
-  <img src="images/quadtree.png" width="350"/>
+<p>
+  <img style="float: right;" src="images/quadtree.png" width="350"/>
 </p>
 
 
