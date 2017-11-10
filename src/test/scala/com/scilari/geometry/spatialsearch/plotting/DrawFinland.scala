@@ -86,7 +86,7 @@ object DrawFinland extends App{
 
   println("Mean evaluation time per added city: " + evalTimes.sum.toDouble/evalTimes.size)
 
-  ImageIO.write(animatedImg.image, "png", new File("suomi.png"))
+  ImageIO.write(animatedImg.image, "png", new File("images/finland.png"))
 
   class BoxToBufferedImage(val bb: AABB, val pixelSize: Float){
     val imageWidth: Int = (bb.width/pixelSize).toInt
