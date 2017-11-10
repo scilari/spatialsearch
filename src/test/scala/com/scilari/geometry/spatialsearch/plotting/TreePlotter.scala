@@ -16,7 +16,8 @@ object TreePlotter {
     height: Int = 800,
     elemRadius: Float = 5f
   ): Unit ={
-    val panel = new FlippedDrawingPanel(width, height, Color.WHITE, (drawTree(tree, elemRadius) _, tree.root.asInstanceOf[AABB]))
+    val bb = AABB(tree.root.corners, margin = 0.05f*tree.root.width)
+    val panel = new FlippedDrawingPanel(width, height, Color.WHITE, (drawTree(tree, elemRadius) _, bb))
     new Frame(frameName, panel)
   }
 
@@ -37,8 +38,6 @@ object TreePlotter {
 
     val rtree = RTree[Float2](points, nodeElementCapacity = 8)
     TreePlotter.plot(rtree, "RTree")
-
-    println("Lol")
   }
 
 }
