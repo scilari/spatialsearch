@@ -60,6 +60,56 @@ points.foreach(p => quadTree.remove(p))
 
 For more detailed examples, see test cases.
 
+## Performance
+Naive performance tests run against a 
+[Java kd-tree implementation](http://robowiki.net/wiki/User:Chase-san/Kd-Tree) with 10k inserted points
+show that the QuadTree performance is about 20-35% better in insertions, and knn and range searches.
+
+```
+== Test info == 
+Point count: 10000
+Run count: 200
+Query count (per run): 1000
+Insert run count: 2000
+Knn k: 100
+Range: 250.0 out of total point area of 1000.0 x 1000.0
+Quadtree. depth: 7 nodeCount: 633
+RTree. depth: 16 nodeCount: 557
+================
+
+== Insert time == 
+KDTree: 1.697278063E-4 (ms/insert)
+QuadTree: 1.2778786165E-4 (ms/insert)
+Ratio (Quad/KD): 0.7528987997649033
+
+== Knn query time == 
+KDTree: 0.023937707545 (ms/query)
+QuadTree: 0.01544552218 (ms/query)
+Ratio (Quad/KD): 0.645238152022882
+
+== Range query time ==
+KDTree: 0.044225099440000006 (ms/query)
+QuadTree: 0.028976486620000002 (ms/query)
+Ratio (Quad/KD): 0.6552045554880498
+...
+```
+## Defining your own searches
+In addition to the predefined searches (range, knn, knnWithCondition, polygonal), 
+defining new searches is rather easy by defining the corresponding search parameters.
+For example, knn search with condition is defined by 
+
+``` scala
+  class KnnWithCondition(k: Int, condition: E => Boolean)
+    extends IncrementallySearchable[P, E]{
+    val parameters: SearchParameters = new SearchParameters {
+      override def endCondition(s: State): Boolean = s.foundElements.size >= k
+      override def filterElements(e: E, s: State): Boolean = condition(e)
+    }
+  }
+``` 
+The parameters define functions that use a search State object to determine what elements and nodes
+to filter and to decide when the search is complete. For details, see IncrementallySearchable.java.
+
 ## TODO:
 * Improve this document (usage, visualization etc.)
 * Describe how to define your own searches
