@@ -10,6 +10,8 @@ import org.scalatest.FlatSpec
 import org.scalatest.Matchers._
 
 class PerformanceTests extends FlatSpec {
+  val plotting = true
+
   val similarityRatio = 2.0
   val runCount = 200
   val insertRunCount = 10*runCount
@@ -49,8 +51,11 @@ class PerformanceTests extends FlatSpec {
 
 
   def testInfo: Unit ={
-    TreePlotter.plot(quadTree, "QuadTree", elemRadius = bb.width/500)
-    TreePlotter.plot(rTree, "rTree", elemRadius = bb.width/500)
+    if(plotting){
+      TreePlotter.plot(quadTree, "QuadTree", elemRadius = bb.width/500)
+      TreePlotter.plot(rTree, "rTree", elemRadius = bb.width/500)
+    }
+
     info("== Test info == ")
     info("Point count: " + pointCount)
     info("Run count: " + runCount)
