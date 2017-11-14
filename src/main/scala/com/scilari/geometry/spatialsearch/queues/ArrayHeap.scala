@@ -12,7 +12,7 @@ class ArrayHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E]{
     enqueue(e.key, e.value)
   }
 
-  def enqueue(key: Float, value: E): Unit ={
+  override def enqueue(key: Float, value: E): Unit ={
     if(isFull){
       doubleCapacity()
       enqueue(key, value)
