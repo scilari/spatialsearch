@@ -30,7 +30,6 @@ trait QueueTests extends FlatSpec with Matchers {
     }
 
     dequeued.zip(correctOrder).foreach{ case(s1, s2) =>
-      println(s1 + " " + s2)
         s1 should be (s2)
     }
 
