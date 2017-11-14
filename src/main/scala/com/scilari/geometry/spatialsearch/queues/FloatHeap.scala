@@ -8,6 +8,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   private[this] var keys = new Array[Float](initialCapacity)
   private[this] implicit def anyToE(a: Any): E = a.asInstanceOf[E]
 
+  private[this] val firstIndex = 1
   private[this] var maxIndex = 0
   private[this] var capacity = initialCapacity
 
@@ -34,20 +35,20 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     capacity *= 2
     val newValues = new Array[Any](capacity)
     val newKeys = new Array[Float](capacity)
-    Array.copy(values, 1, newValues, 1, maxIndex)
-    Array.copy(keys, 1, newKeys, 1, maxIndex)
+    Array.copy(values, firstIndex, newValues, firstIndex, maxIndex)
+    Array.copy(keys, firstIndex, newKeys, firstIndex, maxIndex)
     values = newValues
     keys = newKeys
   }
 
   override def dequeue(): FloatKey[E] = {
-    val floatKey = new FloatKey[E](keys(1), values(1))
+    val floatKey = new FloatKey[E](keys(firstIndex), values(firstIndex))
     popFirst()
     floatKey
   }
 
   override def dequeueValue(): E = {
-    val headValue = values(1)
+    val headValue = values(firstIndex)
     popFirst()
     headValue
   }
@@ -59,8 +60,8 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     b
   }
 
-  private def popFirst(): Unit ={
-    move(1, maxIndex)
+  private[this] def popFirst(): Unit ={
+    move(firstIndex, maxIndex)
     maxIndex -= 1
     bubbleDown()
   }
@@ -82,8 +83,8 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   }
 
   private[this] def bubbleDown(): Unit ={
-    val headKey = keys(1)
-    val headValue = values(1)
+    val headKey = keys(firstIndex)
+    val headValue = values(firstIndex)
 
     @tailrec
     def makeRoom(k: Int): Int = {
@@ -101,13 +102,13 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
       }
     }
 
-    update(makeRoom(1), headKey, headValue)
+    update(makeRoom(firstIndex), headKey, headValue)
   }
 
 
-  override def head: FloatKey[E] = new FloatKey(keys(1), values(1))
+  override def head: FloatKey[E] = new FloatKey(keys(firstIndex), values(firstIndex))
 
-  override def headKey: Float = keys(1)
+  override def headKey: Float = keys(firstIndex)
 
   override def isEmpty: Boolean = maxIndex == 0
 
