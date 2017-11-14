@@ -9,7 +9,7 @@ trait FloatPriorityQueue[E] {
   def dequeue(): FloatKey[E]
   def dequeueValue(): E = dequeue().value
 
-  def dequeueAllValues(): Seq[E] = {
+  def getAndClearAllValues(): Seq[E] = {
     val b = mutable.Buffer[E]()
     while(nonEmpty)b += dequeueValue()
     b
