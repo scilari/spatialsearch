@@ -28,7 +28,7 @@ trait Searches[P, E <: MetricObject[P]]{
     private final object RangeParameters extends SearchParameters{
       // Skipping the queues in favor of performance, as we do not need the elements in order
       override def modifyState(s: State): Unit = {
-        Range.range(s.queryPoint, s.nodes.dequeueAllValues(), r, s.foundElements)
+        Range.range(s.queryPoint, s.nodes.getAndClearAllValues(), r, s.foundElements)
       }
 
 

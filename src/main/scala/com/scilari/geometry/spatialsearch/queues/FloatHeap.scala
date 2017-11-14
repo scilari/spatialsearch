@@ -52,7 +52,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     headValue
   }
 
-  override def dequeueAllValues(): Seq[E] = {
+  override def getAndClearAllValues(): Seq[E] = {
     val b = mutable.Buffer[E]()
     for(i <- 1 to maxIndex) b += values(i)
     clear()
