@@ -3,7 +3,7 @@ package com.scilari.geometry.spatialsearch.queues
 import scala.collection.mutable
 
 trait FloatPriorityQueue[E] {
-  def enqueue(key: Float, e: E)
+  def enqueue(key: Float, e: E): Unit = enqueue(new FloatKey(key, e))
   def enqueue(e: FloatKey[E]): Unit = enqueue(e.key, e.value)
 
   def dequeue(): FloatKey[E]

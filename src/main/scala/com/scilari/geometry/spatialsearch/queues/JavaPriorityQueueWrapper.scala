@@ -5,8 +5,6 @@ class JavaPriorityQueueWrapper[T] extends FloatPriorityQueue[T] {
 
   override def enqueue(e: FloatKey[T]): Unit = queue.offer(e)
 
-  override def enqueue(key: Float, e: T): Unit = new FloatKey[T](key, e)
-
   override def dequeue(): FloatKey[T] = queue.poll()
 
   override def head: FloatKey[T] = queue.peek()

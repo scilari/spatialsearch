@@ -8,8 +8,6 @@ class ScalaPriorityQueueWrapper[E] extends FloatPriorityQueue[E] {
 
   override def enqueue(e: FloatKey[E]): Unit = queue.enqueue(e)
 
-  override def enqueue(key: Float, e: E): Unit = enqueue(new FloatKey[E](key, e))
-
   override def dequeue(): FloatKey[E] = queue.dequeue()
 
   override def head: FloatKey[E] = queue.head

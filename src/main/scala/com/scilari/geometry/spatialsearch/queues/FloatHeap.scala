@@ -117,26 +117,3 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
 
   override def clear(): Unit = maxIndex = 0
 }
-
-object FloatHeap{
-  def main(args: Array[String]): Unit ={
-    val heap = new FloatHeap[String](2)
-    heap.enqueue(0.4f, "D")
-    heap.enqueue(0.5f, "E")
-    heap.enqueue(0.2f, "B")
-    heap.enqueue(0.1f, "A")
-    heap.enqueue(0.3f, "C")
-    heap.enqueue(-0.4f, "d")
-    heap.enqueue(-0.5f, "e")
-    heap.enqueue(-0.2f, "b")
-    heap.enqueue(-0.1f, "a")
-    heap.enqueue(-0.3f, "c")
-
-    println("size: " + heap.size)
-    while(heap.nonEmpty){
-      val s = heap.dequeueValue()
-      println(s)
-    }
-
-  }
-}
