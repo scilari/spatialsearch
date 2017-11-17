@@ -112,5 +112,4 @@ to filter and to decide when the search is complete. For details, see Incrementa
 
 ## TODO:
 * Improve this document (usage, visualization etc.)
-* Describe how to define your own searches
 * Optimize r-tree (performance is not very good ATM)
