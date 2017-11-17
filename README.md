@@ -24,7 +24,7 @@ class MyData()
 val points = Seq.fill(100)(Float2.random)
 // wrap your data with coordinates
 val dataPoints = points.map{p => DataPoint(p, new MyData())}
-val quadTree = QuadTree[DataPoint[MyData]](points)
+val quadTree = QuadTree[DataPoint[MyData]](dataPoints)
 ```
 #### If the area is known
 ``` scala
