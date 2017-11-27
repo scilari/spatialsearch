@@ -2,6 +2,7 @@ package com.scilari.geometry.spatialsearch.queues
 
 import scala.annotation.tailrec
 import scala.collection.mutable
+import scala.language.implicitConversions
 
 final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
   private[this] var values = new Array[Any](initialCapacity)
