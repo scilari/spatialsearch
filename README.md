@@ -74,7 +74,6 @@ Insert run count: 2000
 Knn k: 100
 Range: 250.0 out of total point area of 1000.0 x 1000.0
 Quadtree. depth: 7 nodeCount: 633
-RTree. depth: 16 nodeCount: 557
 ================
 
 == Insert time == 
