@@ -64,6 +64,8 @@ trait SearchTree[E <: Float2]
   def foreach[U](f: E => U): Unit = root.foreach(f)
 
   override def toString(): String = root.toString()
+
+  def elements: Seq[E] = root.elements
 }
 
 
