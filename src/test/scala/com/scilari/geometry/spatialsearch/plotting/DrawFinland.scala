@@ -17,9 +17,10 @@ object DrawFinland extends App{
   val pixelSize = 1 // (km)
   val paintRadius = 50 // (km)
   val panelW = 1000
+  val margin = 100f
 
 
-  val box = AABB.enclosingSquare(cityData, margin = 100)
+  val box = AABB.enclosingSquare(cityData, margin = margin)
   val cityTree = QuadTree(cityData)
 
   println(box)
@@ -37,8 +38,9 @@ object DrawFinland extends App{
       Color.RED
     } else if(popSum < 150000){
       Color.YELLOW
-    } else
+    } else {
       Color.GREEN
+    }
 
     new DataPoint(p, color)
   }
@@ -100,7 +102,6 @@ object DrawFinland extends App{
       val pSc = p0 * scaleBBtoImg
       val i = pSc.x.toInt
       val j = pSc.y.toInt
-      //println(i + " " + j )
       image.setRGB(i, j, color.getRGB)
     }
 
