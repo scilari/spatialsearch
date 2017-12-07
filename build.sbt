@@ -30,7 +30,6 @@ parallelExecution in Test := false
 
 pomIncludeRepository := { _ => false }
 
-
 pomExtra :=
   <url>https://github.com/scilari/spatialsearch</url>
     <licenses>

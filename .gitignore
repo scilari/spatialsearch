@@ -14,7 +14,7 @@ project/plugins/project/
 
 # IntelliJ Idea specific
 .idea/
-project/
+project/project/
 *.ipr
 *.iws
 
