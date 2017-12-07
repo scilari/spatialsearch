@@ -20,19 +20,9 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
   type N = Tree[P, E]#NodeType
   type L = Tree[P, E]#LeafType
 
-
   val parameters: SearchParameters
 
-  def search(queryPoint: P, tree: B): Seq[E] = search(defaultInitialState(queryPoint, tree))
-
-  def defaultInitialState(queryPoint: P, tree: B): State = {
-    new State(
-      queryPoint,
-      new FloatHeap[B](parameters.nodeQueueSizeHint)(tree.distanceSq(queryPoint), tree),
-      new FloatHeap[E](parameters.elemQueueSizeHint),
-      new ArrayBuffer[E](parameters.foundElemSizeHint)
-    )
-  }
+  def search(queryPoint: P, tree: B): Seq[E] = search(State.defaultInitialState(queryPoint, tree))
 
   @tailrec
   final def search(state: State, params: SearchParameters = parameters): Seq[E] = {
@@ -80,6 +70,15 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
       val initialNodes = new FloatHeap[B]()
       trees.foreach(tree => initialNodes.enqueue(tree.distanceSq(queryPoint), tree))
       new State(queryPoint, initialNodes)
+    }
+
+    def defaultInitialState(queryPoint: P, tree: B): State = {
+      new State(
+        queryPoint,
+        new FloatHeap[B](parameters.nodeQueueSizeHint)(tree.distanceSq(queryPoint), tree),
+        new FloatHeap[E](parameters.elemQueueSizeHint),
+        new ArrayBuffer[E](parameters.foundElemSizeHint)
+      )
     }
   }
 
