@@ -19,10 +19,10 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
   def centerY: Float = (minPoint.y + maxPoint.y)/2
   def center: Float2 = Float2(centerX, centerY)
 
-  def topLeft = Float2(minPoint.x, maxPoint.y)
-  def topRight = Float2(maxPoint)
-  def bottomLeft = Float2(minPoint)
-  def bottomRight = Float2(maxPoint.x, minPoint.y)
+  def topLeft: Float2 = Float2(minPoint.x, maxPoint.y)
+  def topRight: Float2 = Float2(maxPoint)
+  def bottomLeft: Float2 = Float2(minPoint)
+  def bottomRight: Float2 = Float2(maxPoint.x, minPoint.y)
 
   def minX: Float = minPoint.x
   def minY: Float = minPoint.y
@@ -31,7 +31,7 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
 
   def area: Float = width * height
 
-  def corners = Array(topLeft, topRight, bottomLeft, bottomRight)
+  def corners: Array[Float2] = Array(topLeft, topRight, bottomLeft, bottomRight)
 
   def distanceSq(p: Float2): Float = Float2.distanceSq(p, closestBorderPoint(p))
 
@@ -73,8 +73,8 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
   def intersects(box: AABB): Boolean = maxX >= box.minX && maxY >= box.minY && minX <= box.minX && maxX <= box.maxY
 
 
-  def +(p: Float2) = AABB(minPoint + p, maxPoint + p)
-  def -(p: Float2) = AABB(minPoint - p, maxPoint - p)
+  def +(p: Float2): AABB = AABB(minPoint + p, maxPoint + p)
+  def -(p: Float2): AABB = AABB(minPoint - p, maxPoint - p)
 
   override def toString: String = {
      "AABB: " + minPoint.toString + maxPoint.toString
@@ -88,8 +88,8 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
 
 object AABB{
   def apply(): AABB = empty()
-  def apply(minPoint: Float2, maxPoint: Float2) = new AABB(minPoint, maxPoint)
-  def apply(minX: Float, minY: Float, maxX: Float, maxY: Float) = new AABB(minX, minY, maxX, maxY)
+  def apply(minPoint: Float2, maxPoint: Float2): AABB = new AABB(minPoint, maxPoint)
+  def apply(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB = new AABB(minX, minY, maxX, maxY)
   def apply(box: AABB): AABB = AABB(box.minPoint, box.maxPoint)
   def apply(scale: Float): AABB = apply(Float2.zero, Float2(scale))
 
@@ -101,13 +101,13 @@ object AABB{
     apply(bottomLeft - Float2(margin), topRight + Float2(margin))
   }
 
-  def EnclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
+  def enclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
     val fitBox = AABB.apply(points, margin)
     new AABB(center = fitBox.center, halfWidth = Math.max(fitBox.width, fitBox.height)/2)
   }
 
-  def EnclosingSquare(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB ={
-    EnclosingSquare(Seq(Float2(minX, minY), Float2(maxX, maxY)))
+  def enclosingSquare(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB ={
+    enclosingSquare(Seq(Float2(minX, minY), Float2(maxX, maxY)))
   }
 
   val unit: AABB = AABB(0, 0, 1, 1)

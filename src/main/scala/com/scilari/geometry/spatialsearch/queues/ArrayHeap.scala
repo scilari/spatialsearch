@@ -2,7 +2,7 @@ package com.scilari.geometry.spatialsearch.queues
 
 
 
-class ArrayHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E]{
+class ArrayHeap[E](initialCapacity: Int = ArrayHeap.defaultInitialCapacity) extends FloatPriorityQueue[E]{
   private[this] var values = new Array[AnyRef](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
   private[this] var s = 0
@@ -16,18 +16,16 @@ class ArrayHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E]{
     if(isFull){
       doubleCapacity()
       enqueue(key, value)
-      return
+    } else {
+      var i = s
+      while(i > 0 && keys(i - 1) < key) i -= 1
+      s += 1
+      val j = i + 1
+      Array.copy(keys, i, keys, j, s - j)
+      keys(i) = key
+      Array.copy(values, i, values, j, s - j)
+      values(i) = value.asInstanceOf[AnyRef]
     }
-
-    var i = s
-    while(i > 0 && keys(i - 1) < key) i -= 1
-
-    s += 1
-    val j = i + 1
-    Array.copy(keys, i, keys, j, s - j)
-    keys(i) = key
-    Array.copy(values, i, values, j, s - j)
-    values(i) = value.asInstanceOf[AnyRef]
   }
 
   def dequeue(): FloatKey[E] ={
@@ -55,14 +53,18 @@ class ArrayHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E]{
 
   def head: FloatKey[E] = new FloatKey(keys(s-1), values(s-1).asInstanceOf[E])
 
-  override def headKey = keys(s-1)
+  override def headKey: Float = keys(s-1)
 
   override def clear(): Unit = s = 0
 
-  def headElement = values(s-1)
+  def headElement: E = values(s-1).asInstanceOf[E]
 
   def size: Int = s
 
   def isFull: Boolean = s >= capacity
 
+}
+
+object ArrayHeap{
+  val defaultInitialCapacity: Int = 32
 }

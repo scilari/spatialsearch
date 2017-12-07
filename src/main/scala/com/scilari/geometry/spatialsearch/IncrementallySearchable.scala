@@ -31,9 +31,9 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
 
     modifyState(state)
 
-    if (endCondition(state) || (elements.isEmpty && nodes.isEmpty))
+    if (endCondition(state) || (elements.isEmpty && nodes.isEmpty)) {
       foundElements
-    else {
+    } else {
       if (nodeDistSq >= elemDistSq) {
         val candidate = elements.dequeueValue()
         if (filterElements(candidate, state)) foundElements = foundElements += candidate
@@ -83,19 +83,19 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
   }
 
   class SearchParameters{
-    def endCondition(s: State): Boolean = false
-    def filterElements(e: E, s: State): Boolean = true
-    def filterNodes(n: B, s: State): Boolean = true
-    def modifyState(s: State): Unit = ()
+    def endCondition(s: State): Boolean = false // linter:ignore UnusedParameter
+    def filterElements(e: E, s: State): Boolean = true // linter:ignore UnusedParameter
+    def filterNodes(n: B, s: State): Boolean = true // linter:ignore UnusedParameter
+    def modifyState(s: State): Unit = () // linter:ignore UnusedParameter
     val nodeQueueSizeHint: Int = 32
     val elemQueueSizeHint: Int = 32
     val foundElemSizeHint: Int = 32
   }
 
-  def debugState(state: State): Unit ={
-    println("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.nodeDistSq))
-    println("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq))
-    println("Found elements: " + state.foundElements.size)
+  def debugState(state: State): String ={
+    ("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.nodeDistSq)) + "\n" +
+    ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq)) + "\n" +
+    ("Found elements: " + state.foundElements.size)
   }
 
 

@@ -21,7 +21,7 @@ trait Searches[P, E <: MetricObject[P]]{
     }
   }
 
-  final class Range(r: Float, sizeHint: Int = 32)
+  final class Range(r: Float, sizeHint: Int = Searches.defaultRangeSizeHint)
     extends IncrementallySearchable[P, E]{
     val parameters: SearchParameters = RangeParameters
 
@@ -48,8 +48,9 @@ trait Searches[P, E <: MetricObject[P]]{
       def rangeRec(nodes: List[Tree[P, E]#BaseType]): Unit ={
         nodes match{
           case (leaf: Tree[P, E]#Leaf) :: (tail: List[_]) =>
-            if(leaf.distanceSq(queryPoint) <= rSq)
+            if(leaf.distanceSq(queryPoint) <= rSq){
               leaf.elements.foreach(e => if(e.distanceSq(queryPoint) <= rSq) foundElements += e)
+            }
             rangeRec(tail)
           case (node: Tree[P, E]#Node) :: (tail: List[Tree[P, E]#Base]) =>
             var ns = tail
@@ -98,17 +99,20 @@ trait Searches[P, E <: MetricObject[P]]{
         e.zeroDistance(s.queryPoint)
 
       override def modifyState(s: State): Unit = {
-        if(s.nodeDistSq == 0)
-          s.nodes.head.value match{
-            case leaf: Tree[P, E]#Leaf =>
-              leaf.elements -= e
-
+        if(s.nodeDistSq == 0) {
+          s.nodes.head.value match {
+            case leaf: Tree[P, E]#Leaf => leaf.elements -= e
             case _ => ()
           }
+        }
       }
     }
   }
 
 
 
+}
+
+object Searches{
+  val defaultRangeSizeHint: Int = 32
 }

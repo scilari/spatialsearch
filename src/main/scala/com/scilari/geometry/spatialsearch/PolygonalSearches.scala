@@ -55,11 +55,11 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
     def isDominatedBy(e: HalfPlaneObject, queryPoint: Float2, dominators: Seq[Float2]): Boolean = {
       // Going through in reverse order, as more recently added points are more likely to dominate
       var i = dominators.size - 1
-      while(i >= 0){
-        if(isDominatedBy(e, queryPoint, dominators(i))) return true
+      while(i >= 0) {
+        if (isDominatedBy(e, queryPoint, dominators(i))) i = -1
         i -= 1
       }
-      false
+      i < -1
     }
   }
 

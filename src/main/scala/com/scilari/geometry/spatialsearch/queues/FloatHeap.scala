@@ -4,10 +4,9 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.language.implicitConversions
 
-final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E] {
+final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) extends FloatPriorityQueue[E] {
   private[this] var values = new Array[Any](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
-  private[this] implicit def anyToE(a: Any): E = a.asInstanceOf[E]
 
   private[this] val firstIndex = 1
   private[this] var maxIndex = 0
@@ -42,21 +41,23 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
     keys = newKeys
   }
 
+  private[this] def getValue(i: Int): E = values(i).asInstanceOf[E]
+
   override def dequeue(): FloatKey[E] = {
-    val floatKey = new FloatKey[E](keys(firstIndex), values(firstIndex))
+    val floatKey = new FloatKey[E](keys(firstIndex), getValue(firstIndex))
     popFirst()
     floatKey
   }
 
   override def dequeueValue(): E = {
-    val headValue = values(firstIndex)
+    val headValue: E = getValue(firstIndex)
     popFirst()
     headValue
   }
 
   override def getAndClearAllValues(): Seq[E] = {
     val b = mutable.Buffer[E]()
-    for(i <- 1 to maxIndex) b += values(i)
+    for(i <- 1 to maxIndex) b += getValue(i)
     clear()
     b
   }
@@ -75,8 +76,10 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
       if(pos > 1 && key < keys(par)){
         move(pos, par)
         makeRoom(par)
-      } else
+      } else {
         pos
+      }
+
     }
 
     update(makeRoom(maxIndex), key, value)
@@ -85,21 +88,22 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
 
   private[this] def bubbleDown(): Unit ={
     val headKey = keys(firstIndex)
-    val headValue = values(firstIndex)
+    val headValue = getValue(firstIndex)
 
     @tailrec
     def makeRoom(k: Int): Int = {
       val L = left(k)
-      if(L > maxIndex)
+      if(L > maxIndex) {
         k
-      else{
+      }else{
         val R = L + 1
         val child = if(L != maxIndex && keys(L) > keys(R)) R else L
         if (headKey > keys(child)){
           move(k, child)
           makeRoom(child)
-        } else
+        } else{
           k
+        }
       }
     }
 
@@ -107,7 +111,7 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   }
 
 
-  override def head: FloatKey[E] = new FloatKey(keys(firstIndex), values(firstIndex))
+  override def head: FloatKey[E] = new FloatKey(keys(firstIndex), getValue(firstIndex))
 
   override def headKey: Float = keys(firstIndex)
 
@@ -118,4 +122,8 @@ final class FloatHeap[E](initialCapacity: Int = 32) extends FloatPriorityQueue[E
   override def size: Int = maxIndex
 
   override def clear(): Unit = maxIndex = 0
+}
+
+object FloatHeap{
+  val defaultInitialSize = 32
 }

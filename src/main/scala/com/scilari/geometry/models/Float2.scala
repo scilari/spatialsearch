@@ -10,7 +10,7 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def this(x: Double, y: Double) = this(x.toFloat, y.toFloat)
   def apply(x: Float = this.x, y: Float = this.y): Float2 = { this.x = x; this.y = y; this }
 
-  def unary_- = Float2(-x, -y)
+  def unary_- : Float2 = Float2(-x, -y)
 
   def +(that: Float2): Float2 = Float2(x + that.x, y + that.y)
   def -(that: Float2): Float2 = Float2(x - that.x, y - that.y)
@@ -59,13 +59,13 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
 
   def rotated(angle: Float): Float2 = Float2(this).rotate(angle)
 
-  def clamp(floor: Float2, ceil: Float2) = Float2(com.scilari.math.clamp(x, floor.x, ceil.x), com.scilari.math.clamp(y, floor.y, ceil.y))
+  def clamp(floor: Float2, ceil: Float2): Float2 =
+    Float2(com.scilari.math.clamp(x, floor.x, ceil.x), com.scilari.math.clamp(y, floor.y, ceil.y))
 
-  def copy = Float2(this)
-  override def clone: Float2 = copy
-  def toArray = Array(x, y)
-  def toDoubleArray = Array(x.toDouble, y.toDouble)
-  def toIntArray = Array(x.toInt, y.toInt)
+  def copy: Float2 = Float2(this)
+  def toArray: Array[Float] = Array(x, y)
+  def toDoubleArray: Array[Double] = Array(x.toDouble, y.toDouble)
+  def toIntArray: Array[Int] = Array[Int](x.toInt, y.toInt)
 
   override def equals(that: Any): Boolean = {
     that.isInstanceOf[Float2] && equalCoordinates(that.asInstanceOf[Float2])
@@ -81,10 +81,10 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
 }
 
 object Float2{
-  def apply(x: Float, y: Float) = new Float2(x, y)
+  def apply(x: Float, y: Float): Float2 = new Float2(x, y)
   def apply(that: Float2): Float2 = Float2(that.x, that.y)
-  def apply(xy: Float) = new Float2(xy, xy)
-  def apply(x: Double, y: Double) = new Float2(x.toFloat, y.toFloat)
+  def apply(xy: Float): Float2 = new Float2(xy, xy)
+  def apply(x: Double, y: Double): Float2 = new Float2(x.toFloat, y.toFloat)
   val zero = Float2(0f, 0f)
   val one = Float2(1f, 1f)
   val nan = Float2(Float.NaN, Float.NaN)
@@ -92,20 +92,20 @@ object Float2{
   val unitX = Float2(1f, 0f)
   val unitY = Float2(0f, 1f)
 
-  def max(p1: Float2, p2: Float2) = Float2(com.scilari.math.max(p1.x, p2.x), com.scilari.math.max(p1.y, p2.y))
-  def min(p1: Float2, p2: Float2) = Float2(com.scilari.math.min(p1.x, p2.x), com.scilari.math.min(p1.y, p2.y))
+  def max(p1: Float2, p2: Float2): Float2 = Float2(com.scilari.math.max(p1.x, p2.x), com.scilari.math.max(p1.y, p2.y))
+  def min(p1: Float2, p2: Float2): Float2 = Float2(com.scilari.math.min(p1.x, p2.x), com.scilari.math.min(p1.y, p2.y))
 
   def toArray(f: Float2): Array[Double] = f.toDoubleArray
-  def fromTuple(t: (Float, Float)) = Float2(t._1, t._2)
+  def fromTuple(t: (Float, Float)): Float2 = Float2(t._1, t._2)
 
-  def fromArray(a: Array[Float]) = Float2(a(0), a(1))
-  def fromDoubleArray(a: Array[Double]) = Float2(a(0).toFloat, a(1).toFloat)
+  def fromArray(a: Array[Float]): Float2 = Float2(a(0), a(1))
+  def fromDoubleArray(a: Array[Double]): Float2 = Float2(a(0).toFloat, a(1).toFloat)
 
   def random: Float2 = randomZeroToOne
   def random(scale: Float): Float2 = random(Float2.zero, Float2(scale))
-  def randomZeroToOne = Float2(scala.util.Random.nextFloat(), scala.util.Random.nextFloat())
+  def randomZeroToOne: Float2 = Float2(scala.util.Random.nextFloat(), scala.util.Random.nextFloat())
   def randomMinusOneToOne: Float2 = Float2(1f) - Float2.random*2f
-  def directed(angle: Float, length: Float = 1f) = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
+  def directed(angle: Float, length: Float = 1f): Float2 = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
   def random(minX: Float, minY: Float, maxX: Float, maxY: Float): Float2 = Float2(minX, minY) + Float2.random*Float2(maxX - minX, maxY - minY)
   def random(minPoint: Float2, maxPoint: Float2): Float2 = random(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y)
 
@@ -158,13 +158,20 @@ object Float2{
 
   def distance(a: Float2, b: Float2): Float = Math.sqrt(distanceSq(a, b)).toFloat
 
+  def fastAngleBetween(a: Float2, b: Float2): Float = {
+    Math.acos(fastCosBetween(a, b)).toFloat
+  }
 
   def angleBetween(a: Float2, b: Float2): Float = {
     Math.acos(cosBetween(a, b)).toFloat
   }
 
-  def cosBetween(a: Float2, b: Float2): Float ={
+  def fastCosBetween(a: Float2, b: Float2): Float ={
     a.dot(b)*com.scilari.math.invSqrt(a.lengthSq*b.lengthSq)
+  }
+
+  def cosBetween(a: Float2, b: Float2): Float ={
+    a.dot(b)/com.scilari.math.sqrt(a.lengthSq*b.lengthSq)
   }
 
   import scala.language.implicitConversions

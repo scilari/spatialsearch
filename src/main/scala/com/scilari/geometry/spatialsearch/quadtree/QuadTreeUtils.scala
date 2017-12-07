@@ -3,27 +3,27 @@ package com.scilari.geometry.spatialsearch.quadtree
 import com.scilari.geometry.models.{AABB, Float2}
 
 object QuadTreeUtils {
-    val topLeftIndex = 0
-    val topRightIndex = 1
-    val bottomLeftIndex = 2
-    val bottomRightIndex = 3
+    val topLeftIndex: Int = 0
+    val topRightIndex: Int = 1
+    val bottomLeftIndex: Int = 2
+    val bottomRightIndex: Int = 3
 
 
-    def topLeftAABB(b: AABB) = AABB(b.minPoint.x, b.centerY, b.centerX, b.maxPoint.y)
+    def topLeftAABB(b: AABB): AABB = AABB(b.minPoint.x, b.centerY, b.centerX, b.maxPoint.y)
 
-    def topRightAABB(b: AABB) = AABB(b.center, b.maxPoint)
+    def topRightAABB(b: AABB): AABB = AABB(b.center, b.maxPoint)
 
-    def bottomLeftAABB(b: AABB) = AABB(b.minPoint, b.center)
+    def bottomLeftAABB(b: AABB): AABB = AABB(b.minPoint, b.center)
 
-    def bottomRightAABB(b: AABB) = AABB(b.centerX, b.minPoint.y, b.maxPoint.x, b.centerY)
+    def bottomRightAABB(b: AABB): AABB = AABB(b.centerX, b.minPoint.y, b.maxPoint.x, b.centerY)
 
-    def topLeftAABB(b: AABB, centerPoint: Float2) = AABB(b.minPoint.x, centerPoint.y, centerPoint.x, b.maxPoint.y)
+    def topLeftAABB(b: AABB, centerPoint: Float2): AABB = AABB(b.minPoint.x, centerPoint.y, centerPoint.x, b.maxPoint.y)
 
-    def topRightAABB(b: AABB, centerPoint: Float2) = AABB(centerPoint, b.maxPoint)
+    def topRightAABB(b: AABB, centerPoint: Float2): AABB = AABB(centerPoint, b.maxPoint)
 
-    def bottomLeftAABB(b: AABB, centerPoint: Float2) = AABB(b.minPoint, centerPoint)
+    def bottomLeftAABB(b: AABB, centerPoint: Float2): AABB = AABB(b.minPoint, centerPoint)
 
-    def bottomRightAABB(b: AABB, centerPoint: Float2) = AABB(centerPoint.x, b.minPoint.y, b.maxPoint.x, centerPoint.y)
+    def bottomRightAABB(b: AABB, centerPoint: Float2): AABB = AABB(centerPoint.x, b.minPoint.y, b.maxPoint.x, centerPoint.y)
 
     def quadrantByIndex(b: AABB, index: Int): AABB = {
       index match {

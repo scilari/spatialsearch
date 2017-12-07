@@ -26,8 +26,8 @@ trait Tree[P, E]{
     def add(e: E): BaseType
 
     def add(elems: Seq[E]): BaseType = {
-      var n: BaseType = null.asInstanceOf[BaseType]
-      elems.foreach(e => n = add(e))
+      var n: BaseType = this.asInstanceOf[BaseType]
+      elems.foreach(e => n = add(e)) // linter:ignore VariableAssignedUnusedValue
       n
     }
 
@@ -60,7 +60,7 @@ trait Tree[P, E]{
 
     def childCount: Int = children.length
 
-    def isLeaf = false
+    def isLeaf: Boolean = false
 
     def findChildIndex(e: E): Int
 
@@ -85,11 +85,11 @@ trait Tree[P, E]{
 
     def leaves: Seq[Leaf] = Seq(this)
 
-    def depth = 1
+    def depth: Int = 1
 
     def childCount: Int = elements.size
 
-    def isLeaf = true
+    def isLeaf: Boolean = true
 
     def add(e: E): BaseType = {
       elements += e

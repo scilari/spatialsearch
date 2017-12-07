@@ -39,7 +39,7 @@ object ArrayUtils {
 
   def multiply(a: Array[Float], c: Float): Array[Float] = a.map{_ * c}
 
-  def add(a: Array[Float], b: Array[Float]): Array[Float] = (a, b).zipped.map(_+_)
+  def add(a: Array[Float], b: Array[Float]): Array[Float] = (a, b).zipped.map(_ + _)
 
   def mean(a: Array[Float]): Float = a.sum/a.length
 

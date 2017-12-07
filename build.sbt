@@ -9,6 +9,8 @@ scalaVersion := "2.11.8"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.4" % "test"
 
+addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
+
 publishMavenStyle := true
 
 publishTo := {
@@ -27,6 +29,7 @@ publishArtifact in Test := false
 parallelExecution in Test := false
 
 pomIncludeRepository := { _ => false }
+
 
 pomExtra :=
   <url>https://github.com/scilari/spatialsearch</url>

@@ -26,17 +26,18 @@ object RTreeUtils{
     val diffY = math.abs(bottom.size - top.size)
 
 
-    val splitX = if(diffX == diffY)
+    val splitX = if(diffX == diffY){
       variance(xs) > variance(ys) // tie breaker
-    else
+    }  else {
       diffX < diffY
-
+    }
 
     // finding the extreme points along the selected dimension
-    val (minPoint, maxPoint) = if(splitX)
-      ( points.minBy(_.x), points.maxBy(_.x))
-    else
-      ( points.minBy(_.y), points.maxBy(_.y))
+    val (minPoint, maxPoint) = if(splitX) {
+      (points.minBy(_.x), points.maxBy(_.x))
+    } else {
+      (points.minBy(_.y), points.maxBy(_.y))
+    }
 
     // choose which lists to use based on the dimension and filter extreme points
     val minList = (if(splitX) left else bottom).filter(p => p != minPoint && p != maxPoint)
@@ -47,7 +48,6 @@ object RTreeUtils{
 
     // add from the bigger list first to keep the MBRs similarly sized
     while(minList.nonEmpty || maxList.nonEmpty){
-      //println(minList.size + " " + maxList.size)
       val list = if(minList.size > maxList.size) minList else maxList
       val p = list.last
       list.trimEnd(1)
@@ -68,16 +68,16 @@ object RTreeUtils{
 
     // Handling the first expansion separately to avoid some situations, where candidate is very narrow and area close
     // to zero.
-    val areaA = if(boxA.area != 0)
+    val areaA = if(boxA.area != 0) {
       candidateA.area
-    else {
+    } else {
       val m = (candidateA.width + candidateA.height)/2
       m*m
     }
 
-    val areaB = if(boxB.area != 0)
+    val areaB = if(boxB.area != 0) {
       candidateB.area
-    else {
+    } else {
       val m = (candidateB.width + candidateB.height)/2
       m*m
     }
@@ -87,7 +87,10 @@ object RTreeUtils{
 
   def variance(xs: Seq[Float]): Float = {
     val mean = xs.sum/xs.size
-    xs.map{mean - _}.map{x => x*x}.sum/xs.size
+    xs.map{ x =>
+      val dx = mean - x
+      dx*dx
+    }.sum/xs.size
   }
 
 

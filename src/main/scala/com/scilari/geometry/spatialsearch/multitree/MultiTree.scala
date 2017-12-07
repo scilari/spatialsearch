@@ -9,7 +9,7 @@ import com.scilari.geometry.spatialsearch._
   * @tparam E
   */
 class MultiTree[E <: Float2](trees: Seq[SearchTree[E]]) extends Searchable[E]
-  with Searches[Float2, E] with PolygonalSearches [Float2, E]{
+  with Searches[Float2, E] with PolygonalSearches[Float2, E]{
 
   private[this] val roots =  trees.map{_.root.asInstanceOf[Tree[Float2, E]#BaseType]}
 

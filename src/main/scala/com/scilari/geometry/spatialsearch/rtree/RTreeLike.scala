@@ -62,13 +62,12 @@ trait RTreeLike[E <: Float2] {
       def splitCondition: Boolean = elements.size > nodeElementCapacity
 
       override def add(elems: Seq[E]): BaseType = {
-        //println("elem size: " + elems.size)
         elems.foreach(enclose)
         elements ++= elems
         if(splitCondition) split() else this
       }
 
-      def toNode = new NodeType(this, elements, parent, nodeElementCapacity)
+      def toNode: NodeType = new NodeType(this, elements, parent, nodeElementCapacity)
 
       override def split(): NodeType = {
         val newParent = toNode

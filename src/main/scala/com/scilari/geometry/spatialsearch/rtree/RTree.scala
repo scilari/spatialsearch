@@ -21,14 +21,14 @@ final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
 object RTree{
   val defaultNodeElementCapacity: Int = 63
 
-  def apply[E <: Float2](bb: AABB, nodeElementCapacity: Int) =
+  def apply[E <: Float2](bb: AABB, nodeElementCapacity: Int): RTree[E] =
     new RTree[E](bb, nodeElementCapacity)
 
   def apply[E <: Float2](bb: AABB = AABB.unit): RTree[E] = apply(bb, defaultNodeElementCapacity)
 
   def apply[E <: Float2](elems: Seq[E], nodeElementCapacity: Int): RTree[E] = {
     require(elems.size > 1, "At least two elements required for creating the initial node.")
-    val square = AABB.EnclosingSquare(elems)
+    val square = AABB.enclosingSquare(elems)
     require(square.width > 0 && square.height > 0,
       "At least two spatially distinct elements required for creating the initial node.")
     val q = RTree[E](square, nodeElementCapacity)

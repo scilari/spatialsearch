@@ -19,7 +19,7 @@ object DrawFinland extends App{
   val panelW = 1000
 
 
-  val box = AABB.EnclosingSquare(cityData, margin = 100)
+  val box = AABB.enclosingSquare(cityData, margin = 100)
   val cityTree = QuadTree(cityData)
 
   println(box)

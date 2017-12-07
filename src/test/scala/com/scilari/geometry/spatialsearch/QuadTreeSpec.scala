@@ -13,8 +13,10 @@ object QuadTreeSpec {
   val maxY: Float = 1000f
 
   val pointCount: Int = 1000
+  val minKnnPointCount = 10
+  val maxKnnPointCount: Int = 200
 
-  val genK: Gen[Int] = Gen.choose[Int](0, 200)
+  val genK: Gen[Int] = Gen.choose[Int](minKnnPointCount, maxKnnPointCount)
   val genRadius: Gen[Float] = Gen.choose[Float](0f, 500f)
 
   val bb = AABB(minX, minY, maxX, maxY)
