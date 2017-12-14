@@ -13,6 +13,9 @@ trait SearchTree[E <: Float2]
     new Knn(k).search(queryPoint, root)
   }
 
+  def rangeSearch(queryPoint: Float2, r: Float): Seq[E] =
+    rangeSearch(queryPoint, r, sizeHint = Searches.defaultRangeSizeHint)
+
   def rangeSearch(queryPoint: Float2, r: Float, sizeHint: Int = Searches.defaultRangeSizeHint): Seq[E] = {
     new Range(r, sizeHint).search(queryPoint, root)
   }
