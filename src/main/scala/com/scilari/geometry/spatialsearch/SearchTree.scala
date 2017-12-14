@@ -10,41 +10,31 @@ trait SearchTree[E <: Float2]
   var root: Tree.BaseType
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
-    val knn = new Knn(k)
-    knn.search(queryPoint, root)
+    new Knn(k).search(queryPoint, root)
   }
 
-  def rangeSearch(queryPoint: Float2, r: Float): Seq[E] =
-    rangeSearch(queryPoint, r, sizeHint = Searches.defaultRangeSizeHint)
-
-  def rangeSearch(queryPoint: Float2, r: Float, sizeHint: Int): Seq[E] = {
-    val range = new Range(r, sizeHint)
-    range.search(queryPoint, root)
+  def rangeSearch(queryPoint: Float2, r: Float, sizeHint: Int = Searches.defaultRangeSizeHint): Seq[E] = {
+    new Range(r, sizeHint).search(queryPoint, root)
   }
 
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] = {
-    val knnCond = new KnnWithCondition(k, condition)
-    knnCond.search(queryPoint, root)
+    new KnnWithCondition(k, condition).search(queryPoint, root)
   }
 
   override def polygonalSearch(queryPoint: Float2): Seq[E] = {
-    val poly = new Polygonal()
-    poly.search(queryPoint, root)
+    new Polygonal().search(queryPoint, root)
   }
 
   def polygonalMaxRangeSearch(queryPoint: Float2, maxRange: Float): Seq[E] = {
-    val polyMax = new PolygonalMaxRange(maxRange)
-    polyMax.search(queryPoint, root)
+    new PolygonalMaxRange(maxRange).search(queryPoint, root)
   }
 
   def polygonalDynamicMaxRangeSearch(queryPoint: Float2, maxRangeFactor: Float = 3f): Seq[E] = {
-    val polyMax = new PolygonalDynamicMaxRange(maxRangeFactor)
-    polyMax.search(queryPoint, root)
+    new PolygonalDynamicMaxRange(maxRangeFactor).search(queryPoint, root)
   }
 
   override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
-    val rangeOrFirst = new RangeUntilFirstFound(r)
-    rangeOrFirst.search(queryPoint, root).isEmpty
+    new RangeUntilFirstFound(r).search(queryPoint, root).isEmpty
   }
 
   def add(e: E): Unit = root = root.add(e)
