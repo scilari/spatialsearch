@@ -14,11 +14,14 @@ import scala.collection.mutable.ArrayBuffer
   * Provides highly versatile searches via modifiable SearchParameters
   * Created by iv on 1/17/2017.
   */
-trait IncrementallySearchable[P, E <: MetricObject[P]] {
+trait IncrementallySearchable[P, E <: MetricObject[P]]{
 
   type B = Tree[P, E]#BaseType
   type N = Tree[P, E]#NodeType
   type L = Tree[P, E]#LeafType
+
+  implicit val distanceToElement: (P, E) => Float = (p: P, e: E) => e.distanceSq(p)
+  implicit val distanceToNode: (P, B) => Float = (p: P, n: B) => n.distanceSq(p)
 
   val parameters: SearchParameters
 
@@ -40,10 +43,10 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] {
       } else {
         nodes.dequeueValue() match {
           case node: Tree[P, E]#Node =>
-            node.children.foreach{ c => if (filterNodes(c, state)) nodes.enqueue(c.distanceSq(queryPoint), c) }
+            node.children.foreach{ c => if (filterNodes(c, state)) nodes.enqueue(distanceToNode(queryPoint, c), c) }
 
           case leaf: Tree[P, E]#Leaf =>
-            leaf.elements.foreach{ c => if (filterElements(c, state)) elements.enqueue(c.distanceSq(queryPoint), c)}
+            leaf.elements.foreach{ c => if (filterElements(c, state)) elements.enqueue(distanceToElement(queryPoint, c), c)}
 
 
         }
