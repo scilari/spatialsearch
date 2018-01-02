@@ -13,12 +13,15 @@ addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
 publishMavenStyle := true
 
+crossScalaVersions := Seq("2.11.8", "2.12.4")
+
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
+  if (isSnapshot.value) {
     Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+  } else {
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  }
 }
 
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
