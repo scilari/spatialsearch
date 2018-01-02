@@ -13,16 +13,18 @@ import scala.collection.mutable.ArrayBuffer
   */
 trait Searches[P, E <: MetricObject[P]]{
 
-  final class Knn(k: Int) extends IncrementallySearchable[P, E]{
+  type Search = IncrementallySearchable[P, E]
+
+  final class Knn(k: Int) extends Search{
     val parameters: SearchParameters = KnnParameters
     private final object KnnParameters extends SearchParameters{
-      override def endCondition(s: State): Boolean = s.foundElements.size >= k
+      override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
       override val foundElemSizeHint: Int = k
     }
   }
 
   final class Range(r: Float, sizeHint: Int = Searches.defaultRangeSizeHint)
-    extends IncrementallySearchable[P, E]{
+    extends Search{
     val parameters: SearchParameters = RangeParameters
 
     private final object RangeParameters extends SearchParameters{
@@ -70,15 +72,15 @@ trait Searches[P, E <: MetricObject[P]]{
   }
 
   class KnnWithCondition(k: Int, condition: E => Boolean)
-    extends IncrementallySearchable[P, E]{
+    extends Search{
     val parameters: SearchParameters = new SearchParameters {
-      override def endCondition(s: State): Boolean = s.foundElements.size >= k
+      override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
       override def filterElements(e: E, s: State): Boolean = condition(e)
     }
   }
 
   class RangeUntilFirstFound(r: Float)
-    extends IncrementallySearchable[P, E]{
+    extends Search{
     val rSq: Float = r*r
     val parameters: SearchParameters = new SearchParameters {
       override def endCondition(s: State): Boolean = {
@@ -88,8 +90,7 @@ trait Searches[P, E <: MetricObject[P]]{
   }
 
 
-  final class Removal(e: E)
-    extends IncrementallySearchable[P, E]{
+  final class Removal(e: E) extends Search{
 
     val parameters: SearchParameters = new SearchParameters{
       override def filterNodes(n: Tree[P, E]#BaseType, s: State): Boolean =
