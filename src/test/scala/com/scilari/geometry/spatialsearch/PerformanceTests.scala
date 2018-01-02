@@ -31,7 +31,7 @@ class PerformanceTests extends FlatSpec {
 
   // Data with two clusters and a small number of random points elsewhere
   val points  =
-    Seq.fill(pointCount*9/20)(Float2.random(0.2f*bb.width)+ 0.1f*bb.width) ++
+    Seq.fill(pointCount*9/20)(Float2.random(0.2f*bb.width) + 0.1f*bb.width) ++
       Seq.fill(pointCount*9/20)(Float2.random(0.5f*bb.width) + 0.45f*bb.width) ++
       Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
 
@@ -102,10 +102,20 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
+    // TODO: initial test, fix and clean up or remove
+    val knn = quadTree.knn(queryK)
+    val tQdFixedSearch = warmUpAndMeasureTime({
+      for(q <- queryPoints){
+        val neighbors = knn(q)
+      }
+    }, runCount, warmUpCount)
+
     info("\n== Knn query time == ")
     info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
     info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
+    info("QuadTreeFixed: " + tQdFixedSearch/totalQueryCount + " (ms/query)")
     info("Ratio (Quad/KD): " + tQd/tKd )
+    info("Ratio (QuadFixed/KD): " + tQdFixedSearch/tKd )
     assert(similarTime(tKd, tQd))
   }
 
@@ -114,7 +124,7 @@ class PerformanceTests extends FlatSpec {
       for(q <- queryArray){
         val kdRangeLow = Array(q(0) - range, q(1) - range)
         val kdRangeHigh = Array(q(0) + range, q(1) + range)
-        kdTree.getRange(kdRangeLow, kdRangeHigh)
+        val neighbors = kdTree.getRange(kdRangeLow, kdRangeHigh)
       }
     }, runCount, warmUpCount)
 
@@ -124,10 +134,19 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
+    val rangeSearch = quadTree.range(range)
+    val tQdFixed = warmUpAndMeasureTime({
+      for(q <- queryPoints){
+        val neighbors = rangeSearch(q)
+      }
+    }, runCount, warmUpCount)
+
     info("\n== Range query time ==")
     info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
     info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
+    info("QuadTreeFixed: " + tQdFixed/totalQueryCount + " (ms/query)")
     info("Ratio (Quad/KD): " + tQd/tKd)
+    info("Ratio (QuadFixed/KD): " + tQdFixed/tKd)
     assert(similarTime(tKd, tQd))
   }
 
@@ -139,10 +158,7 @@ class PerformanceTests extends FlatSpec {
     val maxRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.max
     val minRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.min
     val ratios = maxRanges.zip(minRanges).map{case(max, min) => max/min}
-    //println("Avg ratio: " + ratios.sum/ratios.size)
     val meanRange = maxRanges.sum/maxRanges.size
-
-
 
 
     val tPol = warmUpAndMeasureTime({
@@ -160,7 +176,7 @@ class PerformanceTests extends FlatSpec {
 
     val tPolDyn = warmUpAndMeasureTime({
       for(q <- queryPoints){
-        val neighbors = quadTree.polygonalDynamicMaxRangeSearch(q, 3f)
+        val neighbors = quadTree.polygonalDynamicMaxRangeSearch(q)
       }
     }, runCount, warmUpCount)
 
@@ -193,7 +209,7 @@ class PerformanceTests extends FlatSpec {
 
     var quadTree: QuadTree[Float2] = null
 
-    def initBlock(ps: Seq[Float2]) = {
+    def initBlock(ps: Seq[Float2]): Unit = {
       quadTree = QuadTree[Float2](bb)
       ps.foreach{quadTree.add}
     }
@@ -220,8 +236,8 @@ class PerformanceTests extends FlatSpec {
 
     info("\n== Removal vs. rebuild time ==")
     info("Removing " + removeCount + " points (" + removeCount.toDouble/points.size + ")")
-    info("QuadTree (removal): " + tSingle + " (total time), "+ tSingle/totalRemovalCount +" (ms/rem)")
-    info("QuadTree (removal simult): " + tSimult + " (total time), "+ tSimult/totalRemovalCount +" (ms/rem)")
+    info("QuadTree (removal): " + tSingle + " (total time), " + tSingle/totalRemovalCount + " (ms/rem)")
+    info("QuadTree (removal simult): " + tSimult + " (total time), " + tSimult/totalRemovalCount + " (ms/rem)")
     info("QuadTree (rebuild): " + tRebuild + " (total time)")
     info("KdTree (rebuild): " + tRebuildKd + " (total time)")
     tSingle should be < tRebuildKd
