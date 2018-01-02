@@ -103,19 +103,10 @@ class PerformanceTests extends FlatSpec {
     }, runCount, warmUpCount)
 
     // TODO: initial test, fix and clean up or remove
-    val knn = quadTree.knn(queryK)
-    val tQdFixedSearch = warmUpAndMeasureTime({
-      for(q <- queryPoints){
-        val neighbors = knn(q)
-      }
-    }, runCount, warmUpCount)
-
     info("\n== Knn query time == ")
     info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
     info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
-    info("QuadTreeFixed: " + tQdFixedSearch/totalQueryCount + " (ms/query)")
     info("Ratio (Quad/KD): " + tQd/tKd )
-    info("Ratio (QuadFixed/KD): " + tQdFixedSearch/tKd )
     assert(similarTime(tKd, tQd))
   }
 
@@ -134,19 +125,10 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    val rangeSearch = quadTree.range(range)
-    val tQdFixed = warmUpAndMeasureTime({
-      for(q <- queryPoints){
-        val neighbors = rangeSearch(q)
-      }
-    }, runCount, warmUpCount)
-
     info("\n== Range query time ==")
     info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
     info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
-    info("QuadTreeFixed: " + tQdFixed/totalQueryCount + " (ms/query)")
     info("Ratio (Quad/KD): " + tQd/tKd)
-    info("Ratio (QuadFixed/KD): " + tQdFixed/tKd)
     assert(similarTime(tKd, tQd))
   }
 
