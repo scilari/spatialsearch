@@ -16,6 +16,9 @@ import scala.collection.mutable.ArrayBuffer
   */
 trait IncrementallySearchable[P, E <: MetricObject[P]]{
 
+  // TODO: this needs actual tree instance in order to get the types correct
+  // TODO: also provide the distance functions with the tree (Is the tree the correct place?)
+
   type B = Tree[P, E]#BaseType
   type N = Tree[P, E]#NodeType
   type L = Tree[P, E]#LeafType
@@ -43,18 +46,16 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
       } else {
         nodes.dequeueValue() match {
           case node: Tree[P, E]#Node =>
-            node.children.foreach{ c => if (filterNodes(c, state)) nodes.enqueue(distanceToNode(queryPoint, c), c) }
+            node.children.foreach { c => if (filterNodes(c, state)) nodes.enqueue(distanceToNode(queryPoint, c), c) }
 
           case leaf: Tree[P, E]#Leaf =>
-            leaf.elements.foreach{ c => if (filterElements(c, state)) elements.enqueue(distanceToElement(queryPoint, c), c)}
-
-
+            leaf.elements.foreach { c => if (filterElements(c, state)) elements.enqueue(distanceToElement(queryPoint, c), c) }
         }
       }
       search(state)
     }
-
   }
+
 
   final class State(
     val queryPoint: P,
@@ -97,8 +98,8 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
 
   def debugState(state: State): String ={
     ("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.nodeDistSq)) + "\n" +
-    ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq)) + "\n" +
-    ("Found elements: " + state.foundElements.size)
+      ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq)) + "\n" +
+      ("Found elements: " + state.foundElements.size)
   }
 
 
