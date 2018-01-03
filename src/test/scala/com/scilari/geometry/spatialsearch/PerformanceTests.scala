@@ -102,7 +102,6 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    // TODO: initial test, fix and clean up or remove
     info("\n== Knn query time == ")
     info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
     info("QuadTree: " + tQd/totalQueryCount + " (ms/query)")
