@@ -2,6 +2,7 @@ package com.scilari.geometry.spatialsearch.queues
 
 import scala.annotation.tailrec
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 
 final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) extends FloatPriorityQueue[E] {
@@ -55,10 +56,9 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
     headValue
   }
 
-  override def getAndClearAllValues(): Seq[E] = {
-    val b = mutable.Buffer[E]()
-    for(i <- 1 to maxIndex) b += getValue(i)
-    clear()
+  override def getValues: Seq[E] = {
+    val b = new ArrayBuffer[E](maxIndex)
+    for(i <- firstIndex to maxIndex) b += values(i).asInstanceOf[E]
     b
   }
 

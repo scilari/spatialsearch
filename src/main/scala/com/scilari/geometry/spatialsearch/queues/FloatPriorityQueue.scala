@@ -9,10 +9,12 @@ trait FloatPriorityQueue[E] {
   def dequeue(): FloatKey[E]
   def dequeueValue(): E = dequeue().value
 
-  def getAndClearAllValues(): Seq[E] = {
-    val b = mutable.Buffer[E]()
-    while(nonEmpty)b += dequeueValue()
-    b
+  // Default naive implementation: replace with optimized one in concrete instances
+  def getValues: Seq[E] = {
+    val b = mutable.Buffer[FloatKey[E]]()
+    while(nonEmpty) b += dequeue
+    b.foreach(enqueue)
+    b.map{_.value}
   }
 
   def apply(elems: FloatKey[E]*): FloatPriorityQueue[E] = {
