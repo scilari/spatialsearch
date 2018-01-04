@@ -1,8 +1,9 @@
 package com.scilari.geometry.spatialsearch.plotting
 
 import java.awt._
-import java.awt.image.{BufferedImage, ImageObserver}
+import java.awt.image.BufferedImage
 import java.io.File
+import java.net.URL
 import javax.imageio.ImageIO
 import javax.swing.{JFrame, JPanel}
 
@@ -27,13 +28,22 @@ object Panels {
     }
   }
 
-  class BitmapPanel(filename: String, w: Int, h: Int, backgroundColor: Color) extends Panel(w, h, backgroundColor) {
-    val image: BufferedImage = ImageIO.read(new File(filename))
-
+  class BitmapPanel(val image: BufferedImage, w: Int, h: Int, backgroundColor: Color) extends Panel(w, h, backgroundColor) {
     override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       g2d.drawImage(image, 0, 0, w, h, 0, 0, image.getWidth, image.getHeight(), null)
     }
+  }
+
+  object BitmapPanel{
+    def fromFile(filename: String, w: Int, h: Int, backgroundColor: Color): BitmapPanel = {
+      new BitmapPanel(ImageIO.read(new File(filename)), w, h, backgroundColor)
+    }
+
+    def fromUrl(url: String, w: Int, h: Int, backGroundColor: Color): BitmapPanel = {
+      new BitmapPanel(ImageIO.read(new URL(url)), w, h, backGroundColor)
+    }
+
   }
 
   abstract class FlippedPanel(w: Int, h: Int, backGroundColor: Color) extends Panel(w, h, backGroundColor) {
