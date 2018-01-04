@@ -1,8 +1,8 @@
-package com.scilari.geometry.spatialsearch
+package com.scilari.geometry
 
+import java.awt._
 import java.awt.geom._
 import java.awt.image.BufferedImage
-import java.awt._
 
 import com.scilari.geometry.models.{AABB, Float2}
 

@@ -1,4 +1,4 @@
-package com.scilari.geometry.spatialsearch.plotting
+package com.scilari.geometry.plotting
 
 import java.awt._
 import java.awt.image.BufferedImage
