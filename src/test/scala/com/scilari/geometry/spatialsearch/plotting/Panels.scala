@@ -1,6 +1,7 @@
 package com.scilari.geometry.spatialsearch.plotting
 
 import java.awt._
+import java.awt.image.{BufferedImage, ImageObserver}
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.{JFrame, JPanel}
@@ -18,55 +19,57 @@ object Panels {
     setSize(w, h)
     setPreferredSize(this.getSize())
     setBackground(backgroundColor)
-    var g2d: Graphics2D = null
+    var g2d: Graphics2D = _
 
-    override def paintComponent(g: Graphics) = {
+    override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       g2d = g.asInstanceOf[Graphics2D]
     }
   }
 
   class BitmapPanel(filename: String, w: Int, h: Int, backgroundColor: Color) extends Panel(w, h, backgroundColor) {
-    val image = ImageIO.read(new File(filename))
+    val image: BufferedImage = ImageIO.read(new File(filename))
 
-    override def paintComponent(g: Graphics) {
+    override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       g2d.drawImage(image, 0, 0, w, h, 0, 0, image.getWidth, image.getHeight(), null)
     }
   }
 
   abstract class FlippedPanel(w: Int, h: Int, backGroundColor: Color) extends Panel(w, h, backGroundColor) {
-    override def paintComponent(g: Graphics) = {
+    override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       g2d.translate(0, h)
       g2d.scale(1.0, -1.0)
     }
   }
 
-  class DrawingPanel(width: Int, height: Int, backgroundColor: Color, boundedDrawingFunctionsC: BoundedDrawingFunction*) extends Panel(width, height, backgroundColor) {
+  class DrawingPanel(
+    width: Int, height: Int, backgroundColor: Color,
+    boundedDrawingFunctionsC: BoundedDrawingFunction*) extends Panel(width, height, backgroundColor) {
+
     setOpaque(true)
-    var boundedDrawingFunctions = boundedDrawingFunctionsC.toSeq
+    var boundedDrawingFunctions: Seq[BoundedDrawingFunction] = boundedDrawingFunctionsC.toSeq
 
-    def boundingBox = computeEnclosingBounds(boundedDrawingFunctions)
+    def boundingBox: AABB = computeEnclosingBounds(boundedDrawingFunctions)
 
-    def maxAxisBox = max(boundingBox.width, boundingBox.height)
+    def maxAxisBox: Float = max(boundingBox.width, boundingBox.height)
 
-    def minAxisPanel = min(getWidth, getHeight)
+    def minAxisPanel: Float = min(getWidth, getHeight)
 
-    def maxScale = max(getWidth/boundingBox.width, getHeight/boundingBox.height)
+    def maxScale: Float = max(getWidth/boundingBox.width, getHeight/boundingBox.height)
 
-    def minScale = min(getWidth/boundingBox.width, getHeight/boundingBox.height)
+    def minScale: Float = min(getWidth/boundingBox.width, getHeight/boundingBox.height)
 
-    def scaleX = minScale
+    def scaleX: Float = minScale
 
-    def scaleY = minScale
+    def scaleY: Float = minScale
 
+    def transLateX: Float = -scaleX * boundingBox.minX
 
-    def transLateX = -scaleX * boundingBox.minX
+    def transLateY: Float = -scaleY * boundingBox.minY
 
-    def transLateY = -scaleY * boundingBox.minY
-
-    override def paintComponent(g: Graphics) {
+    override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       doTransformations(g)
       boundedDrawingFunctions.foreach(fb => fb.drawingFunction(g2d))
@@ -84,11 +87,14 @@ object Panels {
       g2d.setStroke(new BasicStroke(1 / scaleX))
     }
 
-
   }
 
-  class FlippedDrawingPanel(width: Int, height: Int, backgroundColor: Color, drawingFunctions: BoundedDrawingFunction*) extends DrawingPanel(width, height, backgroundColor, drawingFunctions: _*) {
-    override def paintComponent(g: Graphics) = {
+  class FlippedDrawingPanel(
+    width: Int, height: Int, backgroundColor: Color,
+    drawingFunctions: BoundedDrawingFunction*)
+    extends DrawingPanel(width, height, backgroundColor, drawingFunctions: _*) {
+
+    override def paintComponent(g: Graphics): Unit = {
       g.translate(0, h)
       g.scale(1.0, -1.0)
       super.paintComponent(g)
@@ -101,8 +107,6 @@ object Panels {
     pack()
     setVisible(true)
   }
-
-
 
 
 }
