@@ -6,7 +6,7 @@ import javax.imageio.ImageIO
 
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
 import com.scilari.geometry.spatialsearch.TestResources._
-import com.scilari.geometry.spatialsearch.plotting.Panels.{FlippedDrawingPanel, Frame}
+import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 
 /**
