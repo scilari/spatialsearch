@@ -11,14 +11,19 @@ import com.scilari.geometry.models.{AABB, Float2}
   * Created by iv on 26.2.2014.
   */
 package object plotting {
-  implicit def graphicsTogGraphics2D(g: Graphics) = g.asInstanceOf[Graphics2D]
-  implicit def AABBtoRect(b: AABB) = new Rectangle2D.Float(b.minX, b.minY, b.width, b.height)
+  implicit def graphicsToGraphics2D(g: Graphics): Graphics2D = g.asInstanceOf[Graphics2D]
+  implicit def AABBtoRect(b: AABB): Rectangle2D = new Rectangle2D.Float(b.minX, b.minY, b.width, b.height)
 
   class BoundedDrawingFunction(val drawingFunction: Graphics2D => Any, val bounds: () => AABB)
 
-  implicit def boxPairToBoundedDrawingFunction(fb: (Graphics2D => Any, AABB)): BoundedDrawingFunction = fb match{ case(f: (Graphics2D => Any), b: AABB) => new BoundedDrawingFunction(f, () => b)}
-  implicit def pairToBoundedDrawingFunction(fb: (Graphics2D => Any, () => AABB)): BoundedDrawingFunction = fb match{ case(f: (Graphics2D => Any), b: (() => AABB)) => new BoundedDrawingFunction(f, b)}
-  implicit def functionToBoundedDrawingFunction(f: Graphics2D => Any): BoundedDrawingFunction = new BoundedDrawingFunction(f, () => AABB.zero)
+  implicit def boxPairToBoundedDrawingFunction(fb: (Graphics2D => Any, AABB)): BoundedDrawingFunction =
+    fb match{ case(f: (Graphics2D => Any), b: AABB) => new BoundedDrawingFunction(f, () => b)}
+
+  implicit def pairToBoundedDrawingFunction(fb: (Graphics2D => Any, () => AABB)): BoundedDrawingFunction =
+    fb match{ case(f: (Graphics2D => Any), b: (() => AABB)) => new BoundedDrawingFunction(f, b)}
+
+  implicit def functionToBoundedDrawingFunction(f: Graphics2D => Any): BoundedDrawingFunction =
+    new BoundedDrawingFunction(f, () => AABB.zero)
 
 
   def drawAABB(box: AABB, color: Color = Color.GRAY)(g2d: Graphics2D){
@@ -87,7 +92,7 @@ package object plotting {
     val at = new AffineTransform()
     at.concatenate(AffineTransform.getScaleInstance(1, -1))
     at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()))
-    return createTransformedImage(image, at)
+    createTransformedImage(image, at)
   }
 
   def createTransformedImage(image: BufferedImage, at: AffineTransform): BufferedImage = {
@@ -98,7 +103,7 @@ package object plotting {
     g.transform(at)
     g.drawImage(image, 0, 0, null)
     g.dispose()
-    return newImage
+    newImage
   }
 
 
