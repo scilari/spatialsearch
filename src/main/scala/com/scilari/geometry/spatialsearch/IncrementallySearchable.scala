@@ -23,8 +23,8 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
   type N = Tree[P, E]#NodeType
   type L = Tree[P, E]#LeafType
 
-  implicit val distanceToElement: (P, E) => Float = (p: P, e: E) => e.distanceSq(p)
-  implicit val distanceToNode: (P, B) => Float = (p: P, n: B) => n.distanceSq(p)
+  val distanceToElement: (P, E) => Float = (p: P, e: E) => e.distanceSq(p)
+  val distanceToNode: (P, B) => Float = (p: P, n: B) => n.distanceSq(p)
 
   val parameters: SearchParameters
 
