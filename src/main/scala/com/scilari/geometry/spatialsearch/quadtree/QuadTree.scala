@@ -38,7 +38,7 @@ object QuadTree{
 
   def apply[T <: Float2](elems: Seq[T], parameters: Parameters): QuadTree[T] = {
     require(elems.size > 1, "At least two elements required for creating the initial node.")
-    val square = AABB.enclosingSquare(elems)
+    val square = AABB.EnclosingSquare(elems)
     require(square.area > 0,
       "At least two spatially distinct elements required for creating the initial node.")
     val q = QuadTree[T](square, parameters)

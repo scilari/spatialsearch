@@ -7,6 +7,7 @@ import com.scilari.geometry.spatialsearch.SearchTree
 import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
 import com.scilari.geometry.spatialsearch.quadtree.{Parameters, QuadTree}
 import com.scilari.geometry.spatialsearch.rtree.RTree
+import com.scilari.geometry.plotting._
 
 object TreePlotter {
   def plot[E <: Float2](
