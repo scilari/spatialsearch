@@ -16,7 +16,7 @@ trait RTreeLike[E <: Float2] {
     class RTreeNode(
       bb: AABB,
       elems: Seq[E],
-      val parent: RTreeNode,
+      val parent: Option[RTreeNode],
       nodeElementCapacity: Int
     ) extends BaseType(bb) with Node{
 
@@ -25,8 +25,8 @@ trait RTreeLike[E <: Float2] {
       val children: Array[BaseType] = {
         val (boxA, boxB) = RTreeUtils.angLinearSplit(this, elems)
         Array(
-          new LeafType(boxA, this, nodeElementCapacity),
-          new LeafType(boxB, this, nodeElementCapacity)
+          new LeafType(boxA, Some(this), nodeElementCapacity),
+          new LeafType(boxB, Some(this), nodeElementCapacity)
         )
       }
 
@@ -48,7 +48,7 @@ trait RTreeLike[E <: Float2] {
 
     class RTreeLeaf(
       bb: AABB,
-      val parent: NodeType = null,
+      val parent: Option[NodeType] = None,
       nodeElementCapacity: Int
     ) extends BaseType(bb) with Leaf {
 
@@ -59,7 +59,7 @@ trait RTreeLike[E <: Float2] {
         super.add(e)
       }
 
-      def splitCondition: Boolean = elements.size > nodeElementCapacity
+      def splitCondition: Boolean = elements.lengthCompare(nodeElementCapacity) > 0
 
       override def add(elems: Seq[E]): BaseType = {
         elems.foreach(enclose)

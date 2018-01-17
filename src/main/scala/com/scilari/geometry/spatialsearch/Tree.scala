@@ -11,7 +11,7 @@ trait Tree[P, E]{
   type LeafType <: BaseType with Leaf
 
   trait Base extends MetricObject[P] with Traversable[E] {
-    this: BaseType =>
+    //this: BaseType =>
     def elements: Seq[E]
 
     def nodes: Seq[BaseType]
@@ -27,14 +27,14 @@ trait Tree[P, E]{
     def add(e: E): BaseType
 
     def add(elems: Seq[E]): BaseType = {
-      var n: BaseType = this
+      var n: BaseType = this.asInstanceOf[BaseType]
       elems.foreach(e => n = add(e)) // linter:ignore VariableAssignedUnusedValue
       n
     }
 
-    def parent: BaseType
+    def parent: Option[BaseType]
 
-    def isRoot: Boolean = parent != null
+    def isRoot: Boolean = parent.isEmpty
 
     def isLeaf: Boolean
 
