@@ -23,8 +23,8 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
   type N = Tree[P, E]#NodeType
   type L = Tree[P, E]#LeafType
 
-  val distanceToElement: (P, E) => Float = (p: P, e: E) => e.distanceSq(p)
-  val distanceToNode: (P, B) => Float = (p: P, n: B) => n.distanceSq(p)
+  def elemDist(p: P, e: E): Float = e.distanceSq(p)
+  def nodeDist(p: P, n: B): Float = n.distanceSq(p)
 
   val parameters: SearchParameters
 
@@ -40,16 +40,16 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
     if (endCondition(state) || (elements.isEmpty && nodes.isEmpty)) {
       foundElements
     } else {
-      if (nodeDistSq >= elemDistSq) {
+      if (headNodeDist >= headElemDist) {
         val candidate = elements.dequeueValue()
         if (filterElements(candidate, state)) foundElements = foundElements += candidate
       } else {
         nodes.dequeueValue() match {
           case node: Tree[P, E]#Node =>
-            node.children.foreach { c => if (filterNodes(c, state)) nodes.enqueue(distanceToNode(queryPoint, c), c) }
+            node.children.foreach { c => if (filterNodes(c, state)) nodes.enqueue(nodeDist(queryPoint, c), c) }
 
           case leaf: Tree[P, E]#Leaf =>
-            leaf.elements.foreach { c => if (filterElements(c, state)) elements.enqueue(distanceToElement(queryPoint, c), c) }
+            leaf.elements.foreach { c => if (filterElements(c, state)) elements.enqueue(elemDist(queryPoint, c), c) }
         }
       }
       search(state)
@@ -64,22 +64,22 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
     var foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()
   ){
 
-    def elemDistSq: Float = if(elements.nonEmpty) elements.headKey else Float.PositiveInfinity
-    def nodeDistSq: Float = if(nodes.nonEmpty) nodes.headKey else Float.PositiveInfinity
+    def headElemDist: Float = if(elements.nonEmpty) elements.headKey else Float.PositiveInfinity
+    def headNodeDist: Float = if(nodes.nonEmpty) nodes.headKey else Float.PositiveInfinity
 
   }
 
   object State{
     def apply(queryPoint: P, trees: Seq[B]): State = {
       val initialNodes = new FloatHeap[B]()
-      trees.foreach(tree => initialNodes.enqueue(tree.distanceSq(queryPoint), tree))
+      trees.foreach(tree => initialNodes.enqueue(nodeDist(queryPoint, tree), tree))
       new State(queryPoint, initialNodes)
     }
 
     def defaultInitialState(queryPoint: P, tree: B): State = {
       new State(
         queryPoint,
-        new FloatHeap[B](parameters.nodeQueueSizeHint)(tree.distanceSq(queryPoint), tree),
+        new FloatHeap[B](parameters.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
         new FloatHeap[E](parameters.elemQueueSizeHint),
         new ArrayBuffer[E](parameters.foundElemSizeHint)
       )
@@ -97,8 +97,8 @@ trait IncrementallySearchable[P, E <: MetricObject[P]]{
   }
 
   def debugState(state: State): String ={
-    ("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.nodeDistSq)) + "\n" +
-      ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.elemDistSq)) + "\n" +
+    ("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.headNodeDist)) + "\n" +
+      ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.headElemDist)) + "\n" +
       ("Found elements: " + state.foundElements.size)
   }
 

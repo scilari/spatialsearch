@@ -84,7 +84,7 @@ trait Searches[P, E <: MetricObject[P]]{
     val rSq: Float = r*r
     val parameters: SearchParameters = new SearchParameters {
       override def endCondition(s: State): Boolean = {
-        s.foundElements.nonEmpty || (s.elemDistSq > rSq && s.nodeDistSq > rSq)
+        s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
       }
     }
   }
@@ -100,7 +100,7 @@ trait Searches[P, E <: MetricObject[P]]{
         e.zeroDistance(s.queryPoint)
 
       override def modifyState(s: State): Unit = {
-        if(s.nodeDistSq == 0) {
+        if(s.headNodeDist == 0) {
           s.nodes.head.value match {
             case leaf: Tree[P, E]#Leaf => leaf.elements -= e
             case _ => ()

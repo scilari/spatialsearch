@@ -73,8 +73,8 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
 
     private[this] final object PolygonalParameters extends SearchParameters{
       override def modifyState(s: State): Unit = {
-        if(firstElementDistSq > s.elemDistSq){
-          firstElementDistSq = s.elemDistSq
+        if(firstElementDistSq > s.headElemDist){
+          firstElementDistSq = s.headElemDist
           maxRange = firstElementDistSq*rangeFactorSq
         }
       }
