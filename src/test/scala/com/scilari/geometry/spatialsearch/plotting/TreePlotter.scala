@@ -18,17 +18,17 @@ object TreePlotter {
     elemRadius: Float = 5f
   ): Unit ={
     val bb = AABB(tree.root.corners, margin = 0.05f*tree.root.width)
-    val panel = new FlippedDrawingPanel(width, height, Color.WHITE, (drawTree(tree, elemRadius) _, bb))
+    val panel = new FlippedDrawingPanel(width, height, Color.WHITE,
+      BoundedDrawingFunction(drawTree(tree, elemRadius)(_), bb))
     new Frame(frameName, panel)
   }
 
-  def drawTree[E <: Float2](tree: SearchTree[E], elemRadius: Float)(g2d: Graphics2D): Unit ={
+  def drawTree[E <: Float2](tree: SearchTree[E], elemRadius: Float)(implicit g2d: Graphics2D): Unit ={
     val nodes: Seq[AABB] = tree.root.nodes.map{_.asInstanceOf[AABB]}
     val elems: Seq[Float2] = tree.root.elements
 
-    nodes.foreach(b => drawAABB(b, Color.BLACK)(g2d))
-    elems.foreach(e => drawEdgeCircle(e, radius = elemRadius)(g2d))
-
+    nodes.foreach(b => drawAABB(b, Color.BLACK))
+    elems.foreach(e => drawEdgeCircle(e, radius = elemRadius))
   }
 
   def main(args: Array[String]): Unit ={

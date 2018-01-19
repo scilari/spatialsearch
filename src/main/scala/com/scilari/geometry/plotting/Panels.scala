@@ -22,7 +22,7 @@ object Panels {
     setSize(w, h)
     setPreferredSize(this.getSize())
     setBackground(backgroundColor)
-    var g2d: Graphics2D = _
+    implicit var g2d: Graphics2D = _
 
     override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
