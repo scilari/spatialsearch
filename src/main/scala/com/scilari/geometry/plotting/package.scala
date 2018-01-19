@@ -78,7 +78,7 @@ package object plotting {
     g2d.fill(rect)
   }
 
-  def drawBitmap(image: BufferedImage, imgPxPerMeter: Float)(g2d: Graphics2D): Unit = {
+  def drawScaledBitmap(image: BufferedImage, imgPxPerMeter: Float)(g2d: Graphics2D): Unit = {
     g2d.drawImage(image, 0, 0, image.getWidth(), image.getHeight,
       0, 0, (imgPxPerMeter*image.getWidth).toInt, (imgPxPerMeter*image.getHeight).toInt, null)
   }
