@@ -14,8 +14,10 @@ import com.scilari.math._
  * Created by iv on 8/20/2015.
  */
 object Panels {
+  val transparent: Color = new Color(0, 0, 0, 0)
 
-  abstract class Panel(val w: Int, val h: Int, backgroundColor: Color = Color.BLACK) extends JPanel {
+  abstract class Panel(val w: Int, val h: Int, backgroundColor: Color = transparent)
+    extends JPanel {
     val serialVersionUID = 1L
     setSize(w, h)
     setPreferredSize(this.getSize())
@@ -28,7 +30,8 @@ object Panels {
     }
   }
 
-  class BitmapPanel(val image: BufferedImage, w: Int, h: Int, backgroundColor: Color) extends Panel(w, h, backgroundColor) {
+  class BitmapPanel(val image: BufferedImage, w: Int, h: Int, backgroundColor: Color)
+    extends Panel(w, h, backgroundColor) {
     override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       g2d.drawImage(image, 0, 0, w, h, 0, 0, image.getWidth, image.getHeight(), null)
@@ -46,7 +49,8 @@ object Panels {
 
   }
 
-  abstract class FlippedPanel(w: Int, h: Int, backGroundColor: Color) extends Panel(w, h, backGroundColor) {
+  abstract class FlippedPanel(w: Int, h: Int, backGroundColor: Color = transparent)
+    extends Panel(w, h, backGroundColor) {
     override def paintComponent(g: Graphics): Unit = {
       super.paintComponent(g)
       g2d.translate(0, h)
