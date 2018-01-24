@@ -4,7 +4,7 @@ package com.scilari.geometry.models
   * Data point for holding two-dimensional data
   * Created by iv on 8/15/2015.
  */
-class DataPoint[+E](x: Float, y: Float, var data: E) extends Float2(x, y) {
+class DataPoint[+E](x: Float, y: Float, val data: E) extends Float2(x, y) {
   def this(p: Float2, data: E) = this(p.x, p.y, data)
 
   override def equals(that: Any): Boolean ={
