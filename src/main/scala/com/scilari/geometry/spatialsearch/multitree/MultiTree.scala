@@ -8,7 +8,7 @@ import com.scilari.geometry.spatialsearch._
   * @param trees
   * @tparam E
   */
-class MultiTree[E <: Float2](trees: Seq[SearchTree[E]]) extends Searchable[E]
+class MultiTree[E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends Searchable[E]
   with Searches[Float2, E] with PolygonalSearches[Float2, E]{
 
   private[this] val roots =  trees.map{_.root.asInstanceOf[Tree[Float2, E]#BaseType]}
@@ -32,4 +32,12 @@ class MultiTree[E <: Float2](trees: Seq[SearchTree[E]]) extends Searchable[E]
     val knnCond = new KnnWithCondition(k, condition)
     knnCond.search(knnCond.State(queryPoint, roots))
   }
+
+  override def fastPolygonalSearch(queryPoint: Float2): Seq[E] = {
+    val poly = new PolygonalDynamicMaxRange(3f)
+    poly.search(poly.State(queryPoint, roots))
+  }
+
+  override def isEmpty: Boolean = roots.forall(_.isEmpty)
+  override def nonEmpty: Boolean = roots.exists(_.nonEmpty)
 }

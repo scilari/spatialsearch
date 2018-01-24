@@ -155,9 +155,9 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
-    val tPolDyn = warmUpAndMeasureTime({
+    val tFastPol = warmUpAndMeasureTime({
       for(q <- queryPoints){
-        val neighbors = quadTree.polygonalDynamicMaxRangeSearch(q)
+        val neighbors = quadTree.fastPolygonalSearch(q)
       }
     }, runCount, warmUpCount)
 
@@ -173,10 +173,12 @@ class PerformanceTests extends FlatSpec {
       }
     }, runCount, warmUpCount)
 
+    assert(tPol > tFastPol)
+
     info("\n== Polygonal vs. range time ==")
     info("QuadTree (polygonal):" + tPol/totalQueryCount + " (ms/query)")
     info("QuadTree (poly max r: " + bb.width/20 + "): " + tPolMax/totalQueryCount + " (ms/query)")
-    info("QuadTree (poly dyn max r): " + tPolDyn/totalQueryCount + " (ms/query)")
+    info("QuadTree (fast poly): " + tFastPol/totalQueryCount + " (ms/query)")
     info("QuadTree (range): " + tR/totalQueryCount + " (ms/query)")
     info("QuadTree (range: " + meanRange +  "): " + tMeanRange/totalQueryCount + " (ms/query)")
   }

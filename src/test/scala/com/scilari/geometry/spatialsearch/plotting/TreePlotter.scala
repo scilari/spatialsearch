@@ -3,7 +3,7 @@ package com.scilari.geometry.spatialsearch.plotting
 import java.awt.{Color, Graphics2D}
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.SearchTree
+import com.scilari.geometry.spatialsearch.BoundedSearchTree
 import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
 import com.scilari.geometry.spatialsearch.quadtree.{Parameters, QuadTree}
 import com.scilari.geometry.spatialsearch.rtree.RTree
@@ -11,7 +11,7 @@ import com.scilari.geometry.plotting._
 
 object TreePlotter {
   def plot[E <: Float2](
-    tree: SearchTree[E],
+    tree: BoundedSearchTree[E],
     frameName: String = "Tree",
     width: Int = 800,
     height: Int = 800,
@@ -23,7 +23,7 @@ object TreePlotter {
     new Frame(frameName, panel)
   }
 
-  def drawTree[E <: Float2](tree: SearchTree[E], elemRadius: Float)(implicit g2d: Graphics2D): Unit ={
+  def drawTree[E <: Float2](tree: BoundedSearchTree[E], elemRadius: Float)(implicit g2d: Graphics2D): Unit ={
     val nodes: Seq[AABB] = tree.root.nodes.map{_.asInstanceOf[AABB]}
     val elems: Seq[Float2] = tree.root.elements
 

@@ -32,5 +32,16 @@ trait SpatialContainer[E]{
   /**
     * Removes element from the container by using the element coordinates.
     */
-  def remove(elementCoordinates: Float2, e: E)
+  def remove(elementCoordinates: Float2, e: E): Unit
+
+
+  /**
+    * Removes elements satisfying the filter
+    */
+  def remove(filter: E => Boolean): Unit
+
+
+  def isEmpty: Boolean
+
+  def nonEmpty: Boolean = !isEmpty
 }
