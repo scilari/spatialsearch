@@ -28,6 +28,8 @@ trait SearchTree[E <: Float2]
     new Polygonal().search(queryPoint, root)
   }
 
+  override def fastPolygonalSearch(queryPoint: Float2): Seq[E] = polygonalDynamicMaxRangeSearch(queryPoint)
+
   def polygonalMaxRangeSearch(queryPoint: Float2, maxRange: Float): Seq[E] = {
     new PolygonalMaxRange(maxRange).search(queryPoint, root)
   }

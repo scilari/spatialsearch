@@ -10,6 +10,8 @@ trait Searchable[E] {
 
   def polygonalSearch(queryPoint: Float2): Seq[E]
 
+  def fastPolygonalSearch(queryPoint: Float2): Seq[E]
+
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E]
 
   def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
@@ -17,5 +19,9 @@ trait Searchable[E] {
   }
 
   def nonEmptyRange(queryPoint: Float2, r: Float): Boolean = !isEmptyRange(queryPoint, r)
+
+  def isEmpty: Boolean
+
+  def nonEmpty: Boolean = !isEmpty
 
 }
