@@ -24,4 +24,8 @@ trait Searchable[E] {
 
   def nonEmpty: Boolean = !isEmpty
 
+  def elements: Seq[E] = rangeSearch(Float2.zero, Float.PositiveInfinity)
+
+  def nearestNeighborSearch(queryPoint: Float2): E = knnSearch(queryPoint, 1).head
+
 }

@@ -31,12 +31,8 @@ trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E]
 
   override def toString(): String = root.toString()
 
-  def elements: Seq[E] = root.elements
+  override def elements: Seq[E] = root.elements
 
   def leaves: Seq[Tree.Leaf] = root.leaves
-
-
-
-
 
 }
