@@ -20,7 +20,7 @@ class Pose(xx: Float = 0f, yy: Float = 0f, var heading: Angle = Angle(0f)) exten
 
   def strafe(d: Float): Unit = { this.+=( Float2.directed(heading + HalfPi, d))}
 
-  override def rotate(a: Float): Unit = { heading  += a }
+  override def rotate(a: Float): Unit = { heading += a }
 
   def move(control: Pose): Unit = {
     forward(control.x)

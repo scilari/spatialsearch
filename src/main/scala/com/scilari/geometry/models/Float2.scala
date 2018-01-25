@@ -10,7 +10,6 @@ import scala.collection.mutable
  */
 class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] with HalfPlaneObject {
   def this(x: Double, y: Double) = this(x.toFloat, y.toFloat)
-  def apply(x: Float = this.x, y: Float = this.y): Float2 = { this.x = x; this.y = y; this }
 
   def unary_- : Float2 = Float2(-x, -y)
 
@@ -29,10 +28,10 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def *=(that: Float2): Unit = {x *= that.x; y *= that.y}
   def /=(that: Float2): Unit = {x /= that.x; y /= that.y}
 
-  def +=(c: Float): Float2 = {x += c; y += c; this}
-  def -=(c: Float): Float2 = {x -= c; y -= c; this}
-  def *=(c: Float): Float2 = {x *= c; y *= c; this}
-  def /=(c: Float): Float2 = {x /= c; y /= c; this}
+  def +=(c: Float): Unit = {x += c; y += c}
+  def -=(c: Float): Unit = {x -= c; y -= c}
+  def *=(c: Float): Unit = {x *= c; y *= c}
+  def /=(c: Float): Unit = {x /= c; y /= c}
 
   def dot(that: Float2): Float = x*that.x + y*that.y
   def perpDot(that: Float2): Float = y*that.x - x*that.y
@@ -50,16 +49,19 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
 
   override def pointDeepestInHalfPlane(normal: Float2): Float2 = this
 
-  def rotate(angle: Float): Float2 = {
+  def rotate(angle: Float): Unit = {
     val s = sin(angle)
     val c = cos(angle)
     val xx = x*c - y*s
     val yy = x*s + y*c
     x = xx; y = yy
-    this
   }
 
-  def rotated(angle: Float): Float2 = Float2(this).rotate(angle)
+  def rotated(angle: Float): Float2 = {
+    val cp = Float2(this)
+    cp.rotate(angle)
+    cp
+  }
 
   def clamp(floor: Float2, ceil: Float2): Float2 =
     Float2(com.scilari.math.clamp(x, floor.x, ceil.x), com.scilari.math.clamp(y, floor.y, ceil.y))
