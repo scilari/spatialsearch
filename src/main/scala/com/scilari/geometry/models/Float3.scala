@@ -40,7 +40,7 @@ class Float3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
   def zy: Float2 = Float2(z, y)
 
   def rotatedXY(a: Float): Float3 = {
-    val rot = xy.rotate(a)
+    val rot = xy.rotated(a)
     Float3(rot.x, rot.y, z)
   }
 
