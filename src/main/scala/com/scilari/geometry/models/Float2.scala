@@ -1,6 +1,8 @@
 package com.scilari.geometry.models
 import com.scilari.math._
 
+import scala.collection.mutable
+
 
 /**
   * Two-dimensional point represented by Float coordinates
@@ -134,7 +136,7 @@ object Float2{
   }
 
   @inline
-  def sortByAngle[E <: Float2](queryPoint: Float2, points: Array[E]): Array[E] = {
+  def sortByAngle[E <: Float2](queryPoint: Float2, points: Seq[E]): Seq[E] = {
     val q = queryPoint
     def isUp(p: Float2): Boolean = p.y - q.y > 0f || (p.y - q.y == 0f && p.x - q.y > 0f)
     def angleComparator (p1: Float2, p2: Float2): Boolean = {
@@ -143,14 +145,17 @@ object Float2{
       (u1 && !u2) || (u1 == u2 &&  (p1-q).perpDot(p2-q) > 0f)
     }
 
-    object AngleOrdering extends Ordering[E] {
-      def compare(p1: E, p2: E): Int = {
-        if (angleComparator(p1, p2)) -1 else if(angleComparator(p2, p1)) 1 else 0
-      }
-    }
+    points.sortWith(angleComparator)
 
-    scala.util.Sorting.quickSort(points)(AngleOrdering)
-    points
+//    object AngleOrdering extends Ordering[E] {
+//      def compare(p1: E, p2: E): Int = {
+//        if (angleComparator(p1, p2)) -1 else if(angleComparator(p2, p1)) 1 else 0
+//      }
+//    }
+
+
+    //scala.util.Sorting.quickSort(points)(AngleOrdering)
+    //points
   }
 
   @inline
