@@ -1,6 +1,6 @@
 package com.scilari.geometry.models
 
-import com.scilari.math.HalfPi
+import com.scilari.math.{ArrayUtils, HalfPi}
 
 class Pose(xx: Float = 0f, yy: Float = 0f, var heading: Angle = Angle(0f)) extends Float2(xx, yy) {
   def +(that: Pose): Pose = Pose(super. + (that), heading + that.heading)
@@ -16,23 +16,22 @@ class Pose(xx: Float = 0f, yy: Float = 0f, var heading: Angle = Angle(0f)) exten
 
   def a: Float = heading.value
 
-  def forward(d: Float): Pose = { this.+=( Float2.directed(heading, d) ); this }
+  def forward(d: Float): Unit = { this.+=( Float2.directed(heading, d) )}
 
-  def strafe(d: Float): Pose = { this.+=( Float2.directed(heading + HalfPi, d)); this }
+  def strafe(d: Float): Unit = { this.+=( Float2.directed(heading + HalfPi, d))}
 
-  override def rotate(a: Float): Pose = { heading  += a; this }
+  override def rotate(a: Float): Unit = { heading  += a }
 
-  def move(control: Pose): Pose = {
+  def move(control: Pose): Unit = {
     forward(control.x)
     strafe(control.y)
     rotate(control.heading)
-    this
   }
 
   def moved(control: Pose): Pose = {
-    val copy = Pose(this)
-    copy.move(control)
-    copy
+    val cp = Pose(this)
+    cp.move(control)
+    cp
   }
 
   def moveTo(pose: Pose): Unit ={
@@ -52,5 +51,14 @@ object Pose{
   def apply(x: Float, y: Float, angle: Float): Pose = this(x, y, Angle(angle))
   def apply(that: Pose): Pose = Pose(that.x, that.y, that.heading)
   def apply(float2: Float2, a: Float = 0f): Pose = Pose(float2.x, float2.y, a)
+
+
+  def weightedMean(ps: Seq[Pose], ws: Seq[Float]): Pose = {
+    val x = ArrayUtils.weightedMean(ps.map{_.x}.toArray, ws.toArray)
+    val y = ArrayUtils.weightedMean(ps.map{_.y}.toArray, ws.toArray)
+    val a = Angle.weightedMean(ps.map{_.heading}, ws)
+    Pose(x, y, a)
+  }
+
 }
 
