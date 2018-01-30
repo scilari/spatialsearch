@@ -27,7 +27,7 @@ class PerformanceTests extends FlatSpec {
   val totalInsertCount = insertRunCount * pointCount
 
 
-  val f2 = Float2.random()
+  val f2 = Float2.random
 
   // Data with two clusters and a small number of random points elsewhere
   val points  =
