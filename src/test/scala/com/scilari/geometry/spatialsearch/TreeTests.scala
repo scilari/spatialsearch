@@ -12,7 +12,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
   val pointCount = 1000
   val points: Seq[Float2] = Seq.fill(pointCount)(Float2.random)
-  val queryPoints: Seq[Float2] = Seq.fill(20000)(Float2.random())
+  val queryPoints: Seq[Float2] = Seq.fill(20000)(Float2.random)
 
   def createEmptyUnitTree: BoundedSearchTree[Float2]
   def createFilledTree: BoundedSearchTree[Float2]
