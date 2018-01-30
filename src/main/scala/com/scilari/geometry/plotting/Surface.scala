@@ -4,6 +4,7 @@ import java.awt.{Color, Graphics2D}
 
 import com.scilari.geometry.models.{AABB, DataPoint, Float2, Float3}
 import com.scilari.geometry.plotting.Surface.ColorContainer
+import com.scilari.math._
 
 class Surface(data: Seq[DataPoint[Float3]], val valueMins: Float3 = Float3(0f), val valueMaxs: Float3 = Float3(1f)) {
   val normalizedData: Seq[DataPoint[ColorContainer]] = {
@@ -68,6 +69,39 @@ object Surface{
     )
 
     new Surface(data, valueMins, valueMaxs)
+  }
+
+  /**
+    * Normalizes the data based on its deviation and mean and squashes it through tanh to
+    * get values between -1 and 1.
+    * @param data Data points containing three dimensional inner data
+    * @param devScale How many deviations maps to 1 in tanh input
+    * @return Surface containing the data squashed in this way
+    */
+  def tanhSquashedWithDev(data: Seq[DataPoint[Float3]], devScale: Float = 2.0f): Surface = {
+    val xs = data.map{_.data.x}
+    val ys = data.map{_.data.y}
+    val zs = data.map{_.data.z}
+
+    val mX = mean(xs)
+    val mY = mean(ys)
+    val mZ = mean(zs)
+
+    val devs = Float3(deviation(xs), deviation(ys), deviation(zs))
+
+    val dX = xs.map{_ - mX}
+    val dY = ys.map{_ - mY}
+    val dZ = zs.map{_ - mZ}
+
+    val translated = (dX zip dY zip dZ).map{ case((x, y), z) => Float3(x, y, z) }
+
+    val scaled: Seq[Float3] = translated.map{d => (d*devScale)/devs}
+
+    val squashed = scaled.map{ d => Float3(Math.tanh(d.x), Math.tanh(d.y), Math.tanh(d.z))}
+
+    val squashedData = squashed.indices.map{i => new DataPoint[Float3](data(i), squashed(i))}
+    new Surface(squashedData, Float3(-1f), Float3(1f))
+
   }
 
   def tanhSquashed(data: Seq[DataPoint[Float3]], squashRatio: Float = 0.5f): Surface = {
