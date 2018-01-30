@@ -28,7 +28,7 @@ package object plotting {
 
 
   def drawAABB(box: AABB, color: Color = Color.GRAY)
-    (implicit g2d: Graphics2D): Unit = {
+    (g2d: Graphics2D): Unit = {
     g2d.setPaint(color)
     g2d.draw(box)
   }
@@ -48,7 +48,7 @@ package object plotting {
   }
 
   def drawFilledCircle[T <: Float2](point: T, color: Color = Color.RED, radius: Float)
-    (implicit g2d: Graphics2D): Unit ={
+    (g2d: Graphics2D): Unit ={
     val twoR = 2*radius
     val circle = new java.awt.geom.Ellipse2D.Double(point.x - radius, point.y - radius, twoR, twoR)
     g2d.setColor(color)
@@ -56,7 +56,7 @@ package object plotting {
   }
 
   def drawCircle[T <: Float2](point: T, color: Color = Color.RED, radius: Float)
-    (implicit g2d: Graphics2D): Unit ={
+    (g2d: Graphics2D): Unit ={
     val twoR = 2*radius
     val circle = new java.awt.geom.Ellipse2D.Double(point.x - radius, point.y - radius, twoR, twoR)
     g2d.setColor(color)
@@ -64,7 +64,7 @@ package object plotting {
   }
 
   def drawEdgeCircle[T <: Float2](point: T, faceColor: Color = Color.RED, edgeColor: Color = Color.BLACK, radius: Float)
-    (implicit g2d: Graphics2D): Unit ={
+    (g2d: Graphics2D): Unit ={
     // TODO: edge width
     val twoR = 2*radius
     val circle = new java.awt.geom.Ellipse2D.Double(point.x - radius, point.y - radius, twoR, twoR)
@@ -76,19 +76,19 @@ package object plotting {
   }
 
   def drawFilledPoints[T <: Float2](points: Traversable[T], color: Color = Color.RED, radius: Float)
-    (implicit g2d: Graphics2D){
+    (g2d: Graphics2D){
     points.foreach{drawFilledPoint(_, color, radius)(g2d)}
   }
 
   def drawFilledPoint[T <: Float2](point: T, color: Color = Color.RED, radius: Float)
-    (implicit g2d: Graphics2D){
+    (g2d: Graphics2D){
     g2d.setPaint(color)
     val rect = new Rectangle2D.Float(point.x - radius, point.y - radius, 2*radius, 2*radius)
     g2d.fill(rect)
   }
 
   def drawScaledBitmap(image: BufferedImage, imgPxPerMeter: Float)
-    (implicit g2d: Graphics2D): Unit = {
+    (g2d: Graphics2D): Unit = {
     g2d.drawImage(image, 0, 0, image.getWidth(), image.getHeight,
       0, 0, (imgPxPerMeter*image.getWidth).toInt, (imgPxPerMeter*image.getHeight).toInt, null)
   }
