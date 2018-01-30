@@ -50,4 +50,13 @@ package object math {
     y*(1.5f - halfX*y*y)
   }
 
+  @inline def mean(xs: Seq[Float]): Float = xs.sum/xs.length
+
+  @inline def variance(xs: Seq[Float]): Float = {
+    val m = mean(xs)
+    xs.map{x => (x-m)*(x-m)}.sum/xs.size
+  }
+
+  @inline def deviation(xs: Seq[Float]): Float = sqrt(variance(xs))
+
 }
