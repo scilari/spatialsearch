@@ -75,7 +75,7 @@ object Surface{
     * Normalizes the data based on its deviation and mean and squashes it through tanh to
     * get values between -1 and 1.
     * @param data Data points containing three dimensional inner data
-    * @param devScale How many deviations maps to 1 in tanh input
+    * @param devScale How many deviations maps to 1 in tanh() input
     * @return Surface containing the data squashed in this way
     */
   def tanhSquashedWithDev(data: Seq[DataPoint[Float3]], devScale: Float = 2.0f): Surface = {
@@ -89,13 +89,15 @@ object Surface{
 
     val devs = Float3(deviation(xs), deviation(ys), deviation(zs))
 
+    val scaledDevs = devs*devScale
+
     val dX = xs.map{_ - mX}
     val dY = ys.map{_ - mY}
     val dZ = zs.map{_ - mZ}
 
-    val translated = (dX zip dY zip dZ).map{ case((x, y), z) => Float3(x, y, z) }
+    val shifted = (dX zip dY zip dZ).map{ case((x, y), z) => Float3(x, y, z) }
 
-    val scaled: Seq[Float3] = translated.map{d => (d*devScale)/devs}
+    val scaled: Seq[Float3] = shifted.map{d => d/scaledDevs}
 
     val squashed = scaled.map{ d => Float3(Math.tanh(d.x), Math.tanh(d.y), Math.tanh(d.z))}
 
