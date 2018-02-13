@@ -7,6 +7,8 @@ package com.scilari.geometry.models
 class DataPoint[+E](x: Float, y: Float, val data: E) extends Float2(x, y) {
   def this(p: Float2, data: E) = this(p.x, p.y, data)
 
+  override def copy: DataPoint[E] = this(x, y, data)
+
   override def equals(that: Any): Boolean ={
     isInstanceOf[DataPoint[E]] && {
       val thatDp = that.asInstanceOf[DataPoint[E]]
