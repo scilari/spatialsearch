@@ -6,8 +6,7 @@ import com.scilari.geometry.spatialsearch.{BoundedPlanarTree, Tree}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-trait RTreeLike[E <: Float2] {
-  object Tree extends BoundedPlanarTree[E]{
+trait RTreeLike[E <: Float2] extends BoundedPlanarTree[E] {
     type BaseType = BoundedBase
     type NodeType = RTreeNode
     type LeafType = RTreeLeaf
@@ -74,7 +73,5 @@ trait RTreeLike[E <: Float2] {
         newParent
       }
     }
-
-  }
 
 }

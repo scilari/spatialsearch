@@ -93,7 +93,7 @@ trait Searches[P, E <: MetricObject[P]]{
   final class Removal(e: E) extends Search{
 
     val parameters: SearchParameters = new SearchParameters{
-      override def filterNodes(n: Tree[P, E]#BaseType, s: State): Boolean =
+      override def filterNodes(n: BaseType, s: State): Boolean =
         n.zeroDistance(s.queryPoint)
 
       override def filterElements(e: E, s: State): Boolean =
@@ -102,7 +102,7 @@ trait Searches[P, E <: MetricObject[P]]{
       override def modifyState(s: State): Unit = {
         if(s.headNodeDist == 0) {
           s.nodes.head.value match {
-            case leaf: Tree[P, E]#Leaf => leaf.elements -= e
+            case leaf: Leaf => leaf.elements -= e
             case _ => ()
           }
         }

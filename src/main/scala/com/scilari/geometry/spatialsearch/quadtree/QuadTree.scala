@@ -11,8 +11,6 @@ import com.scilari.geometry.spatialsearch._
 final class QuadTree[E <: Float2] private (bb: AABB, parameters: Parameters = Parameters())
   extends BoundedSearchTree[E] with QuadTreeLike[E]{
 
-  import Tree.{BaseType, NodeType, LeafType}
-
   var root: BaseType = new LeafType(bb, null, parameters)
 
   def addEnclose(e: E): Unit = {

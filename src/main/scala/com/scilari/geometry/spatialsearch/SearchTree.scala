@@ -2,11 +2,11 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
 
-trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E]
+trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with SpatialContainer[E]
   with Searches[Float2, E] with PolygonalSearches[Float2, E] with Traversable[E]{
 
-  val Tree: Tree[Float2, E]
-  var root: Tree.BaseType
+  //val Tree: Tree[Float2, E]
+  var root: BaseType
 
   def add(e: E): Unit = root = root.add(e)
 
@@ -16,7 +16,7 @@ trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E]
 
   def remove(queryPoint: Float2, e: E): Unit = {
     val removal = new Removal(e)
-    removal.search(queryPoint, root)
+    removal.search(queryPoint, root.asInstanceOf[removal.BaseType]) // TODO: fix this cast
   }
 
   override def isEmpty: Boolean = root.isEmpty
@@ -33,6 +33,6 @@ trait SearchTree[E <: Float2] extends Searchable[E] with SpatialContainer[E]
 
   override def elements: Seq[E] = root.elements
 
-  def leaves: Seq[Tree.Leaf] = root.leaves
+  def leaves: Seq[LeafType] = root.leaves
 
 }

@@ -14,7 +14,7 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
         !isDominatedBy(e, s.queryPoint, s.foundElements)
       }
 
-      override def filterNodes(n: B, s: State): Boolean = {
+      override def filterNodes(n: BaseType, s: State): Boolean = {
         !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
       }
 
@@ -33,7 +33,7 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
         s.queryPoint.distanceSq(e) <= rSq && !isDominatedBy(e, s.queryPoint, s.foundElements)
       }
 
-      override def filterNodes(n: B, s: State): Boolean = {
+      override def filterNodes(n: BaseType, s: State): Boolean = {
         n.asInstanceOf[AABB].distanceSq(s.queryPoint) <= rSq && !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
       }
 
@@ -83,7 +83,7 @@ trait PolygonalSearches[P <: Float2, E <: Float2 with MetricObject[P]]{
         e.distanceSq(s.queryPoint) <= maxRange && !isDominatedBy(e, s.queryPoint, s.foundElements)
       }
 
-      override def filterNodes(n: B, s: State): Boolean = {
+      override def filterNodes(n: BaseType, s: State): Boolean = {
         n.asInstanceOf[AABB].distanceSq(s.queryPoint) <= maxRange && !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
       }
 

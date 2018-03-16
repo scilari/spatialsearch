@@ -11,12 +11,11 @@ trait Tree[P, E]{
   type LeafType <: BaseType with Leaf
 
   trait Base extends MetricObject[P] with Traversable[E] {
-    //this: BaseType =>
     def elements: Seq[E]
 
     def nodes: Seq[BaseType]
 
-    def leaves: Seq[Leaf]
+    def leaves: Seq[LeafType]
 
     override def foreach[U](f: E => U): Unit = elements.foreach(f)
 
@@ -53,7 +52,7 @@ trait Tree[P, E]{
 
     def nodes: Seq[BaseType] = Seq(this) ++ children.flatMap{_.nodes}
 
-    def leaves: Seq[Leaf] = children.flatMap{_.leaves}
+    def leaves: Seq[LeafType] = children.flatMap{_.leaves}
 
     def depth: Int = children.map {
       _.depth
@@ -84,7 +83,7 @@ trait Tree[P, E]{
 
     def nodes: Seq[BaseType] = Seq(this)
 
-    def leaves: Seq[Leaf] = Seq(this)
+    def leaves: Seq[LeafType] = Seq(this)
 
     def depth: Int = 1
 

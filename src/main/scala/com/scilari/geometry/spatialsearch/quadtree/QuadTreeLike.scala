@@ -7,8 +7,7 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-trait QuadTreeLike[E <: Float2]{
-  object Tree extends BoundedPlanarTree[E]{
+trait QuadTreeLike[E <: Float2] extends BoundedPlanarTree[E]{
     type BaseType = BoundedBase
     type NodeType = QuadNode
     type LeafType = QuadLeaf
@@ -45,7 +44,6 @@ trait QuadTreeLike[E <: Float2]{
       def toNode: NodeType = new NodeType(this, this.parent, parameters)
 
     }
-  }
 }
 
 

@@ -7,8 +7,6 @@ import com.scilari.geometry.spatialsearch.BoundedSearchTree
 final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
   extends BoundedSearchTree[E] with RTreeLike[E]{
 
-  import Tree._
-
   var root: BaseType = new LeafType(bb, null, nodeElementCapacity)
 
   override def add(elems: Seq[E]): Unit = root = root.add(elems)
