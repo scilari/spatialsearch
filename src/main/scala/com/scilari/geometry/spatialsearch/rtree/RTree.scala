@@ -9,6 +9,10 @@ final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
 
   var root: BaseType = new LeafType(bb, null, nodeElementCapacity)
 
+  override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
+
+  override def nodeDist(p: Float2, n: BoundedBase): Float = n.distanceSq(p)
+
   override def add(elems: Seq[E]): Unit = root = root.add(elems)
 
   def addEnclose(e: E): Unit = add(e) // elements are enclosed

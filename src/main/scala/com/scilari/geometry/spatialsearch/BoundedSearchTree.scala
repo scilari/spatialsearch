@@ -1,50 +1,25 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.models.Float2
 
 trait BoundedSearchTree[E <: Float2] extends SearchTree[E] with BoundedPlanarTree[E] {
 
   var root: BaseType
 
-  def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
-    val s = new Knn(k)
-    s.search(queryPoint, root.asInstanceOf[s.BaseType])
+  def knnSearch(queryPoint: Float2, k: Int): Seq[E] = knn(k)(queryPoint, root)
+
+  def rangeSearch(queryPoint: Float2, r: Float): Seq[E] = {
+    range(r)(queryPoint, root)
   }
 
-  def rangeSearch(queryPoint: Float2, r: Float): Seq[E] =
-    rangeSearch(queryPoint, r, sizeHint = Searches.defaultRangeSizeHint)
+  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] =
+    knnWithCondition(k, condition)(queryPoint, root)
 
-  def rangeSearch(queryPoint: Float2, r: Float, sizeHint: Int = Searches.defaultRangeSizeHint): Seq[E] = {
-    val s = new Range(r, sizeHint)
-    s.search(queryPoint, root.asInstanceOf[s.BaseType])
-  }
+  override def polygonalSearch(queryPoint: Float2): Seq[E] = polygonal(queryPoint, root)
 
-  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] = {
-    val s = new KnnWithCondition(k, condition)
-    s.search(queryPoint, root.asInstanceOf[s.BaseType])
-  }
+  override def fastPolygonalSearch(queryPoint: Float2): Seq[E] = polygonalDynamicMaxRange()(queryPoint, root)
 
-  override def polygonalSearch(queryPoint: Float2): Seq[E] = {
-    val s = new Polygonal()
-    s.search(queryPoint, root.asInstanceOf[s.BaseType])
-  }
-
-  override def fastPolygonalSearch(queryPoint: Float2): Seq[E] = polygonalDynamicMaxRangeSearch(queryPoint)
-
-  def polygonalMaxRangeSearch(queryPoint: Float2, maxRange: Float): Seq[E] = {
-    val s = new PolygonalMaxRange(maxRange)
-    s.search(queryPoint, root.asInstanceOf[s.BaseType])
-  }
-
-  def polygonalDynamicMaxRangeSearch(queryPoint: Float2, maxRangeFactor: Float = 3f): Seq[E] = {
-    val s = new PolygonalDynamicMaxRange(maxRangeFactor)
-    s.search(queryPoint, root.asInstanceOf[s.BaseType])
-  }
-
-  override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
-    val s = new RangeUntilFirstFound(r)
-    s.search(queryPoint, root.asInstanceOf[s.BaseType]).isEmpty
-  }
+  override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = rangeUntilFirstFound(r)(queryPoint, root).isEmpty
 
 
 }

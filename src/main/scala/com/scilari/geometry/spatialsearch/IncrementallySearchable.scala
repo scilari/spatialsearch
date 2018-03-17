@@ -1,6 +1,5 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.MetricObject
 import com.scilari.geometry.spatialsearch.queues._
 import com.scilari.math.sqrt
 
@@ -14,24 +13,18 @@ import scala.collection.mutable.ArrayBuffer
   * Provides highly versatile searches via modifiable SearchParameters
   * Created by iv on 1/17/2017.
   */
-trait IncrementallySearchable[P, E <: MetricObject[P]] extends Tree[P, E]{
+trait IncrementallySearchable[P, E] extends Tree[P, E]{
 
-  // TODO: this needs actual tree instance in order to get the types correct
-  // TODO: also provide the distance functions with the tree (Is the tree the correct place?)
+  type SearchFn = (P, BaseType) => Seq[E]
 
-  //type B = BaseType
-  //type N = NodeType
-  //type L = LeafType
+  def elemDist(p: P, e: E): Float
+  def nodeDist(p: P, n: BaseType): Float
 
-  def elemDist(p: P, e: E): Float = e.distanceSq(p)
-  def nodeDist(p: P, n: BaseType): Float = n.distanceSq(p)
-
-  val parameters: SearchParameters
-
-  def search(queryPoint: P, tree: BaseType): Seq[E] = search(State.defaultInitialState(queryPoint, tree))
+  def search(params: SearchParameters)(queryPoint: P, tree: BaseType): Seq[E] =
+    search(State.defaultInitialState(queryPoint, tree, params), params)
 
   @tailrec
-  final def search(state: State, params: SearchParameters = parameters): Seq[E] = {
+  final def search(state: State, params: SearchParameters): Seq[E] = {
     import state._
     import params._
 
@@ -52,7 +45,7 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] extends Tree[P, E]{
             leaf.elements.foreach { c => if (filterElements(c, state)) elements.enqueue(elemDist(queryPoint, c), c) }
         }
       }
-      search(state)
+      search(state, params)
     }
   }
 
@@ -76,12 +69,12 @@ trait IncrementallySearchable[P, E <: MetricObject[P]] extends Tree[P, E]{
       new State(queryPoint, initialNodes)
     }
 
-    def defaultInitialState(queryPoint: P, tree: BaseType): State = {
+    def defaultInitialState(queryPoint: P, tree: BaseType, params: SearchParameters): State = {
       new State(
         queryPoint,
-        new FloatHeap[BaseType](parameters.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
-        new FloatHeap[E](parameters.elemQueueSizeHint),
-        new ArrayBuffer[E](parameters.foundElemSizeHint)
+        new FloatHeap[BaseType](params.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
+        new FloatHeap[E](params.elemQueueSizeHint),
+        new ArrayBuffer[E](params.foundElemSizeHint)
       )
     }
   }

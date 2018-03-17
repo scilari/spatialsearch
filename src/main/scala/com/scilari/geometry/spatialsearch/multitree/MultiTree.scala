@@ -11,34 +11,33 @@ import com.scilari.geometry.spatialsearch._
 class MultiTree[E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends Searchable[E]
   with Searches[Float2, E] with PolygonalSearches[Float2, E]{
 
-  private[this] val roots =  trees.map{_.root.asInstanceOf[Tree[Float2, E]#BaseType]}
+  private[this] val roots = trees.map{tree => tree.root.asInstanceOf[BaseType]}
+
+  override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
+
+  override def nodeDist(p: Float2, n: BaseType): Float = n.distanceSq(p)
 
   override def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
-    val knn = new Knn(k)
-    // TODO: fix all these casts
-    knn.search(knn.State(queryPoint, roots.asInstanceOf[Seq[knn.BaseType]]))
+    search(State(queryPoint, roots), new KnnParameters(k))
   }
 
   override def rangeSearch(queryPoint: Float2, r: Float): Seq[E] = {
-    val range = new Range(r)
-    range.search(range.State(queryPoint, roots.asInstanceOf[Seq[range.BaseType]]))
+    search(State(queryPoint, roots), new RangeParameters(r))
   }
 
   override def polygonalSearch(queryPoint: Float2): Seq[E] = {
-    val poly = new Polygonal()
-    poly.search(poly.State(queryPoint, roots.asInstanceOf[Seq[poly.BaseType]]))
+    search(State(queryPoint, roots), new PolygonalParameters())
   }
 
   override def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] = {
-    val knnCond = new KnnWithCondition(k, condition)
-    knnCond.search(knnCond.State(queryPoint, roots.asInstanceOf[Seq[knnCond.BaseType]]))
+    search(State(queryPoint, roots), new KnnWithCondition(k, condition))
   }
 
   override def fastPolygonalSearch(queryPoint: Float2): Seq[E] = {
-    val poly = new PolygonalDynamicMaxRange(3f)
-    poly.search(poly.State(queryPoint, roots.asInstanceOf[Seq[poly.BaseType]]))
+    search(State(queryPoint, roots.asInstanceOf[Seq[BaseType]]), new PolygonalDynamicMaxRange(3f))
   }
 
   override def isEmpty: Boolean = roots.forall(_.isEmpty)
   override def nonEmpty: Boolean = roots.exists(_.nonEmpty)
+
 }

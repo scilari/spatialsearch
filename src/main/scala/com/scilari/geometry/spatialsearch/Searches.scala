@@ -11,55 +11,55 @@ import scala.collection.mutable.ArrayBuffer
 /**
   * Created by iv on 1/17/2017.
   */
-trait Searches[P, E <: MetricObject[P]]{
+trait Searches[P, E <: MetricObject[P]] extends IncrementallySearchable[P, E]{
 
-  type Search = IncrementallySearchable[P, E]
+  def knn(k: Int): SearchFn = search(new KnnParameters(k))
 
-  final class Knn(k: Int) extends Search{
-    val parameters: SearchParameters = KnnParameters
-    private final object KnnParameters extends SearchParameters{
-      override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
-      override val foundElemSizeHint: Int = k
-    }
+  def range(r: Float, sizeHint: Int = Searches.defaultRangeSizeHint): SearchFn = search(new RangeParameters(r, sizeHint))
+
+  def knnWithCondition(k: Int, condition: E => Boolean): SearchFn = search(new KnnWithCondition(k, condition))
+
+  def rangeUntilFirstFound(r: Float): SearchFn = search(new RangeUntilFirstFound(r))
+
+  def removal(e: E): SearchFn = search(new Removal(e)) // TODO: does not belong here
+
+
+  final class KnnParameters(k: Int) extends SearchParameters{
+    override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
+    override val foundElemSizeHint: Int = k
   }
 
-  final class Range(r: Float, sizeHint: Int = Searches.defaultRangeSizeHint)
-    extends Search{
-    val parameters: SearchParameters = RangeParameters
-
-    private final object RangeParameters extends SearchParameters{
-      // Skipping the queues in favor of performance, as we do not need the elements in order
-      override def modifyState(s: State): Unit = {
-        Range.range(s.queryPoint, s.nodes.getValues, r, s.foundElements)
-      }
-
-      override def endCondition(s: State): Boolean = true
-      override val elemQueueSizeHint: Int = 0
-      override val nodeQueueSizeHint: Int = 1
-      override val foundElemSizeHint: Int = sizeHint
-
+  final class RangeParameters(r: Float, sizeHint: Int = Searches.defaultRangeSizeHint) extends SearchParameters{
+    // Skipping the queues in favor of performance, as we do not need the elements in order
+    override def modifyState(s: State): Unit = {
+      Range.range(s.queryPoint, s.nodes.getValues, r, s.foundElements)
     }
+
+    override def endCondition(s: State): Boolean = true
+    override val elemQueueSizeHint: Int = 0
+    override val nodeQueueSizeHint: Int = 1
+    override val foundElemSizeHint: Int = sizeHint
+
   }
 
   object Range{
-    def range(queryPoint: P, rootNodes: Seq[Tree[P, E]#BaseType],
+    def range(queryPoint: P, rootNodes: Seq[BaseType],
       r: Float, foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()): Seq[E] = {
       val rSq = r * r
 
       @tailrec
-      def rangeRec(nodes: List[Tree[P, E]#BaseType]): Unit ={
+      def rangeRec(nodes: List[Base]): Unit ={
         nodes match{
-          case (leaf: Tree[P, E]#Leaf) :: (tail: List[_]) =>
+          case (leaf: Leaf) :: (tail: List[_]) =>
             if(leaf.distanceSq(queryPoint) <= rSq){
-              leaf.elements.foreach(e => if(e.distanceSq(queryPoint) <= rSq) foundElements += e)
+              leaf.elements.foreach(e => if(elemDist(queryPoint, e) <= rSq) foundElements += e)
             }
             rangeRec(tail)
-          case (node: Tree[P, E]#Node) :: (tail: List[Tree[P, E]#Base]) =>
+          case (node: Node) :: (tail: List[Base]) =>
             var ns = tail
-            if(node.distanceSq(queryPoint) <= rSq) {
-              var i = 0; val n = node.children.length
-              while (i < n) { ns = node.children(i) :: ns; i += 1}
-            }
+            val cs = node.children
+            var i = 0; val n = cs.length
+            while (i < n) { if(nodeDist(queryPoint, cs(i)) <= rSq) ns = cs(i) :: ns; i += 1}
             rangeRec(ns)
           case _ => ()
         }
@@ -68,31 +68,23 @@ trait Searches[P, E <: MetricObject[P]]{
       rangeRec(rootNodes.toList)
       foundElements
     }
-
   }
 
-  class KnnWithCondition(k: Int, condition: E => Boolean)
-    extends Search{
-    val parameters: SearchParameters = new SearchParameters {
-      override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
-      override def filterElements(e: E, s: State): Boolean = condition(e)
-    }
+  class KnnWithCondition(k: Int, condition: E => Boolean) extends SearchParameters {
+    override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
+    override def filterElements(e: E, s: State): Boolean = condition(e)
   }
 
-  class RangeUntilFirstFound(r: Float)
-    extends Search{
+
+  class RangeUntilFirstFound(r: Float) extends SearchParameters{
     val rSq: Float = r*r
-    val parameters: SearchParameters = new SearchParameters {
-      override def endCondition(s: State): Boolean = {
-        s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
-      }
+    override def endCondition(s: State): Boolean = {
+      s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
     }
   }
 
 
-  final class Removal(e: E) extends Search{
-
-    val parameters: SearchParameters = new SearchParameters{
+  final class Removal(e: E) extends SearchParameters{
       override def filterNodes(n: BaseType, s: State): Boolean =
         n.zeroDistance(s.queryPoint)
 
@@ -108,10 +100,6 @@ trait Searches[P, E <: MetricObject[P]]{
         }
       }
     }
-  }
-
-
-
 }
 
 object Searches{

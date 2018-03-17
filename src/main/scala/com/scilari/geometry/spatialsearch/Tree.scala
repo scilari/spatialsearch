@@ -39,7 +39,7 @@ trait Tree[P, E]{
 
     def nonLeaf: Boolean = !isLeaf
 
-    def contains(e: P): Boolean = zeroDistance(e)
+    def contains(e: P): Boolean
 
   }
 
