@@ -62,13 +62,9 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
       @tailrec
       def rangeRec(nodes: List[Base]): Unit ={
         nodes match{
-          case (leaf: Leaf) :: (tail: List[_]) =>
+          case (leaf: Leaf) :: (tail: List[Base]) =>
             val es = leaf.elements
-            var i = 0; val n = es.size
-            while(i < n){
-              if(elemDist(queryPoint, es(i)) <= rSq) foundElements += es(i)
-              i += 1
-            }
+            es.foreach(e => if(elemDist(queryPoint, e) <= rSq) foundElements += e)
             rangeRec(tail)
           case (node: Node) :: (tail: List[Base]) =>
             var ns = tail
