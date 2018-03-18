@@ -12,6 +12,8 @@ class Angle(var value: Float){
 }
 
 object Angle{
+  import scala.language.implicitConversions
+
   def apply(value: Float): Angle = new Angle(value)
   implicit def toFloat(a: Angle): Float = a.value
   implicit def fromFloat(f: Float): Angle = new Angle(f)
@@ -36,7 +38,7 @@ object Angle{
   }
 
   def weightedMean(angles: Seq[Angle], ws: Seq[Float]): Float = {
-    ArrayUtils.weightedMeanAngle(angles.map{_.toFloat}.toArray, ws.toArray)
+    ArrayUtils.weightedMeanAngle(angles.map{toFloat}.toArray, ws.toArray)
   }
 
 }
