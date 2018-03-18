@@ -50,15 +50,20 @@ trait Searches[P, E] extends IncrementallySearchable[P, E]{
       def rangeRec(nodes: List[Base]): Unit ={
         nodes match{
           case (leaf: Leaf) :: (tail: List[_]) =>
-            if(leaf.distanceSq(queryPoint) <= rSq){
-              leaf.elements.foreach(e => if(elemDist(queryPoint, e) <= rSq) foundElements += e)
+            val es = leaf.elements
+            var i = 0; val n = es.size
+            while(i < n){
+              if(elemDist(queryPoint, es(i)) <= rSq) foundElements += es(i)
+              i += 1
             }
             rangeRec(tail)
           case (node: Node) :: (tail: List[Base]) =>
             var ns = tail
             val cs = node.children
             var i = 0; val n = cs.length
-            while (i < n) { if(nodeDist(queryPoint, cs(i)) <= rSq) ns = cs(i) :: ns; i += 1}
+            while (i < n) {
+              if(nodeDist(queryPoint, cs(i)) <= rSq) ns = cs(i) :: ns; i += 1
+            }
             rangeRec(ns)
           case _ => ()
         }
