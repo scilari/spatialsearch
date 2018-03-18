@@ -2,7 +2,7 @@ package com.scilari.geometry.spatialsearch.rtree
 
 import com.scilari.geometry.models.{AABB, Float2}
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable
 
 object RTreeUtils{
 
@@ -18,8 +18,8 @@ object RTreeUtils{
     val centerY = node.centerY
 
     // arranging into four lists based on the side they are closest to
-    val (right: ListBuffer[Float2], left: ListBuffer[Float2]) = points.partition(_.x > centerX)
-    val (top: ListBuffer[Float2], bottom: ListBuffer[Float2]) = points.partition(_.y > centerY)
+    val (right: mutable.Buffer[Float2], left: mutable.Buffer[Float2]) = points.partition(_.x > centerX)
+    val (top: mutable.Buffer[Float2], bottom: mutable.Buffer[Float2]) = points.partition(_.y > centerY)
 
     // deciding along which dimension to split
     val diffX = math.abs(left.size - right.size)
