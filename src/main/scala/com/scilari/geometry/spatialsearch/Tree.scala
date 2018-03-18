@@ -1,16 +1,14 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.MetricObject
 
 import scala.collection.mutable
-
 
 trait Tree[P, E]{
   type BaseType <: Base
   type NodeType <: BaseType with Node
   type LeafType <: BaseType with Leaf
 
-  trait Base extends MetricObject[P] with Traversable[E] {
+  trait Base extends Traversable[E] {
     def elements: Seq[E]
 
     def nodes: Seq[BaseType]

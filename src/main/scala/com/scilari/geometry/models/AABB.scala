@@ -6,7 +6,7 @@ package com.scilari.geometry.models
  * Created by iv on 25.2.2014.
  */
 
-class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Float2] with HalfPlaneObject{
+class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends HalfPlaneObject{
 
   def this(minX: Float, minY: Float, maxX: Float, maxY: Float) = this(Float2(minX, minY), Float2(maxX, maxY))
   def this(box: AABB) = this(box.minPoint, box.maxPoint)
@@ -34,6 +34,8 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends MetricObject[Fl
   def corners: Array[Float2] = Array(topLeft, topRight, bottomLeft, bottomRight)
 
   def distanceSq(p: Float2): Float = Float2.distanceSq(p, closestBorderPoint(p))
+
+  def distance(p: Float2): Float = com.scilari.math.sqrt(distanceSq(p))
 
   def closestCorner(p: Float2): Float2 = {
     val left = p.x <= centerX

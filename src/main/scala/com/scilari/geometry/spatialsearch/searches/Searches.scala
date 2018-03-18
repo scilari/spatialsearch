@@ -39,6 +39,19 @@ trait Searches[P, E] extends IncrementallySearchable[P, E]{
 
   }
 
+  protected final class KnnWithCondition(k: Int, condition: E => Boolean) extends SearchParameters {
+    override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
+    override def filterElements(e: E, s: State): Boolean = condition(e)
+  }
+
+
+  protected final class RangeUntilFirstFound(r: Float) extends SearchParameters{
+    val rSq: Float = r*r
+    override def endCondition(s: State): Boolean = {
+      s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
+    }
+  }
+
   private object Range{
     val defaultRangeSizeHint: Int = 32
 
@@ -73,20 +86,6 @@ trait Searches[P, E] extends IncrementallySearchable[P, E]{
       foundElements
     }
   }
-
-  protected final class KnnWithCondition(k: Int, condition: E => Boolean) extends SearchParameters {
-    override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
-    override def filterElements(e: E, s: State): Boolean = condition(e)
-  }
-
-
-  protected final class RangeUntilFirstFound(r: Float) extends SearchParameters{
-    val rSq: Float = r*r
-    override def endCondition(s: State): Boolean = {
-      s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
-    }
-  }
-
 
   protected final class Removal(e: E) extends SearchParameters{
       override def filterNodes(n: BaseType, s: State): Boolean =

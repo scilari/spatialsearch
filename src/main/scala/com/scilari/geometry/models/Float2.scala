@@ -1,14 +1,12 @@
 package com.scilari.geometry.models
 import com.scilari.math._
 
-import scala.collection.mutable
-
 
 /**
   * Two-dimensional point represented by Float coordinates
  * Created by iv on 10.2.2014.
  */
-class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] with HalfPlaneObject {
+class Float2(var x: Float = 0f, var y: Float = 0f) extends HalfPlaneObject {
   def this(x: Double, y: Double) = this(x.toFloat, y.toFloat)
 
   def unary_- : Float2 = Float2(-x, -y)
@@ -41,8 +39,9 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends MetricObject[Float2] 
   def length: Float = sqrt(lengthSq)
 
   def distanceSq(that: Float2): Float = Float2.distanceSq(this, that)
+  def distance(that: Float2): Float = sqrt(distanceSq(that))
 
-  override def zeroDistance(point: Float2): Boolean = equalCoordinates(point)
+  def zeroDistance(point: Float2): Boolean = equalCoordinates(point)
 
   def direction: Float = atan2(y, x)
   def manhattan: Float = abs(x + y)
@@ -163,7 +162,7 @@ object Float2{
   @inline
   def distanceSq(a: Float2, b: Float2): Float = { val dx = a.x - b.x; val dy = a.y - b.y; dx*dx + dy*dy}
 
-  def distance(a: Float2, b: Float2): Float = Math.sqrt(distanceSq(a, b)).toFloat
+  def distance(a: Float2, b: Float2): Float = sqrt(distanceSq(a, b))
 
   def fastAngleBetween(a: Float2, b: Float2): Float = {
     Math.acos(fastCosBetween(a, b)).toFloat

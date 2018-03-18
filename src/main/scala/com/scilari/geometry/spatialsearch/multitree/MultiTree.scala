@@ -9,8 +9,9 @@ import com.scilari.geometry.spatialsearch.searches.{PolygonalSearches, Searches}
   * @param trees The trees to search from
   * @tparam E Element type
   */
-class MultiTree[E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends Searchable[E]
-  with Searches[Float2, E] with PolygonalSearches[Float2, E]{
+class MultiTree[E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends BoundedSearchTree[E]{
+
+  var root: BaseType = null.asInstanceOf[BaseType]
 
   private[this] val roots = trees.map{tree => tree.root.asInstanceOf[BaseType]}
 
@@ -40,5 +41,7 @@ class MultiTree[E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends Searchabl
 
   override def isEmpty: Boolean = roots.forall(_.isEmpty)
   override def nonEmpty: Boolean = roots.exists(_.nonEmpty)
+
+  def addEnclose(e: E): Unit = ???
 
 }

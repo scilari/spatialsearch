@@ -10,7 +10,6 @@ trait BoundedSearchTree[E <: Float2] extends SearchTree[E] {
 
     override def toString(): String = "Bounded Tree: " + super[AABB].toString()
   }
-
 }
 
 
