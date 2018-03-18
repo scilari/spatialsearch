@@ -1,12 +1,12 @@
 package com.scilari.geometry.spatialsearch.rtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.{BoundedPlanarTree, Tree}
+import com.scilari.geometry.spatialsearch.{BoundedSearchTree, Tree}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-trait RTreeLike[E <: Float2] extends BoundedPlanarTree[E] {
+trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
     type BaseType = BoundedBase
     type NodeType = RTreeNode
     type LeafType = RTreeLeaf

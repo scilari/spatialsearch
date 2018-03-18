@@ -5,7 +5,7 @@ import com.scilari.geometry.spatialsearch.BoundedSearchTree
 
 
 final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
-  extends BoundedSearchTree[E] with RTreeLike[E]{
+  extends RTreeLike[E]{
 
   var root: BaseType = new LeafType(bb, null, nodeElementCapacity)
 

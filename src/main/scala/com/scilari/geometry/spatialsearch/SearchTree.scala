@@ -3,10 +3,30 @@ package com.scilari.geometry.spatialsearch
 import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch.searches.{PolygonalSearches, Searches}
 
+/**
+  * Ties the searches and operations into a root node
+  * @tparam E Element type
+  */
 trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with SpatialContainer[E]
   with Searches[Float2, E] with PolygonalSearches[Float2, E] with Traversable[E]{
 
   var root: BaseType
+
+  def knnSearch(queryPoint: Float2, k: Int): Seq[E] = knn(k)(queryPoint, root)
+
+  def rangeSearch(queryPoint: Float2, r: Float): Seq[E] = {
+    range(r)(queryPoint, root)
+  }
+
+  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E] =
+    knnWithCondition(k, condition)(queryPoint, root)
+
+  override def polygonalSearch(queryPoint: Float2): Seq[E] = polygonal(queryPoint, root)
+
+  override def fastPolygonalSearch(queryPoint: Float2): Seq[E] = polygonalDynamicMaxRange()(queryPoint, root)
+
+  override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = rangeUntilFirstFound(r)(queryPoint, root).isEmpty
+
 
   def add(e: E): Unit = root = root.add(e)
 

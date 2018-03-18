@@ -9,7 +9,7 @@ import com.scilari.geometry.spatialsearch._
   * @tparam E Element type
   */
 final class QuadTree[E <: Float2] private (bb: AABB, parameters: Parameters = Parameters())
-  extends BoundedSearchTree[E] with QuadTreeLike[E]{
+  extends QuadTreeLike[E]{
 
   var root: BaseType = new LeafType(bb, null, parameters)
 
