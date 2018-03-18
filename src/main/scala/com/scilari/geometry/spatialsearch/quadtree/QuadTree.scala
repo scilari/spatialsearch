@@ -1,7 +1,6 @@
 package com.scilari.geometry.spatialsearch.quadtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch._
 
 /**
   * Concrete QuadTree implementation of SearchTree

@@ -1,7 +1,6 @@
 package com.scilari.geometry.spatialsearch.rtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.BoundedSearchTree
 
 
 final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)

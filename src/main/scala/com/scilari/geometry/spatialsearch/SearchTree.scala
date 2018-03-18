@@ -1,14 +1,14 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
-import com.scilari.geometry.spatialsearch.searches.{PolygonalSearches, Searches}
+import com.scilari.geometry.spatialsearch.searches.Searches
 
 /**
-  * Ties the searches and operations into a root node
+  * Ties the searches and operations to a root node
   * @tparam E Element type
   */
 trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with SpatialContainer[E]
-  with Searches[Float2, E] with PolygonalSearches[Float2, E] with Traversable[E]{
+  with Searches[Float2, E] with Traversable[E]{
 
   var root: BaseType
 

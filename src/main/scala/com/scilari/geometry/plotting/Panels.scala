@@ -4,11 +4,11 @@ import java.awt._
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
-import javax.imageio.ImageIO
-import javax.swing.{JFrame, JPanel}
 
 import com.scilari.geometry.models.AABB
 import com.scilari.math._
+import javax.imageio.ImageIO
+import javax.swing.{JFrame, JPanel}
 
 /**
  * Created by iv on 8/20/2015.

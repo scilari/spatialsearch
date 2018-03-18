@@ -1,7 +1,6 @@
 package com.scilari.geometry.spatialsearch.queues
 
 import scala.annotation.tailrec
-import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 

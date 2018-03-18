@@ -1,6 +1,6 @@
 package com.scilari.geometry.models
 
-import com.scilari.math.{clamp => floatClamp, sqrt}
+import com.scilari.math.{sqrt, clamp => floatClamp}
 
 /**
   * Data structure representing a vector of three floating points
@@ -62,6 +62,7 @@ object Float3{
   def random: Float3 = Float3(scala.util.Random.nextFloat(), scala.util.Random.nextFloat(), scala.util.Random.nextFloat())
   def randomMinusOneToOne: Float3 = Float3(1f) - Float3.random*2f
 
+  import scala.language.implicitConversions
   implicit def fromArray(a: Array[Float]): Float3 = Float3(a)
   implicit def fromTuple(t: (Float, Float, Float)): Float3 = Float3(t._1, t._2, t._3)
   def fromDoubleArray(a: Array[Double]): Float3 = Float3(a(0).toFloat, a(1).toFloat, a(2).toFloat)

@@ -25,8 +25,8 @@ trait IncrementallySearchable[P, E] extends Tree[P, E]{
 
   @tailrec
   final def search(state: State, params: SearchParameters): Seq[E] = {
-    import state._
     import params._
+    import state._
 
     modifyState(state)
 
