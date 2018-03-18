@@ -1,6 +1,7 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
+import com.scilari.geometry.spatialsearch.searches.{PolygonalSearches, Searches}
 
 trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with SpatialContainer[E]
   with Searches[Float2, E] with PolygonalSearches[Float2, E] with Traversable[E]{

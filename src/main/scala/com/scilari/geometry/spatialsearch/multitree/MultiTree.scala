@@ -2,6 +2,7 @@ package com.scilari.geometry.spatialsearch.multitree
 
 import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch._
+import com.scilari.geometry.spatialsearch.searches.{PolygonalSearches, Searches}
 
 /**
   * Spatial search functionality from multiple trees at once
