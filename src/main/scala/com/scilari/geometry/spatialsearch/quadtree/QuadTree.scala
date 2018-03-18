@@ -11,7 +11,7 @@ import com.scilari.geometry.spatialsearch._
 final class QuadTree[E <: Float2] private (bb: AABB, parameters: Parameters = Parameters())
   extends QuadTreeLike[E]{
 
-  var root: BaseType = new LeafType(bb, null, parameters)
+  var root: BaseType = new LeafType(bb, None, parameters)
 
   override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
 

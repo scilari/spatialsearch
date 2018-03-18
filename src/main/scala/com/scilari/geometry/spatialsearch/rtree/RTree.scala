@@ -7,7 +7,7 @@ import com.scilari.geometry.spatialsearch.BoundedSearchTree
 final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
   extends RTreeLike[E]{
 
-  var root: BaseType = new LeafType(bb, null, nodeElementCapacity)
+  var root: BaseType = new LeafType(bb, None, nodeElementCapacity)
 
   override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
 
