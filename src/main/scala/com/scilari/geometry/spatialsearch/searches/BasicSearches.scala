@@ -71,7 +71,9 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
             val cs = node.children
             var i = 0; val n = cs.length
             while (i < n) {
-              if(nodeDist(queryPoint, cs(i)) <= rSq) ns = cs(i) :: ns; i += 1
+              val c = cs(i)
+              if(nodeDist(queryPoint, c) <= rSq) ns = c :: ns
+              i += 1
             }
             rangeRec(ns)
           case _ => ()
