@@ -1,4 +1,4 @@
-package com.scilari.geometry.spatialsearch
+package com.scilari.geometry.spatialsearch.core
 
 import com.scilari.geometry.spatialsearch.queues._
 import com.scilari.math.sqrt

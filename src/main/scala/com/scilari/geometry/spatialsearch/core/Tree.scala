@@ -1,5 +1,4 @@
-package com.scilari.geometry.spatialsearch
-
+package com.scilari.geometry.spatialsearch.core
 
 import scala.collection.mutable
 

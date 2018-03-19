@@ -1,6 +1,7 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
+import com.scilari.geometry.spatialsearch.core.Tree
 import com.scilari.geometry.spatialsearch.searches.Searches
 
 /**

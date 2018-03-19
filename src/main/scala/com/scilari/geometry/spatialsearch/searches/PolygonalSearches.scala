@@ -1,7 +1,7 @@
 package com.scilari.geometry.spatialsearch.searches
 
 import com.scilari.geometry.models.{AABB, Float2, HalfPlaneObject}
-import com.scilari.geometry.spatialsearch.IncrementallySearchable
+import com.scilari.geometry.spatialsearch.core.IncrementallySearchable
 
 
 trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchable[P, E]{

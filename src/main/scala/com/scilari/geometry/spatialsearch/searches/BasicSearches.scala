@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch.searches
 
-import com.scilari.geometry.spatialsearch.IncrementallySearchable
+import com.scilari.geometry.spatialsearch.core.IncrementallySearchable
 
 import scala.annotation.tailrec
 import scala.collection.mutable
