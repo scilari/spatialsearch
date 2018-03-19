@@ -83,7 +83,7 @@ trait Tree[P, E]{
 
     def leaves: Seq[LeafType] = Seq(this)
 
-    def depth: Int = 1
+    val depth: Int = 1
 
     def childCount: Int = elements.size
 
