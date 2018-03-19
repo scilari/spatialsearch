@@ -63,8 +63,7 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
       def rangeRec(nodes: List[Base]): Unit ={
         nodes match{
           case (leaf: Leaf) :: (tail: List[Base]) =>
-            val es = leaf.elements
-            es.foreach(e => if(elemDist(queryPoint, e) <= rSq) foundElements += e)
+            leaf.elements.foreach(e => if(elemDist(queryPoint, e) <= rSq) foundElements += e)
             rangeRec(tail)
           case (node: Node) :: (tail: List[Base]) =>
             var ns = tail
@@ -86,21 +85,21 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
   }
 
   protected final class Removal(e: E) extends SearchParameters{
-      override def filterNodes(n: BaseType, s: State): Boolean =
-        nodeDist(s.queryPoint, n) <= 0f
+    override def filterNodes(n: BaseType, s: State): Boolean =
+      nodeDist(s.queryPoint, n) <= 0f
 
-      override def filterElements(e: E, s: State): Boolean =
-        elemDist(s.queryPoint, e) <= 0f
+    override def filterElements(e: E, s: State): Boolean =
+      elemDist(s.queryPoint, e) <= 0f
 
-      override def modifyState(s: State): Unit = {
-        if(s.headNodeDist == 0) {
-          s.nodes.head.value match {
-            case leaf: Leaf => leaf.elements -= e
-            case _ => ()
-          }
+    override def modifyState(s: State): Unit = {
+      if(s.headNodeDist == 0) {
+        s.nodes.head.value match {
+          case leaf: Leaf => leaf.elements -= e
+          case _ => ()
         }
       }
     }
+  }
 }
 
 
