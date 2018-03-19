@@ -4,13 +4,12 @@ import com.scilari.geometry.models.{AABB, Float2}
 import com.scilari.geometry.spatialsearch.BoundedSearchTree
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
     type BaseType = BoundedBase
     type NodeType = RTreeNode
     type LeafType = RTreeLeaf
-
 
     class RTreeNode(
       bb: AABB,
@@ -41,7 +40,7 @@ trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
       }
 
       def findChildIndex(e: E): Int =
-        if(RTreeUtils.isEnclosingFirst(children(0).asInstanceOf[AABB], children(1).asInstanceOf[AABB], e)) 0 else 1
+        if(RTreeUtils.isEnclosingFirst(children(0), children(1), e)) 0 else 1
 
     }
 
@@ -51,7 +50,7 @@ trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
       nodeElementCapacity: Int
     ) extends BaseType(bb) with Leaf {
 
-      val elements: mutable.Buffer[E] = ListBuffer[E]()
+      val elements: mutable.Buffer[E] = ArrayBuffer[E]()
 
       override def add(e: E): BaseType = {
         enclose(e)
