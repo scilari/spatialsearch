@@ -92,23 +92,8 @@ QuadTree: 0.028976486620000002 (ms/query)
 Ratio (Quad/KD): 0.6552045554880498
 ...
 ```
-## Defining your own searches
-In addition to the predefined searches (range, knn, knnWithCondition, polygonal), 
-defining new searches is rather easy by defining the corresponding search parameters.
-For example, knn search with condition is defined by 
-
-``` scala
-  class KnnWithCondition(k: Int, condition: E => Boolean)
-    extends IncrementallySearchable[P, E]{
-    val parameters: SearchParameters = new SearchParameters {
-      override def endCondition(s: State): Boolean = s.foundElements.size >= k
-      override def filterElements(e: E, s: State): Boolean = condition(e)
-    }
-  }
-``` 
-The parameters define functions that use a search State object to determine what elements and nodes
-to filter and to decide when the search is complete. For details, see IncrementallySearchable.java.
 
 ## TODO:
 * Improve this document (usage, visualization etc.)
+* Searches with query point of type Seq[Float2]
 * Optimize r-tree (performance is not very good ATM)
