@@ -9,6 +9,8 @@ trait Tree[P, E]{
   type LeafType <: BaseType with Leaf
 
   trait Base extends Traversable[E] {
+    this: BaseType =>
+
     def elements: Seq[E]
 
     def nodes: Seq[BaseType]
@@ -24,7 +26,7 @@ trait Tree[P, E]{
     def add(e: E): BaseType
 
     def add(elems: Seq[E]): BaseType = {
-      var n: BaseType = this.asInstanceOf[BaseType]
+      var n: BaseType = this
       elems.foreach(e => n = add(e)) // linter:ignore VariableAssignedUnusedValue
       n
     }
