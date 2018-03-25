@@ -50,6 +50,7 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
     override def endCondition(s: State): Boolean = {
       s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
     }
+    override val elemQueueSizeHint: Int = 1
     override val foundElemSizeHint: Int = 1
   }
 
