@@ -19,8 +19,6 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
 
   protected def rangeUntilFirstFound(r: Float): SearchFn = search(new RangeUntilFirstFound(r))
 
-  protected def removal(e: E): SearchFn = search(new Removal(e)) // TODO: does not belong here
-
   protected final class KnnParameters(k: Int) extends SearchParameters{
     override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
     override val foundElemSizeHint: Int = k
@@ -86,22 +84,7 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
     }
   }
 
-  protected final class Removal(e: E) extends SearchParameters{
-    override def filterNodes(n: BaseType, s: State): Boolean =
-      nodeDist(s.queryPoint, n) <= 0f
 
-    override def filterElements(e: E, s: State): Boolean =
-      elemDist(s.queryPoint, e) <= 0f
-
-    override def modifyState(s: State): Unit = {
-      if(s.headNodeDist == 0) {
-        s.nodes.head.value match {
-          case leaf: Leaf => leaf.elements -= e
-          case _ => ()
-        }
-      }
-    }
-  }
 }
 
 
