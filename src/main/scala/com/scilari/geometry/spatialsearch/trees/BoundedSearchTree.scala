@@ -1,4 +1,4 @@
-package com.scilari.geometry.spatialsearch
+package com.scilari.geometry.spatialsearch.trees
 
 import com.scilari.geometry.models.{AABB, Float2}
 
