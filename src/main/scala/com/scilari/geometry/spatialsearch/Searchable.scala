@@ -14,9 +14,7 @@ trait Searchable[E] {
 
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E]
 
-  def isEmptyRange(queryPoint: Float2, r: Float): Boolean = {
-    rangeSearch(queryPoint, r).isEmpty
-  }
+  def isEmptyRange(queryPoint: Float2, r: Float): Boolean = rangeSearch(queryPoint, r).isEmpty
 
   def nonEmptyRange(queryPoint: Float2, r: Float): Boolean = !isEmptyRange(queryPoint, r)
 
@@ -26,6 +24,6 @@ trait Searchable[E] {
 
   def elements: Seq[E] = rangeSearch(Float2.zero, Float.PositiveInfinity)
 
-  def nearestNeighborSearch(queryPoint: Float2): E = knnSearch(queryPoint, 1).head
+  def nearestNeighborSearch(queryPoint: Float2): Option[E] = knnSearch(queryPoint, 1).headOption
 
 }
