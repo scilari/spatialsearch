@@ -1,8 +1,9 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{DataPoint, Float2}
-import com.scilari.geometry.spatialsearch.rtree.RTree
+import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 import TestResources._
+import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
 
 class RTreeTests extends TreeTests{
   override def treeName: String = "RTree"

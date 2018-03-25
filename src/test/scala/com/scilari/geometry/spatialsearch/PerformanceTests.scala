@@ -1,8 +1,8 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.quadtree.{Parameters, QuadTree}
-import com.scilari.geometry.spatialsearch.rtree.RTree
+import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
+import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 import TestUtils.Timing._
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 import org.csdgn.util.KDTree

@@ -1,10 +1,10 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.spatialsearch.quadtree.{Parameters, QuadTree}
+import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import org.scalatest.{FlatSpec, Matchers}
 import TestResources._
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.multitree.MultiTree
+import com.scilari.geometry.spatialsearch.trees.multitree.MultiTree
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 
 class MultiTreeTests extends FlatSpec with Matchers{
