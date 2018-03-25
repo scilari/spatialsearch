@@ -1,15 +1,16 @@
-package com.scilari.geometry.spatialsearch
+package com.scilari.geometry.spatialsearch.trees
 
 import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch.core.Tree
-import com.scilari.geometry.spatialsearch.searches.Searches
+import com.scilari.geometry.spatialsearch.searches.{Removal, Searches}
+import com.scilari.geometry.spatialsearch.{Searchable, SpatialContainer}
 
 /**
   * Ties the searches and operations to a root node
   * @tparam E Element type
   */
 trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with SpatialContainer[E]
-  with Searches[Float2, E] with Traversable[E]{
+  with Searches[Float2, E] with Removal[Float2, E] with Traversable[E]{
 
   var root: BaseType
 
