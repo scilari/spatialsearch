@@ -48,17 +48,19 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends HalfPlaneObject {
 
   override def pointDeepestInHalfPlane(normal: Float2): Float2 = this
 
-  def rotate(angle: Float): Unit = {
-    val s = sin(angle)
-    val c = cos(angle)
-    val xx = x*c - y*s
-    val yy = x*s + y*c
+  def rotate(angle: Float): Unit = rotate(cos(angle), sin(angle))
+
+  def rotated(angle: Float): Float2 = rotated(cos(angle), sin(angle))
+
+  def rotate(cos: Float, sin: Float): Unit = {
+    val xx = x*cos - y*sin
+    val yy = x*sin + y*cos
     x = xx; y = yy
   }
 
-  def rotated(angle: Float): Float2 = {
+  def rotated(cos: Float, sin: Float): Float2 = {
     val cp = Float2(this)
-    cp.rotate(angle)
+    cp.rotate(cos, sin)
     cp
   }
 
