@@ -5,15 +5,13 @@ import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 
 final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) extends FloatPriorityQueue[E] {
+  import FloatHeap._
   private[this] var values = new Array[Any](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
+  if(initialCapacity > 0) keys(0) = Float.MinValue // use as a sentinel in bubbleUp
 
-  private[this] val firstIndex = 1
   private[this] var maxIndex = 0
   private[this] var capacity = initialCapacity
-
-  private[this] def left(k: Int) = 2*k
-  private[this] def parent(k: Int) = k/2
 
   private[this] def move(to: Int, from: Int): Unit ={
     keys(to) = keys(from)
@@ -72,17 +70,15 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
     @tailrec
     def makeRoom(pos: Int): Int = {
       val par = parent(pos)
-      if(pos > 1 && key < keys(par)){
+      if(key < keys(par)){
         move(pos, par)
         makeRoom(par)
       } else {
         pos
       }
-
     }
 
     update(makeRoom(maxIndex), key, value)
-
   }
 
   private[this] def bubbleDown(): Unit ={
@@ -94,13 +90,13 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
       val L = left(k)
       if(L > maxIndex) {
         k
-      }else{
+      } else {
         val R = L + 1
         val child = if(L != maxIndex && keys(L) > keys(R)) R else L
         if (headKey > keys(child)){
           move(k, child)
           makeRoom(child)
-        } else{
+        } else {
           k
         }
       }
@@ -125,4 +121,8 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
 
 object FloatHeap{
   val defaultInitialSize = 32
+
+  private val firstIndex = 1
+  private def left(k: Int) = 2*k
+  private def parent(k: Int) = k/2
 }
