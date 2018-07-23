@@ -1,4 +1,4 @@
-package com.scilari.geometry.spatialsearch.quadtree
+package com.scilari.geometry.spatialsearch.trees.quadtree
 
 case class Parameters(
   nodeElementCapacity: Int = Parameters.defaultNodeCapacity,
