@@ -1,4 +1,4 @@
-package com.scilari.geometry.spatialsearch.quadtree
+package com.scilari.geometry.spatialsearch.trees.quadtree
 
 import com.scilari.geometry.models.{AABB, Float2}
 

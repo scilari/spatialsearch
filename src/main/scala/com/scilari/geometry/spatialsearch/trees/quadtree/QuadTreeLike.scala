@@ -1,8 +1,7 @@
-package com.scilari.geometry.spatialsearch.quadtree
+package com.scilari.geometry.spatialsearch.trees.quadtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.BoundedSearchTree
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils._
+import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeUtils._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
