@@ -34,7 +34,7 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
     val newValues = new Array[Any](capacity)
     val newKeys = new Array[Float](capacity)
     Array.copy(values, firstIndex, newValues, firstIndex, maxIndex)
-    Array.copy(keys, firstIndex, newKeys, firstIndex, maxIndex)
+    Array.copy(keys, 0, newKeys, 0, maxIndex + 1) // copy sentinel as well
     values = newValues
     keys = newKeys
   }
