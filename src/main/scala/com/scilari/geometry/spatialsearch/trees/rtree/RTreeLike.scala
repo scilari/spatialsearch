@@ -1,7 +1,7 @@
-package com.scilari.geometry.spatialsearch.rtree
+package com.scilari.geometry.spatialsearch.trees.rtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.BoundedSearchTree
+import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
