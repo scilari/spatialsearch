@@ -170,13 +170,13 @@ class PerformanceTests extends FlatSpec {
     assert(tPol > tFastPol)
 
     info("\n== Polygonal vs. range time ==")
-    info("QuadTree (polygonal):" + tPol/totalQueryCount + " (ms/query)")
+    info("QuadTree (polygonal): " + tPol/totalQueryCount + " (ms/query)")
     info("QuadTree (fast poly): " + tFastPol/totalQueryCount + " (ms/query)")
     info("QuadTree (range): " + tR/totalQueryCount + " (ms/query)")
     info("QuadTree (range: " + meanRange +  "): " + tMeanRange/totalQueryCount + " (ms/query)")
   }
 
-  it should "should have better removal performance than rebuilding the KdTree" in {
+  it should "have better removal performance than rebuilding the KdTree" in {
     val removeCount = points.size/50
     val removedPoints = points.take(removeCount)
     val remainingPoints = points.drop(removeCount)
