@@ -5,7 +5,7 @@ import com.scilari.geometry.models.{AABB, Float2}
 trait BoundedSearchTree[E <: Float2] extends SearchTree[E] {
   override type BaseType <: BoundedBase
 
-  abstract class BoundedBase(bb: AABB) extends AABB(bb) with Base{
+  abstract class BoundedBase(bb: AABB) extends AABB(bb) with Base {
     this: BaseType =>
     override def contains(p: Float2): Boolean = super[AABB].contains(p)
 

@@ -2,7 +2,7 @@ package com.scilari.geometry.spatialsearch.core
 
 import scala.collection.mutable
 
-trait Tree[P, E]{
+trait Tree[E]{
   type BaseType <: Base
   type NodeType <: BaseType with Node
   type LeafType <: BaseType with Leaf
@@ -38,7 +38,7 @@ trait Tree[P, E]{
 
     def nonLeaf: Boolean = !isLeaf
 
-    def contains(e: P): Boolean
+    //def contains(e: E): Boolean
 
   }
 

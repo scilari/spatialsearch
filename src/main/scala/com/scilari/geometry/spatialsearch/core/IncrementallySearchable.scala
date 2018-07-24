@@ -13,7 +13,7 @@ import scala.collection.mutable.ArrayBuffer
   * Provides highly versatile searches via modifiable SearchParameters
   * Created by iv on 1/17/2017.
   */
-trait IncrementallySearchable[P, E] extends Tree[P, E]{
+trait IncrementallySearchable[P, E] extends Tree[E]{
 
   type SearchFn = (P, BaseType) => Seq[E]
 

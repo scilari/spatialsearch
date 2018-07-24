@@ -9,7 +9,7 @@ import com.scilari.geometry.spatialsearch.{Searchable, SpatialContainer}
   * Ties the searches and operations to a root node
   * @tparam E Element type
   */
-trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with SpatialContainer[E]
+trait SearchTree[E <: Float2] extends Tree[E] with Searchable[E] with SpatialContainer[E]
   with Searches[Float2, E] with Removal[Float2, E] with Traversable[E]{
 
   var root: BaseType
@@ -41,7 +41,7 @@ trait SearchTree[E <: Float2] extends Tree[Float2, E] with Searchable[E] with Sp
   override def isEmpty: Boolean = root.isEmpty
   override def nonEmpty: Boolean = root.nonEmpty
 
-  override def remove(elems: Seq[E]): Unit = for(l <- leaves) l.elements --= elems.filter(l.contains)
+  override def remove(elems: Seq[E]): Unit = for(l <- leaves) l.elements --= elems
 
   override def remove(filter: E => Boolean): Unit =
     for{l <- leaves; e <- l.elements if filter(e)} l.elements -= e

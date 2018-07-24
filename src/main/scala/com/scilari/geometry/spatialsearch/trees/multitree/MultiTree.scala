@@ -1,14 +1,15 @@
-package com.scilari.geometry.spatialsearch.multitree
+package com.scilari.geometry.spatialsearch.trees.multitree
 
 import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch._
+import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
 
 /**
   * Spatial search functionality from multiple trees at once
   * @param trees The trees to search from
   * @tparam E Element type
   */
-class MultiTree[E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends BoundedSearchTree[E]{
+class MultiTree[P <: Float2, E <: Float2](trees: Seq[BoundedSearchTree[E]]) extends BoundedSearchTree[E]{
 
   var root: BaseType = null.asInstanceOf[BaseType]
 
