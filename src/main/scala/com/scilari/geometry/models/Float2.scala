@@ -6,7 +6,7 @@ import com.scilari.math._
   * Two-dimensional point represented by Float coordinates
  * Created by iv on 10.2.2014.
  */
-class Float2(var x: Float = 0f, var y: Float = 0f) extends HalfPlaneObject {
+class Float2(var x: Float = 0f, var y: Float = 0f) extends ExtremePoint {
   def this(x: Double, y: Double) = this(x.toFloat, y.toFloat)
 
   def unary_- : Float2 = Float2(-x, -y)
@@ -46,7 +46,7 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends HalfPlaneObject {
   def direction: Float = atan2(y, x)
   def manhattan: Float = abs(x) + abs(y)
 
-  override def pointDeepestInHalfPlane(normal: Float2): Float2 = this
+  override def extremePoint(normal: Float2): Float2 = this
 
   def rotate(angle: Float): Unit = rotate(cos(angle), sin(angle))
 

@@ -6,7 +6,7 @@ package com.scilari.geometry.models
  * Created by iv on 25.2.2014.
  */
 
-class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends HalfPlaneObject{
+class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends ExtremePoint{
 
   def this(minX: Float, minY: Float, maxX: Float, maxY: Float) = this(Float2(minX, minY), Float2(maxX, maxY))
   def this(box: AABB) = this(box.minPoint, box.maxPoint)
@@ -46,7 +46,7 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends HalfPlaneObject
   def isSquare: Boolean = width == height
 
   // Returns the corner that is deepest inside the half-plane defined by the normal of the separating line
-  def pointDeepestInHalfPlane(normal: Float2): Float2 = {
+  def extremePoint(normal: Float2): Float2 = {
     val left = normal.x >= 0f
     val top = normal.y <= 0f
     getCorner(top, left)
