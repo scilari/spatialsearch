@@ -1,8 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
-import com.scilari.geometry.models.Float2
-
-trait SpatialContainer[E]{
+trait SpatialContainer[E] extends Traversable[E]{
   /**
     * Adds element to the container.
     */
@@ -30,18 +28,17 @@ trait SpatialContainer[E]{
   def remove(elems: Seq[E]): Unit = elems.foreach(remove)
 
   /**
-    * Removes element from the container by using the element coordinates.
-    */
-  def remove(elementCoordinates: Float2, e: E): Unit
-
-
-  /**
     * Removes elements satisfying the filter
     */
   def remove(filter: E => Boolean): Unit
 
+  /**
+    * Returns the elements in the container
+    * @return Elements
+    */
+  def elements: Seq[E]
 
   def isEmpty: Boolean
 
-  def nonEmpty: Boolean = !isEmpty
+  override def nonEmpty: Boolean = !isEmpty
 }
