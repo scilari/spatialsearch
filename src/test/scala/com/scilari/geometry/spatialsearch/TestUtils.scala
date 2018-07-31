@@ -85,6 +85,10 @@ object TestUtils {
       t1/t2 < similarityRatio && t2/t1 < similarityRatio
     }
 
+    def similarOrBetterTime(better: Double, baseLine: Double, similarityRatio: Double = 3): Boolean = {
+      better/baseLine < similarityRatio
+    }
+
 
   }
 

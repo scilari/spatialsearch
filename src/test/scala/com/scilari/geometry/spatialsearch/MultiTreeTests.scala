@@ -3,28 +3,28 @@ package com.scilari.geometry.spatialsearch
 import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import org.scalatest.{FlatSpec, Matchers}
 import TestResources._
-import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.models.{AABB, DataPoint, Float2}
 import com.scilari.geometry.spatialsearch.trees.multitree.MultiTree
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 
 class MultiTreeTests extends FlatSpec with Matchers{
-  val bb = AABB(cityData)
-  val knnK = 10
-  val range = 0.25f*bb.width
+  import QuadTree._
+  val bb: AABB = AABB(cityData)
+  val knnK: Int = 10
+  val range: Float = 0.25f*bb.width
   val (small, large) = cityData.partition(c => c.data.population < 50000)
 
   val parameters = Parameters(nodeElementCapacity = 8)
-  val quadTree = QuadTree(cityData, parameters)
-  val quadSmall = QuadTree(small, parameters)
-  val quadLarge = QuadTree(large, parameters)
-  val multiTree = new MultiTree(Seq(quadSmall, quadLarge))
+  val quadTree: QuadTree[DataPoint[City]] = QuadTree(cityData, parameters)
+  val quadSmall: QuadTree[DataPoint[City]] = QuadTree(small, parameters)
+  val quadLarge: QuadTree[DataPoint[City]] = QuadTree(large, parameters)
+  val multiTree = MultiTree(Seq(quadSmall, quadLarge))
 
   TreePlotter.plot(quadTree, elemRadius = 10)
   TreePlotter.plot(quadSmall, elemRadius = 10)
   TreePlotter.plot(quadLarge, elemRadius = 10)
 
-
-  val queryPoints = Seq.fill(100)(bb.randomEnclosedPoint)
+  val queryPoints: Seq[Float2] = Seq.fill(100)(bb.randomEnclosedPoint)
 
   "MultiTree" should "find the same knn elements as the corresponding single tree" in {
     for (q <- queryPoints) {
@@ -33,9 +33,9 @@ class MultiTreeTests extends FlatSpec with Matchers{
 
       mKnn.map {
         _.data.name
-      } should contain theSameElementsAs (sKnn.map {
+      } should contain theSameElementsAs sKnn.map {
         _.data.name
-      })
+      }
     }
   }
 
@@ -46,9 +46,9 @@ class MultiTreeTests extends FlatSpec with Matchers{
 
       mRange.map {
         _.data.name
-      } should contain theSameElementsAs (sRange.map {
+      } should contain theSameElementsAs sRange.map {
         _.data.name
-      })
+      }
     }
   }
 
@@ -59,9 +59,9 @@ class MultiTreeTests extends FlatSpec with Matchers{
 
       mPoly.map {
         _.data.name
-      } should contain theSameElementsAs (sPoly.map {
+      } should contain theSameElementsAs sPoly.map {
         _.data.name
-      })
+      }
     }
   }
 

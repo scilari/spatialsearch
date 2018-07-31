@@ -15,9 +15,9 @@ abstract class TreeTests extends FlatSpec with Matchers {
   val points: Seq[Float2] = Seq.fill(pointCount)(Float2.random)
   val queryPoints: Seq[Float2] = Seq.fill(20000)(Float2.random)
 
-  def createEmptyUnitTree: BoundedSearchTree[Float2]
-  def createFilledTree: BoundedSearchTree[Float2]
-  def createCityTree: BoundedSearchTree[DataPoint[City]]
+  def createEmptyUnitTree: SearchTree[Float2]
+  def createFilledTree: SearchTree[Float2]
+  def createCityTree: SearchTree[DataPoint[City]]
   def treeName: String
 
 
@@ -125,7 +125,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
 
 
-  val cityTree: BoundedSearchTree[DataPoint[City]] = createCityTree
+  val cityTree: SearchTree[DataPoint[City]] = createCityTree
 
   it should "find the five nearest cities to WGS 65.0 25.0 (ENU origo there)" in {
     val cities = cityTree.knnSearch(Float2(0, 0), 5)
@@ -173,7 +173,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
     val cityTree = createCityTree
     val toBeRemoved = cityData.take(3)
     for(e <- toBeRemoved){
-      cityTree.remove(e, e)
+      cityTree.remove(e)
     }
 
     val treeNames = cityTree.toList.map{_.data.name}
@@ -193,13 +193,11 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
   }
 
-  it should "have consistent leaf and inner code counts" in {
-    val leaves = cityTree.root.leaves
-    val nodes = cityTree.root.nodes
-    val innerNodes = nodes.filter{n => n.nonLeaf}
-    nodes.size should be (leaves.size + innerNodes.size)
-  }
-
-
+//  it should "have consistent leaf and inner code counts" in {
+  ////    val leaves = cityTree.root.leaves
+  ////    val nodes = cityTree.root.nodes
+  ////    val innerNodes = nodes.filter{n => n.nonLeaf}
+  ////    nodes.size should be (leaves.size + innerNodes.size)
+  ////  }
 
 }
