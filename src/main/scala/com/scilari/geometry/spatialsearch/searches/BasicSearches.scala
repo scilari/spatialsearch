@@ -6,25 +6,22 @@ import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * Created by iv on 1/17/2017.
-  */
 trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
 
-  protected def knn(k: Int): SearchFn = search(new KnnParameters(k))
+  def knn(k: Int): SearchFn = search(new KnnParameters(k))
 
-  protected def range(r: Float, sizeHint: Int = Range.defaultRangeSizeHint): SearchFn = search(new RangeParameters(r, sizeHint))
+  def range(r: Float, sizeHint: Int = Range.defaultRangeSizeHint): SearchFn = search(new RangeParameters(r, sizeHint))
 
-  protected def knnWithCondition(k: Int, condition: E => Boolean): SearchFn = search(new KnnWithCondition(k, condition))
+  def knnWithCondition(k: Int, condition: E => Boolean): SearchFn = search(new KnnWithCondition(k, condition))
 
-  protected def rangeUntilFirstFound(r: Float): SearchFn = search(new RangeUntilFirstFound(r))
+  def rangeUntilFirstFound(r: Float): SearchFn = search(new RangeUntilFirstFound(r))
 
-  protected final class KnnParameters(k: Int) extends SearchParameters{
+  final class KnnParameters(k: Int) extends SearchParameters{
     override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
     override val foundElemSizeHint: Int = k
   }
 
-  protected final class RangeParameters(r: Float, sizeHint: Int = Range.defaultRangeSizeHint) extends SearchParameters{
+  final class RangeParameters(r: Float, sizeHint: Int = Range.defaultRangeSizeHint) extends SearchParameters{
     // Skipping the queues in favor of performance, as we do not need the elements in order
     override def modifyState(s: State): Unit = {
       Range.range(s.queryPoint, s.nodes.getValues, r, s.foundElements)
@@ -37,13 +34,13 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
 
   }
 
-  protected final class KnnWithCondition(k: Int, condition: E => Boolean) extends SearchParameters {
+  final class KnnWithCondition(k: Int, condition: E => Boolean) extends SearchParameters {
     override def endCondition(s: State): Boolean = s.foundElements.lengthCompare(k) >= 0
     override def filterElements(e: E, s: State): Boolean = condition(e)
   }
 
 
-  protected final class RangeUntilFirstFound(r: Float) extends SearchParameters{
+  final class RangeUntilFirstFound(r: Float) extends SearchParameters{
     val rSq: Float = r*r
     override def endCondition(s: State): Boolean = {
       s.foundElements.nonEmpty || (s.headElemDist > rSq && s.headNodeDist > rSq)
