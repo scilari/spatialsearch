@@ -12,12 +12,8 @@ final class QuadTree[E <: Float2] private (bb: AABB, parameters: Parameters = Pa
 
   var root: BaseType = new LeafType(bb, None, parameters)
 
-  override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
-
-  override def nodeDist(p: Float2, n: BoundedBase): Float = n.distanceSq(p)
-
   def addEnclose(e: E): Unit = {
-    if(root.contains(e)) {
+    if(root.encloses(e)) {
       add(e)
     } else{
       val newAABB = QuadTreeUtils.expandAABB(e, root)
