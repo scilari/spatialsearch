@@ -65,6 +65,4 @@ class MultiTreeTests extends FlatSpec with Matchers{
     }
   }
 
-
-
 }
