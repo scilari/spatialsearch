@@ -11,7 +11,7 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
     forAll(genTree) { tree =>
       val allPoints = tree.elements
       forAll(genPoints, genK){ (queryPoints: List[Float2], k: Int) =>
-        val queriedPoints = tree.seqKnnSearch(queryPoints, k)
+        val queriedPoints = tree.seqKnnSearch(queryPoints.toIndexedSeq, k)
 
         val sortedPoints = allPoints.sortBy(p => queryPoints.map{q => p.distanceSq(q)}.min)
         val maxAcceptableDist = queryPoints.map{sortedPoints(k-1).distanceSq}.min
@@ -27,7 +27,7 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
     forAll(genTree) { tree =>
       val allPoints = tree.elements
       forAll(genPoints, genRadius){ (queryPoints: List[Float2], r: Float) =>
-        val queriedPoints = tree.seqRangeSearch(queryPoints, r)
+        val queriedPoints = tree.seqRangeSearch(queryPoints.toIndexedSeq, r)
         val separatelyQueriedPoints = queryPoints.flatMap{ queryPoint =>
           tree.rangeSearch(queryPoint, r)
         }

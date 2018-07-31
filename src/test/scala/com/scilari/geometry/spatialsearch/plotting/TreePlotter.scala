@@ -37,10 +37,10 @@ object TreePlotter {
   def main(args: Array[String]): Unit ={
     val k = 200
     val points = Seq.fill(k)(Float2.random(1000f)) ++ Seq.fill(k)(Float2.random(1000f) + 1100f)
-    val quad = QuadTree[Float2](points, parameters = Parameters(nodeElementCapacity = 8))
+    val quad: QuadTree[Float2] = QuadTree[Float2](points, parameters = Parameters(nodeElementCapacity = 8))
     TreePlotter.plot(quad, "QuadTree")
 
-    val rtree = RTree[Float2](points, nodeElementCapacity = 8)
+    val rtree: RTree[Float2] = RTree[Float2](points, nodeElementCapacity = 8)
     TreePlotter.plot(rtree, "RTree")
   }
 

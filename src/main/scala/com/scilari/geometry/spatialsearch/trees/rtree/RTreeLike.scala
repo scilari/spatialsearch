@@ -29,7 +29,7 @@ trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
       }
 
       {
-        val (for0, for1) = elems.partition(e => children(0).contains(e))
+        val (for0, for1) = elems.partition(e => children(0).encloses(e))
         setChild(0, getChild(0).add(for0))
         setChild(1, getChild(1).add(for1))
       }

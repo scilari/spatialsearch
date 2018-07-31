@@ -39,9 +39,8 @@ class PerformanceTests extends FlatSpec with Matchers {
       Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
 
 
-
-  val queryPoints: Seq[Float2] = {
-    Seq.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
+  val queryPoints: IndexedSeq[Float2] = {
+    mutable.IndexedSeq.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
   }
 
   val pointsArray = points.map{_.toDoubleArray}
@@ -139,7 +138,6 @@ class PerformanceTests extends FlatSpec with Matchers {
     val quadTree = QuadTree(points, Parameters(nodeElementCapacity = 15))
 
     val maxRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.max
-    val minRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.min
     val meanRange = maxRanges.sum/maxRanges.size
 
     val tPol = warmUpAndMeasureTime({
@@ -176,7 +174,7 @@ class PerformanceTests extends FlatSpec with Matchers {
     info("QuadTree (range: " + meanRange +  "): " + tMeanRange/totalQueryCount + " (ms/query)")
   }
 
-  "QuadTree" should "have similar sequence range query performance than with separate queries" in {
+  it should "have similar sequence range query performance than with separate queries" in {
     val slidingQueryPoints = queryPoints.sliding(20)
 
     val tSeq = warmUpAndMeasureTime({
@@ -207,12 +205,12 @@ class PerformanceTests extends FlatSpec with Matchers {
     assert(similarTime(tSeq, tSep))
   }
 
-  "QuadTree" should "have similar path sequence range query performance than with separate queries" in {
+  it should "have similar path sequence range query performance than with separate queries" in {
     val range = 0.1f*bb.width
     val pathCount = 100
     for(pathPoints <- Seq(10, 50, 200)){
       val paths = (0 until pathCount ).map { _ =>
-        Float2.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints)
+        Float2.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints).toArray
       }
 
       val tSeq = warmUpAndMeasureTime({
@@ -289,7 +287,7 @@ class PerformanceTests extends FlatSpec with Matchers {
     assert(similarTime(tSeq, tSep))
   }
 
-  "QuadTree" should "have better removal performance than rebuilding the KdTree" in {
+  it should "have better removal performance than rebuilding the KdTree" in {
     val removeCount = points.size/50
     val removedPoints = points.take(removeCount)
     val remainingPoints = points.drop(removeCount)

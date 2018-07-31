@@ -1,16 +1,13 @@
 package com.scilari.geometry.spatialsearch.trees.rtree
 
 import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.spatialsearch.SearchTree
 
 
 final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
-  extends RTreeLike[E]{
+  extends RTreeLike[E] with SearchTree[E] {
 
   var root: BaseType = new LeafType(bb, None, nodeElementCapacity)
-
-  override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
-
-  override def nodeDist(p: Float2, n: BoundedBase): Float = n.distanceSq(p)
 
   override def add(elems: Seq[E]): Unit = root = root.add(elems)
 
@@ -22,12 +19,12 @@ final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
 object RTree{
   val defaultNodeElementCapacity: Int = 63
 
-  def apply[E <: Float2](bb: AABB, nodeElementCapacity: Int): RTree[E] =
+  def apply[E <: Float2](bb: AABB, nodeElementCapacity: Int): SearchTree[E] =
     new RTree[E](bb, nodeElementCapacity)
 
-  def apply[E <: Float2](bb: AABB = AABB.unit): RTree[E] = apply(bb, defaultNodeElementCapacity)
+  def apply[E <: Float2](bb: AABB = AABB.unit): SearchTree[E] = apply(bb, defaultNodeElementCapacity)
 
-  def apply[E <: Float2](elems: Seq[E], nodeElementCapacity: Int): RTree[E] = {
+  def apply[E <: Float2](elems: Seq[E], nodeElementCapacity: Int): SearchTree[E] = {
     require(elems.size > 1, "At least two elements required for creating the initial node.")
     val square = AABB.EnclosingSquare(elems)
     require(square.width > 0 && square.height > 0,
@@ -37,7 +34,9 @@ object RTree{
     q
   }
 
-  def apply[E <: Float2](elems: Seq[E]): RTree[E] = apply(elems, defaultNodeElementCapacity)
+  def apply[E <: Float2](elems: Seq[E]): SearchTree[E] = apply(elems, defaultNodeElementCapacity)
+
+  implicit def searchTreeToRTree[E <: Float2](s: SearchTree[E]): RTree[E] = s.asInstanceOf[RTree[E]]
 
 
 }
