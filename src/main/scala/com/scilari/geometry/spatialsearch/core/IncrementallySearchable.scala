@@ -14,7 +14,6 @@ import scala.collection.mutable.ArrayBuffer
   * Created by iv on 1/17/2017.
   */
 trait IncrementallySearchable[P, E] extends Tree[E]{
-
   type SearchFn = (P, BaseType) => Seq[E]
 
   def elemDist(p: P, e: E): Float
