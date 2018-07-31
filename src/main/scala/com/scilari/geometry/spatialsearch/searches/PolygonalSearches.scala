@@ -1,29 +1,30 @@
 package com.scilari.geometry.spatialsearch.searches
 
-import com.scilari.geometry.models.{AABB, Float2, HalfPlaneObject}
+import com.scilari.geometry.models.{AABB, Float2, ExtremePoint}
 import com.scilari.geometry.spatialsearch.core.IncrementallySearchable
 
 
 trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchable[P, E]{
   import Polygonal._
+  type BaseType <: Base with ExtremePoint
 
-  protected def polygonal: SearchFn = search(new PolygonalParameters)
+  def polygonal: SearchFn = search(new PolygonalParameters)
 
-  protected def polygonalDynamicMaxRange(maxRangeFactor: Float = 3.0f): SearchFn = search(new PolygonalDynamicMaxRange(maxRangeFactor))
+  def polygonalDynamicMaxRange(maxRangeFactor: Float = 3.0f): SearchFn = search(new PolygonalDynamicMaxRange(maxRangeFactor))
 
-  protected final class PolygonalParameters extends SearchParameters{
+  final class PolygonalParameters extends SearchParameters{
     override def filterElements(e: E, s: State): Boolean = {
       !isDominatedBy(e, s.queryPoint, s.foundElements)
     }
 
     override def filterNodes(n: BaseType, s: State): Boolean = {
-      !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
+      !isDominatedBy(n, s.queryPoint, s.foundElements)
     }
 
     override val foundElemSizeHint: Int = 8
   }
 
-  protected final class PolygonalDynamicMaxRange(maxRangeFactor: Float) extends SearchParameters{
+  final class PolygonalDynamicMaxRange(maxRangeFactor: Float) extends SearchParameters{
     private[this] val rangeFactorSq = maxRangeFactor*maxRangeFactor
     private[this] var firstElementDistSq = Float.PositiveInfinity
     private[this] var maxRange = Float.PositiveInfinity
@@ -36,27 +37,22 @@ trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchabl
     }
 
     override def filterElements(e: E, s: State): Boolean = {
-      e.distanceSq(s.queryPoint) <= maxRange && !isDominatedBy(e, s.queryPoint, s.foundElements)
+      elemDist(s.queryPoint, e) <= maxRange && !isDominatedBy(e, s.queryPoint, s.foundElements)
     }
 
     override def filterNodes(n: BaseType, s: State): Boolean = {
-      n.asInstanceOf[AABB].distanceSq(s.queryPoint) <= maxRange && !isNodeDominatedBy(n, s.queryPoint, s.foundElements)
+      nodeDist(s.queryPoint, n) <= maxRange && !isDominatedBy(n, s.queryPoint, s.foundElements)
     }
 
     override val foundElemSizeHint: Int = 8
   }
 
   private object Polygonal{
-    def isDominatedBy(e: HalfPlaneObject, queryPoint: Float2, dominator: Float2): Boolean ={
+    def isDominatedBy(e: ExtremePoint, queryPoint: Float2, dominator: Float2): Boolean ={
       !e.intersectsHalfPlane(queryPoint, dominator)
     }
 
-    def isNodeDominatedBy(node: Any, queryPoint: Float2, dominators: Seq[Float2]): Boolean ={
-      isDominatedBy(
-        node.asInstanceOf[HalfPlaneObject], queryPoint, dominators) // TODO: get rid of this cast
-    }
-
-    def isDominatedBy(e: HalfPlaneObject, queryPoint: Float2, dominators: Seq[Float2]): Boolean = {
+    def isDominatedBy(e: ExtremePoint, queryPoint: Float2, dominators: Seq[Float2]): Boolean = {
       // Going through in reverse order, as more recently added points are more likely to dominate
       var i = dominators.size - 1
       while(i >= 0) {
