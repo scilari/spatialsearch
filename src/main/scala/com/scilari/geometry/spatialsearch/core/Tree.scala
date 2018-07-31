@@ -2,12 +2,12 @@ package com.scilari.geometry.spatialsearch.core
 
 import scala.collection.mutable
 
-trait Tree[E]{
+trait Tree[E] {
   type BaseType <: Base
   type NodeType <: BaseType with Node
   type LeafType <: BaseType with Leaf
 
-  trait Base extends Traversable[E] {
+  trait Base {
     this: BaseType =>
 
     def elements: Seq[E]
@@ -16,7 +16,7 @@ trait Tree[E]{
 
     def leaves: Seq[LeafType]
 
-    override def foreach[U](f: E => U): Unit = elements.foreach(f)
+    def foreach[U](f: E => U): Unit = elements.foreach(f)
 
     def depth: Int
 
@@ -38,20 +38,30 @@ trait Tree[E]{
 
     def nonLeaf: Boolean = !isLeaf
 
-    //def contains(e: E): Boolean
+    def isEmpty: Boolean = !nonEmpty
 
+    def nonEmpty: Boolean
+
+    def encloses(e: E): Boolean
+
+    def remove(e: E): Unit
   }
 
 
-  trait Node extends Base {
+  trait Node extends Base{
     this: NodeType =>
+
     val children: Array[BaseType]
 
     def elements: Seq[E] = children.flatMap(_.elements)
 
-    def nodes: Seq[BaseType] = Seq(this) ++ children.flatMap{_.nodes}
+    def nodes: Seq[BaseType] = Seq(this) ++ children.flatMap {
+      _.nodes
+    }
 
-    def leaves: Seq[LeafType] = children.flatMap{_.leaves}
+    def leaves: Seq[LeafType] = children.flatMap {
+      _.leaves
+    }
 
     def depth: Int = children.map {
       _.depth
@@ -60,6 +70,10 @@ trait Tree[E]{
     def childCount: Int = children.length
 
     def isLeaf: Boolean = false
+
+    def nonEmpty: Boolean = leaves.exists(_.nonEmpty)
+
+    def remove(e: E): Unit = children.filter{_.encloses(e)}.foreach(_.remove(e))
 
     def findChildIndex(e: E): Int
 
@@ -78,6 +92,7 @@ trait Tree[E]{
 
   trait Leaf extends Base {
     this: LeafType =>
+
     val elements: mutable.Buffer[E]
 
     def nodes: Seq[BaseType] = Seq(this)
@@ -89,6 +104,10 @@ trait Tree[E]{
     def childCount: Int = elements.size
 
     def isLeaf: Boolean = true
+
+    def nonEmpty: Boolean = elements.nonEmpty
+
+    def remove(e: E): Unit = elements -= e
 
     def add(e: E): BaseType = {
       elements += e
