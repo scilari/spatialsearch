@@ -6,10 +6,13 @@ import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 import TestUtils.Timing._
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 import org.csdgn.util.KDTree
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalatest.{FlatSpec, Matchers}
 
-class PerformanceTests extends FlatSpec {
+import scala.collection.mutable
+
+
+class PerformanceTests extends FlatSpec with Matchers {
+  import QuadTree._
   val plotting = true
 
   val similarityRatio = 2.0
@@ -45,8 +48,8 @@ class PerformanceTests extends FlatSpec {
   val queryArray = queryPoints.map{_.toDoubleArray}
   val kdTree = new KDTree[Float2](2)
   pointsArray.foreach(k => kdTree.add(k, Float2.random))
-  val quadTree = QuadTree(points)
-  val rTree = RTree(points)
+  val quadTree: QuadTree[Float2] = QuadTree(points)
+  val rTree: RTree[Float2] = RTree(points)
 
 
 
@@ -135,12 +138,9 @@ class PerformanceTests extends FlatSpec {
     // polygonal search improves with smaller nodeElementCapacity
     val quadTree = QuadTree(points, Parameters(nodeElementCapacity = 15))
 
-
     val maxRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.max
     val minRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.min
-    val ratios = maxRanges.zip(minRanges).map{case(max, min) => max/min}
     val meanRange = maxRanges.sum/maxRanges.size
-
 
     val tPol = warmUpAndMeasureTime({
       for(q <- queryPoints){
@@ -176,14 +176,127 @@ class PerformanceTests extends FlatSpec {
     info("QuadTree (range: " + meanRange +  "): " + tMeanRange/totalQueryCount + " (ms/query)")
   }
 
-  it should "have better removal performance than rebuilding the KdTree" in {
+  "QuadTree" should "have similar sequence range query performance than with separate queries" in {
+    val slidingQueryPoints = queryPoints.sliding(20)
+
+    val tSeq = warmUpAndMeasureTime({
+      for(qs <- slidingQueryPoints){
+        BlackHole.consumeAny(quadTree.seqRangeSearch(qs, range))
+      }
+    }, runCount, warmUpCount)
+
+    val tSep = warmUpAndMeasureTime({
+      for(qs <- slidingQueryPoints){
+        for(q <- qs){
+          BlackHole.consumeAny(quadTree.rangeSearch(q, range))
+        }
+      }
+    }, runCount, warmUpCount)
+
+    val tSepSet = warmUpAndMeasureTime({
+      for(qs <- slidingQueryPoints){
+        val neighbors = for(q <- qs) yield {
+          quadTree.rangeSearch(q, range)
+        }
+        BlackHole.consumeAny(neighbors.flatten.toSet)
+      }
+    }, runCount, warmUpCount)
+
+    info(s"\nSequence-based vs separate range query time: ${tSeq/tSep}")
+    info(s"Sequence-based vs separate unique range query time: ${tSeq/tSepSet}")
+    assert(similarTime(tSeq, tSep))
+  }
+
+  "QuadTree" should "have similar path sequence range query performance than with separate queries" in {
+    val range = 0.1f*bb.width
+    val pathCount = 100
+    for(pathPoints <- Seq(10, 50, 200)){
+      val paths = (0 until pathCount ).map { _ =>
+        Float2.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints)
+      }
+
+      val tSeq = warmUpAndMeasureTime({
+        for(qs <- paths){
+          BlackHole.consumeAny(quadTree.seqRangeSearch(qs, range))
+        }
+      }, runCount/pathCount*10, warmUpCount/pathCount*10)
+
+      val tSep = warmUpAndMeasureTime({
+        for(qs <- paths){
+          for(q <- qs){
+            BlackHole.consumeAny(quadTree.rangeSearch(q, range))
+          }
+        }
+      }, runCount/pathCount*10, warmUpCount/pathCount*10)
+
+      val tSepSet = warmUpAndMeasureTime({
+        for(qs <- paths){
+          val neighbors = for(q <- qs) yield {
+            quadTree.rangeSearch(q, range)
+          }
+          BlackHole.consumeAny(neighbors.flatten.toSet)
+        }
+      }, runCount/pathCount*10, warmUpCount/pathCount*10)
+
+      val tSepSet2 = warmUpAndMeasureTime({
+        for(qs <- paths){
+          val s = mutable.Set[Float2]()
+          qs.foreach{ q =>
+            s ++= quadTree.rangeSearch(q, range)
+          }
+          BlackHole.consumeAny(s)
+        }
+      }, runCount/pathCount*10, warmUpCount/pathCount*10)
+
+
+
+      info(s"\n== Sequence path query test with $pathPoints points ==")
+      info(s"Sequence-based vs separate range query time: ${tSeq/tSep}")
+      info(s"Sequence-based vs separate unique range query time: ${tSeq/tSepSet}")
+      info(s"Sequence-based vs separate unique range query time 2: ${tSeq/tSepSet2}")
+      assert(similarOrBetterTime(tSeq, tSepSet2, similarityRatio = 1.5))
+    }
+  }
+
+  it should "have similar sequence knn query performance than with separate queries" in {
+    val slidingQueryPoints = queryPoints.sliding(20)
+
+    val tSeq = warmUpAndMeasureTime({
+      for(qs <- slidingQueryPoints){
+        BlackHole.consumeAny(quadTree.seqKnnSearch(qs, queryK))
+      }
+    }, runCount, warmUpCount)
+
+    val tSep = warmUpAndMeasureTime({
+      for(qs <- slidingQueryPoints){
+        for(q <- qs){
+          BlackHole.consumeAny(quadTree.knnSearch(q, queryK))
+        }
+      }
+    }, runCount, warmUpCount)
+
+    val tSepSet = warmUpAndMeasureTime({
+      for(qs <- slidingQueryPoints){
+        val neighbors = for(q <- qs) yield {
+          quadTree.knnSearch(q, queryK)
+        }
+        BlackHole.consumeAny(neighbors.flatten.toSet)
+      }
+    }, runCount, warmUpCount)
+
+    info(s"\nSequence-based vs separate knn query time: ${tSeq/tSep}")
+    info(s"Sequence-based vs separate unique knn query time: ${tSeq/tSepSet}")
+    assert(similarTime(tSeq, tSep))
+  }
+
+  "QuadTree" should "have better removal performance than rebuilding the KdTree" in {
     val removeCount = points.size/50
     val removedPoints = points.take(removeCount)
     val remainingPoints = points.drop(removeCount)
     val remainingPointsArray = remainingPoints.map{_.toDoubleArray}
     val totalRemovalCount = insertRunCount*removeCount
 
-    var quadTree: QuadTree[Float2] = null
+    var quadTree: QuadTree[Float2] = null // scalastyle:ignore null
 
     def initBlock(ps: Seq[Float2]): Unit = {
       quadTree = QuadTree[Float2](bb)
@@ -193,7 +306,7 @@ class PerformanceTests extends FlatSpec {
     val tSingle = warmUpAndMeasureTimeWithInit(
       initBlock(points),
       {
-        removedPoints.foreach{e => quadTree.remove(e, e)}},
+        removedPoints.foreach{e => quadTree.remove(e)}},
       insertRunCount, warmUpCount)
 
     val tSimult = warmUpAndMeasureTimeWithInit(
