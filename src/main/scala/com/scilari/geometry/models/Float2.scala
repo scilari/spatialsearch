@@ -46,7 +46,7 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends ExtremePoint {
   def direction: Float = atan2(y, x)
   def manhattan: Float = abs(x) + abs(y)
 
-  override def extremePoint(normal: Float2): Float2 = this
+  override def extremePoint(direction: Float2): Float2 = this
 
   def rotate(angle: Float): Unit = rotate(cos(angle), sin(angle))
 

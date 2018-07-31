@@ -45,10 +45,10 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends ExtremePoint{
 
   def isSquare: Boolean = width == height
 
-  // Returns the corner that is deepest inside the half-plane defined by the normal of the separating line
-  def extremePoint(normal: Float2): Float2 = {
-    val left = normal.x >= 0f
-    val top = normal.y <= 0f
+  // Returns the corner that is deepest in the given direction
+  def extremePoint(direction: Float2): Float2 = {
+    val left = direction.x >= 0f
+    val top = direction.y <= 0f
     getCorner(top, left)
   }
 
