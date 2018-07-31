@@ -1,5 +1,15 @@
 package com.scilari.geometry.spatialsearch.searches
 
 import com.scilari.geometry.models.Float2
+import com.scilari.geometry.spatialsearch.core.Tree
 
-trait Searches[P <: Float2, E <: Float2] extends BasicSearches[P, E] with PolygonalSearches[P, E]
+trait Searches[P, E <: Float2] extends Tree[E] {
+  val basicSearches: BasicSearches[P, E]
+  val polygonalSearches: PolygonalSearches[Float2, E] // TODO
+  val seqSearches: BasicSearches[Seq[P], E]
+}
+
+
+
+
+  
