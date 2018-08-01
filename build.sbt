@@ -2,7 +2,7 @@ name := "spatialsearch"
 
 organization := "com.scilari"
 
-version := "0.2.8-SNAPSHOT"
+version := "0.3.0-SNAPSHOT"
 
 scalaVersion := "2.12.4"
 
