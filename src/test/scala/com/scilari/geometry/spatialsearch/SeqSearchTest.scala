@@ -11,13 +11,13 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
     forAll(genTree) { tree =>
       val allPoints = tree.elements
       forAll(genPoints, genK){ (queryPoints: List[Float2], k: Int) =>
-        val queriedPoints = tree.seqKnnSearch(queryPoints.toIndexedSeq, k)
+        val foundPoints = tree.seqKnnSearch(queryPoints.toIndexedSeq, k)
 
         val sortedPoints = allPoints.sortBy(p => queryPoints.map{q => p.distanceSq(q)}.min)
         val maxAcceptableDist = queryPoints.map{sortedPoints(k-1).distanceSq}.min
         val acceptablePoints = sortedPoints.filter{ p => queryPoints.map{ q => p.distanceSq(q) }.min <= maxAcceptableDist}
 
-        assert(queriedPoints.toSet.subsetOf(acceptablePoints.toSet))
+        assert(foundPoints.toSet.subsetOf(acceptablePoints.toSet))
 
       }
     }
@@ -27,15 +27,15 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
     forAll(genTree) { tree =>
       val allPoints = tree.elements
       forAll(genPoints, genRadius){ (queryPoints: List[Float2], r: Float) =>
-        val queriedPoints = tree.seqRangeSearch(queryPoints.toIndexedSeq, r)
+        val foundPoints = tree.seqRangeSearch(queryPoints.toIndexedSeq, r)
         val separatelyQueriedPoints = queryPoints.flatMap{ queryPoint =>
           tree.rangeSearch(queryPoint, r)
         }
 
         val filteredPoints = allPoints.filter{p => queryPoints.map{q => p.distance(q)}.min <= r }
-        queriedPoints.toSet should equal (filteredPoints.toSet)
+        foundPoints.toSet should equal (filteredPoints.toSet)
 
-        queriedPoints.toSet should equal (separatelyQueriedPoints.toSet)
+        foundPoints.toSet should equal (separatelyQueriedPoints.toSet)
 
       }
     }
