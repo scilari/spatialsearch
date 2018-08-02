@@ -25,9 +25,9 @@ object TreeSearches{
   }
 
   trait Polygonal[P <: Float2, E <: Float2] extends Base[P, E]{
-    def polygonalSearch(queryPoint: P): Seq[E] = polygonalSearches.polygonal(queryPoint, castRoot)
+    def polygonalSearch(queryPoint: P with Float2): Seq[E] = polygonalSearches.polygonal(queryPoint, castRoot)
 
-    def fastPolygonalSearch(queryPoint: P): Seq[E] = polygonalSearches.polygonalDynamicMaxRange()(queryPoint, castRoot)
+    def fastPolygonalSearch(queryPoint: P with Float2): Seq[E] = polygonalSearches.polygonalDynamicMaxRange()(queryPoint, castRoot)
   }
 
   trait Sequence[P <: Float2, E <: Float2] extends Base[P, E]{
