@@ -210,7 +210,7 @@ class PerformanceTests extends FlatSpec with Matchers {
     val pathCount = 100
     for(pathPoints <- Seq(10, 50, 200)){
       val paths = (0 until pathCount ).map { _ =>
-        Float2.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints).toArray
+        Float2.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints)
       }
 
       val tSeq = warmUpAndMeasureTime({
@@ -249,6 +249,7 @@ class PerformanceTests extends FlatSpec with Matchers {
 
 
       info(s"\n== Sequence path query test with $pathPoints points ==")
+      info(s"Total sequence-based time: $tSeq (ms)")
       info(s"Sequence-based vs separate range query time: ${tSeq/tSep}")
       info(s"Sequence-based vs separate unique range query time: ${tSeq/tSepSet}")
       info(s"Sequence-based vs separate unique range query time 2: ${tSeq/tSepSet2}")
