@@ -2,7 +2,7 @@ package com.scilari.geometry.spatialsearch.trees.multitree
 
 import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch.Searchable
-import com.scilari.geometry.spatialsearch.searches.SearchesImpl
+import com.scilari.geometry.spatialsearch.searches.{SearchesImpl, TreeSearches}
 import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
 
 /**
@@ -10,7 +10,7 @@ import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
   * @param trees The trees to search from
   * @tparam E Element type
   */
-class MultiTree[E <: Float2] private (trees: Seq[BoundedSearchTree[E]]) extends SearchesImpl[E] with Searchable[E] {
+class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) extends SearchesImpl[E] with Searchable[E] {
 
   var root: BaseType = null.asInstanceOf[BaseType] // scalastyle:ignore null
 
