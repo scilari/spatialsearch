@@ -1,6 +1,8 @@
 package com.scilari.geometry.models
 import com.scilari.math._
 
+import scala.collection.mutable.ArrayBuffer
+
 
 /**
   * Two-dimensional point represented by Float coordinates
@@ -114,10 +116,10 @@ object Float2{
   def random(minX: Float, minY: Float, maxX: Float, maxY: Float): Float2 = Float2(minX, minY) + Float2.random*Float2(maxX - minX, maxY - minY)
   def random(minPoint: Float2, maxPoint: Float2): Float2 = random(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y)
 
-  def linSpace(start: Float2, end: Float2, n: Int): Seq[Float2] = {
+  def linSpace(start: Float2, end: Float2, n: Int): IndexedSeq[Float2] = {
     val diff = end - start
     val ts = (0 until n).map(_.toFloat/(n-1))
-    ts.map{ t => start + diff*t}
+    ArrayBuffer[Float2](ts.map{ t => start + diff*t}: _*)
   }
 
   @inline
@@ -150,15 +152,6 @@ object Float2{
 
     points.sortWith(angleComparator)
 
-//    object AngleOrdering extends Ordering[E] {
-//      def compare(p1: E, p2: E): Int = {
-//        if (angleComparator(p1, p2)) -1 else if(angleComparator(p2, p1)) 1 else 0
-//      }
-//    }
-
-
-    //scala.util.Sorting.quickSort(points)(AngleOrdering)
-    //points
   }
 
   @inline
