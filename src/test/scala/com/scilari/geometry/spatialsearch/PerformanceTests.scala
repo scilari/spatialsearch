@@ -12,28 +12,26 @@ import scala.collection.mutable
 
 
 class PerformanceTests extends FlatSpec with Matchers {
-  import QuadTree._
   val plotting = true
 
-  val similarityRatio = 2.0
-  val runCount = 200
-  val insertRunCount = 10*runCount
-  val warmUpCount = 2
-  val pointCount = 10000
-  val queryCount = 1000
-  val bb = AABB(1000f)
-  val range = 0.25f*bb.width
-  val queryK = 100 //pointCount/10
+  val runCount: Int = 200
+  val insertRunCount: Int = 10*runCount
+  val warmUpCount: Int = 2
+  val pointCount: Int = 10000
+  val queryCount: Int = 1000
+  val bb: AABB = AABB(1000f)
+  val range: Float = 0.25f*bb.width
+  val queryK: Int = 100 //pointCount/10
 
 
-  val totalQueryCount = runCount * queryCount
-  val totalInsertCount = insertRunCount * pointCount
+  val totalQueryCount: Int = runCount * queryCount
+  val totalInsertCount: Int = insertRunCount * pointCount
 
 
-  val f2 = Float2.random
+  val f2: Float2 = Float2.random
 
   // Data with two clusters and a small number of random points elsewhere
-  val points  =
+  val points: Seq[Float2]  =
     Seq.fill(pointCount*9/20)(Float2.random(0.2f*bb.width) + 0.1f*bb.width) ++
       Seq.fill(pointCount*9/20)(Float2.random(0.5f*bb.width) + 0.45f*bb.width) ++
       Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
@@ -43,8 +41,8 @@ class PerformanceTests extends FlatSpec with Matchers {
     mutable.IndexedSeq.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
   }
 
-  val pointsArray = points.map{_.toDoubleArray}
-  val queryArray = queryPoints.map{_.toDoubleArray}
+  val pointsArray: Seq[Array[Double]] = points.map{_.toDoubleArray}
+  val queryArray: Seq[Array[Double]] = queryPoints.map{_.toDoubleArray}
   val kdTree = new KDTree[Float2](2)
   pointsArray.foreach(k => kdTree.add(k, Float2.random))
   val quadTree: QuadTree[Float2] = QuadTree(points)
@@ -52,7 +50,7 @@ class PerformanceTests extends FlatSpec with Matchers {
 
 
 
-  def testInfo: Unit ={
+  def testInfo(): Unit ={
     if(plotting){
       TreePlotter.plot(quadTree, "QuadTree", elemRadius = bb.width/500)
       TreePlotter.plot(rTree, "rTree", elemRadius = bb.width/500)
@@ -74,7 +72,7 @@ class PerformanceTests extends FlatSpec with Matchers {
 
 
   "QuadTree" should "have similar insertion performance to KDTree" in {
-    testInfo
+    testInfo()
     val tKd = warmUpAndMeasureTime({
       val kdTree = new KDTree[Float2](2, 48)
       pointsArray.foreach(k => kdTree.add(k, f2))

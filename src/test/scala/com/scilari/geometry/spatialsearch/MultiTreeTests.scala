@@ -4,11 +4,10 @@ import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import org.scalatest.{FlatSpec, Matchers}
 import TestResources._
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
-import com.scilari.geometry.spatialsearch.trees.multitree.MultiTree
+import com.scilari.geometry.spatialsearch.SearchTree.MultiTree
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 
 class MultiTreeTests extends FlatSpec with Matchers{
-  import QuadTree._
   val bb: AABB = AABB(cityData)
   val knnK: Int = 10
   val range: Float = 0.25f*bb.width

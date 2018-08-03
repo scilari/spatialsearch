@@ -61,5 +61,5 @@ class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) 
 }
 
 object MultiTree{
-  def apply[E <: Float2](trees: Seq[BoundedSearchTree[E]]): Searchable[E] = new MultiTree[E](trees)
+  def apply[E <: Float2](trees: Seq[BoundedSearchTree[E]]): MultiTree[E] = new MultiTree[E](trees)
 }

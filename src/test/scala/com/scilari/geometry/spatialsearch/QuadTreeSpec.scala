@@ -1,7 +1,8 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
+import SearchTree.QuadTree
+
 import org.scalacheck.Gen
 import org.scalatest.{Matchers, PropSpec}
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
@@ -30,7 +31,7 @@ object QuadTreeSpec {
   val genPoints: Gen[List[Float2]] = Gen.listOfN(pointCount, genPoint)
   val genDistinctPoints: Gen[Set[Float2]] = Gen.containerOfN[Set, Float2](pointCount, genPoint)
 
-  val genTree: Gen[QuadTree[Float2]] =
+  val genTree: Gen[SearchTree[Float2]] =
     for {
       ps <- genDistinctPoints
     } yield {

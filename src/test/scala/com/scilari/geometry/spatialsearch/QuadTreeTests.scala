@@ -2,7 +2,6 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
 import com.scilari.geometry.spatialsearch.TestResources.{City, cityData}
-import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
 import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 
 class QuadTreeTests extends TreeTests {
