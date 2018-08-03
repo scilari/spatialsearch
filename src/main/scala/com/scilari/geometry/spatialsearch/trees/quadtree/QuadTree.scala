@@ -29,13 +29,16 @@ final class QuadTree[E <: Float2] private (bb: AABB, val parameters: Parameters)
 
 object QuadTree{
 
-  def apply[E <: Float2](bb: AABB, parameters: Parameters): SearchTree[E] = new QuadTree[E](bb, parameters)
+  def apply[E <: Float2](bb: AABB, parameters: Parameters): SearchTree[E] = {
+    new QuadTree[E](AABB.enclosingSquare(bb), parameters)
+  }
+
   def apply[E <: Float2](bb: AABB = AABB.unit): SearchTree[E] = apply(bb, Parameters(bb))
 
   def apply[E <: Float2](elems: Seq[E]): SearchTree[E] = apply(elems, Parameters())
 
   def apply[E <: Float2](elems: Seq[E], parameters: Parameters): SearchTree[E] = {
-    val square = AABB.EnclosingSquare(elems)
+    val square = AABB.enclosingSquare(elems)
     require(square.area > 0,
       "At least two spatially distinct elements required for creating the initial node.")
 
