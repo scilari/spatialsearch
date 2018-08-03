@@ -39,7 +39,7 @@ trait QuadTreeLike[E <: Float2] extends BoundedSearchTree[E]{
       val elements: mutable.Buffer[E] = new ArrayBuffer[E]()
 
       def splitCondition: Boolean =
-        elements.lengthCompare(parameters.nodeElementCapacity) > 0 && width >= parameters.minNodeSize
+        elements.lengthCompare(parameters.nodeElementCapacity) > 0 && width > parameters.minNodeSize
 
       def toNode: BranchType = new BranchType(this, this.parent, parameters)
 
