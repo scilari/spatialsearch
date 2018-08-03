@@ -4,7 +4,7 @@ import com.scilari.geometry.models.{Float2, ExtremePoint}
 import com.scilari.geometry.spatialsearch.core.IncrementallySearchable
 
 
-trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchable[P, E]{
+trait PolygonalSearches[E <: Float2] extends IncrementallySearchable[Float2, E]{
   import Polygonal._
   type NodeType <: Node with ExtremePoint
 
@@ -25,9 +25,9 @@ trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchabl
   }
 
   final class PolygonalDynamicMaxRange(maxRangeFactor: Float) extends SearchParameters{
-    private[this] val rangeFactorSq = maxRangeFactor*maxRangeFactor
-    private[this] var firstElementDistSq = Float.PositiveInfinity
-    private[this] var maxRange = Float.PositiveInfinity
+    private[this] val rangeFactorSq: Float = maxRangeFactor*maxRangeFactor
+    private[this] var firstElementDistSq: Float = Float.PositiveInfinity
+    private[this] var maxRange: Float = Float.PositiveInfinity
 
     override def modifyState(s: State): Unit = {
       if(firstElementDistSq > s.headElemDist){

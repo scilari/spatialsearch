@@ -9,12 +9,12 @@ import com.scilari.geometry.models.{AABB, Float2}
 trait SearchesImpl[E <: Float2] extends TreeSearches.Combined[Float2, E] {
   import SearchesImpl._
   val basicSearches: BasicSearches[Float2, E] = new PointDistances[E]
-  val polygonalSearches: PolygonalSearches[Float2, E] = new PointDistances[E]
+  val polygonalSearches: PolygonalSearches[E] = new PointDistances[E]
   val seqSearches: BasicSearches[Seq[Float2], E] = new SeqDistances[Seq[Float2], E]
 }
 
 object SearchesImpl{
-    class PointDistances[E <: Float2] extends BasicSearches[Float2, E] with PolygonalSearches[Float2, E] {
+    class PointDistances[E <: Float2] extends BasicSearches[Float2, E] with PolygonalSearches[E] {
       override type NodeType <: Node with AABB
       override def elemDist(p: Float2, e: E): Float = p.distanceSq(e)
       override def nodeDist(p: Float2, n: NodeType): Float = n.distanceSq(p)
