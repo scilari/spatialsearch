@@ -12,6 +12,8 @@ trait Tree[E] {
 
     def elements: Seq[E]
 
+    def elementCount: Int
+
     def nodes: Seq[NodeType]
 
     def leaves: Seq[LeafType]
@@ -49,9 +51,11 @@ trait Tree[E] {
   trait Branch extends Node{
     this: BranchType =>
 
-    val children: Array[NodeType]
+    def children: Array[NodeType]
 
     def elements: Seq[E] = children.flatMap(_.elements)
+
+    def elementCount: Int = children.map{_.elementCount}.sum
 
     def nodes: Seq[NodeType] = Seq(this) ++ children.flatMap {
       _.nodes
@@ -91,13 +95,15 @@ trait Tree[E] {
   trait Leaf extends Node {
     this: LeafType =>
 
-    val elements: mutable.Buffer[E]
+    def elements: mutable.Buffer[E]
+
+    def elementCount: Int = elements.size
 
     def nodes: Seq[NodeType] = Seq(this)
 
     def leaves: Seq[LeafType] = Seq(this)
 
-    val depth: Int = 1
+    def depth: Int = 1
 
     def childCount: Int = elements.size
 
