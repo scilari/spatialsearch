@@ -107,13 +107,17 @@ object AABB{
     b.enlarge(margin)
   }
 
-  def EnclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
+  def enclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
     val fitBox = AABB.apply(points, margin)
     new AABB(center = fitBox.center, halfWidth = Math.max(fitBox.width, fitBox.height)/2)
   }
 
-  def EnclosingSquare(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB ={
-    EnclosingSquare(Seq(Float2(minX, minY), Float2(maxX, maxY)))
+  def enclosingSquare(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB ={
+    enclosingSquare(Seq(Float2(minX, minY), Float2(maxX, maxY)))
+  }
+
+  def enclosingSquare(b: AABB): AABB = {
+    if(b.isSquare) b else enclosingSquare(Seq(b.minPoint, b.maxPoint))
   }
 
   val unit: AABB = AABB(0, 0, 1, 1)
