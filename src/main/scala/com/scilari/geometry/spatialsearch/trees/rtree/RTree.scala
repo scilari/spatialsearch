@@ -26,7 +26,7 @@ object RTree{
 
   def apply[E <: Float2](elems: Seq[E], nodeElementCapacity: Int): SearchTree[E] = {
     require(elems.size > 1, "At least two elements required for creating the initial node.")
-    val square = AABB.EnclosingSquare(elems)
+    val square = AABB.enclosingSquare(elems)
     require(square.width > 0 && square.height > 0,
       "At least two spatially distinct elements required for creating the initial node.")
     val q = RTree[E](square, nodeElementCapacity)
@@ -36,6 +36,7 @@ object RTree{
 
   def apply[E <: Float2](elems: Seq[E]): SearchTree[E] = apply(elems, defaultNodeElementCapacity)
 
+  import scala.language.implicitConversions
   implicit def searchTreeToRTree[E <: Float2](s: SearchTree[E]): RTree[E] = s.asInstanceOf[RTree[E]]
 
 
