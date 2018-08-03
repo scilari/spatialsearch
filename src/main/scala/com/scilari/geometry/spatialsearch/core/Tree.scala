@@ -16,8 +16,6 @@ trait Tree[E] {
 
     def leaves: Seq[LeafType]
 
-    def foreach[U](f: E => U): Unit = elements.foreach(f)
-
     def depth: Int
 
     def childCount: Int

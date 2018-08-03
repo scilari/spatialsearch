@@ -38,6 +38,8 @@ trait SpatialContainer[E] extends Traversable[E]{
     */
   def elements: Seq[E]
 
+  def foreach[U](f: E => U): Unit = elements.foreach(f)
+
   def isEmpty: Boolean
 
   override def nonEmpty: Boolean = !isEmpty
