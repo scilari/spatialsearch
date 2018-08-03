@@ -53,10 +53,10 @@ class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) 
     search(State(queryPoints, roots), new RangeParameters(r))
   }
 
-  //override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = super.isEmptyRange(queryPoint, r)
-
-  def isEmpty: Boolean = roots.forall(_.isEmpty)
+  def isEmpty: Boolean = !nonEmpty
   def nonEmpty: Boolean = roots.exists(_.nonEmpty)
+
+  def elements: Seq[E] = roots.flatMap(_.elements)
 
 }
 
