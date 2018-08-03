@@ -9,7 +9,7 @@ case class Parameters(
 )
 
 object Parameters{
-  val defaultNodeCapacity = 2
+  val defaultNodeCapacity = 63
   val defaultMinNodeSize = 0.000001f
   val defaultMaxDepth = 10
 
