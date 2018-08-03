@@ -69,6 +69,10 @@ object ArrayUtils {
     a
   }
 
+  def linSpace(a: Float, b: Float, n: Int): Array[Float] = {
+    Array.tabulate(n)(i => a + i*(b - a)/(n-1))
+  }
+
   def binaryFindIndex(a: Array[Double], key: Double): Int = {
     val ix = java.util.Arrays.binarySearch(a, key)
     if (ix >= 0) ix else -ix - 1
