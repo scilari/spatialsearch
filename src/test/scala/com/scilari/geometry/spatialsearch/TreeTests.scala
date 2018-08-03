@@ -189,8 +189,17 @@ abstract class TreeTests extends FlatSpec with Matchers {
     val treeNames = cityTree.toList.map{_.data.name}
     val names = cityData.drop(10).map{_.data.name}
     treeNames should contain theSameElementsAs names
+  }
 
-
+  it should "find cities near Oulu and Helsinki" in {
+    val cityTree = createCityTree
+    val Oulu = Float2(22.155672,2.312214)
+    val Helsinki = Float2(-3.330808,-537.687128)
+    val range = 25
+    val queryPoints = IndexedSeq(Oulu, Helsinki)
+    val foundCities = cityTree.seqRangeSearch(queryPoints, range)
+    val names = foundCities.map{_.data.name}
+    names should contain theSameElementsAs Seq("Helsinki", "Vantaa", "Espoo", "Oulu", "Haukipudas", "Kempele")
   }
 
 //  it should "have consistent leaf and inner code counts" in {
