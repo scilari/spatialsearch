@@ -6,8 +6,7 @@ package com.scilari.geometry.models
  * Created by iv on 25.2.2014.
  */
 
-class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends ExtremePoint{
-
+class AABB private (var minPoint: Float2, var maxPoint: Float2) extends ExtremePoint {
   def this(minX: Float, minY: Float, maxX: Float, maxY: Float) = this(Float2(minX, minY), Float2(maxX, maxY))
   def this(box: AABB) = this(box.minPoint, box.maxPoint)
   def this(center: Float2, halfWidth: Float) = this(center - Float2(halfWidth), center + Float2(halfWidth))
@@ -65,8 +64,10 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends ExtremePoint{
 
   def closestBorderPoint(p: Float2): Float2 = p.clamp(minPoint, maxPoint)
 
-  def enclose(p: Float2): AABB = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p); this}
+  def enclose(p: Float2): AABB = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p); this }
   def enclose(ps: Seq[Float2]): AABB = { ps.foreach(enclose); this }
+
+  def enlarge(margin: Float): AABB = { minPoint -= margin; maxPoint -= margin; this}
 
   def contains(p: Float2): Boolean = p.x >= minX && p.y >= minY && p.x <= maxX && p.y <= maxY
 
@@ -90,17 +91,21 @@ class AABB( var minPoint: Float2, var maxPoint: Float2 ) extends ExtremePoint{
 
 object AABB{
   def apply(): AABB = empty()
-  def apply(minPoint: Float2, maxPoint: Float2): AABB = new AABB(minPoint, maxPoint)
+  def apply(minPoint: Float2, maxPoint: Float2): AABB = {
+    val b = new AABB(minPoint, maxPoint)
+    require(b.area >= 0f,
+      s"AABB area must be non-negative. Check corner parameters, minPoint: $minPoint, maxPoint: $maxPoint")
+
+    b
+  }
   def apply(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB = new AABB(minX, minY, maxX, maxY)
   def apply(box: AABB): AABB = AABB(box.minPoint, box.maxPoint)
   def apply(scale: Float): AABB = apply(Float2.zero, Float2(scale))
 
   def apply(points: Seq[Float2], margin: Float = 0f): AABB = {
-    val xs = points.map{_.x}
-    val ys = points.map{_.y}
-    val bottomLeft = Float2(xs.min, ys.min)
-    val topRight =  Float2(xs.max, ys.max)
-    apply(bottomLeft - Float2(margin), topRight + Float2(margin))
+    val b = empty()
+    b.enclose(points)
+    b.enlarge(margin)
   }
 
   def EnclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
@@ -116,7 +121,6 @@ object AABB{
   def zero: AABB = AABB(0, 0, 0, 0)
   def random: AABB = AABB(Float2.zero, Float2.random)
 
-  def empty(): AABB = AABB(Float2.inf, -Float2.inf)
-
+  def empty(): AABB = new AABB(Float2.inf, -Float2.inf)
 
 }
