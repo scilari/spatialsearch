@@ -133,10 +133,10 @@ object Surface{
   }
 
   def surfaceGrid(box: AABB, pixelSize: Float): Seq[Float2] = {
-    val halfSize = pixelSize/2
+    val halfPixelSize = pixelSize/2
     for{
-      x <- box.minX + halfSize until box.maxX by pixelSize
-      y <- box.minY + halfSize until box.maxY by pixelSize
+      x <- ArrayUtils.linSpace(box.minX + halfPixelSize, box.maxX - halfPixelSize, (box.width/pixelSize).toInt)
+      y <- ArrayUtils.linSpace(box.minY + halfPixelSize, box.maxY - halfPixelSize, (box.height/pixelSize).toInt)
     } yield Float2(x,y)
 
   }
