@@ -93,11 +93,10 @@ object AABB{
   def apply(): AABB = empty()
   def apply(minPoint: Float2, maxPoint: Float2): AABB = {
     val b = new AABB(minPoint, maxPoint)
-    require(b.area >= 0f,
-      s"AABB area must be non-negative. Check corner parameters, minPoint: $minPoint, maxPoint: $maxPoint")
-
+    require(b.area >= 0f, s"AABB area must be non-negative. Check corners, minPoint: $minPoint, maxPoint: $maxPoint")
     b
   }
+
   def apply(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB = new AABB(minX, minY, maxX, maxY)
   def apply(box: AABB): AABB = AABB(box.minPoint, box.maxPoint)
   def apply(scale: Float): AABB = apply(Float2.zero, Float2(scale))
