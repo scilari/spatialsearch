@@ -7,20 +7,20 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
-    type BaseType = BoundedBase
-    type NodeType = RTreeNode
+    type NodeType = BoundedNode
+    type BranchType = RTreeBranch
     type LeafType = RTreeLeaf
 
-    class RTreeNode(
+    class RTreeBranch(
       bb: AABB,
       elems: Seq[E],
-      val parent: Option[RTreeNode],
+      val parent: Option[RTreeBranch],
       nodeElementCapacity: Int
-    ) extends BaseType(bb) with Node{
+    ) extends NodeType(bb) with Branch{
 
       elems.foreach(enclose)
 
-      val children: Array[BaseType] = {
+      val children: Array[NodeType] = {
         val (boxA, boxB) = RTreeUtils.angLinearSplit(this, elems)
         Array(
           new LeafType(boxA, Some(this), nodeElementCapacity),
@@ -34,7 +34,7 @@ trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
         setChild(1, getChild(1).add(for1))
       }
 
-      override def add(e: E): NodeType = {
+      override def add(e: E): BranchType = {
         enclose(e)
         super.add(e)
       }
@@ -46,28 +46,28 @@ trait RTreeLike[E <: Float2] extends BoundedSearchTree[E] {
 
     class RTreeLeaf(
       bb: AABB,
-      val parent: Option[NodeType] = None,
+      val parent: Option[BranchType] = None,
       nodeElementCapacity: Int
-    ) extends BaseType(bb) with Leaf {
+    ) extends NodeType(bb) with Leaf {
 
       val elements: mutable.Buffer[E] = ArrayBuffer[E]()
 
-      override def add(e: E): BaseType = {
+      override def add(e: E): NodeType = {
         enclose(e)
         super.add(e)
       }
 
       def splitCondition: Boolean = elements.lengthCompare(nodeElementCapacity) > 0
 
-      override def add(elems: Seq[E]): BaseType = {
+      override def add(elems: Seq[E]): NodeType = {
         elems.foreach(enclose)
         elements ++= elems
         if(splitCondition) split() else this
       }
 
-      def toNode: NodeType = new NodeType(this, elements, parent, nodeElementCapacity)
+      def toNode: BranchType = new BranchType(this, elements, parent, nodeElementCapacity)
 
-      override def split(): NodeType = {
+      override def split(): BranchType = {
         val newParent = toNode
         newParent
       }

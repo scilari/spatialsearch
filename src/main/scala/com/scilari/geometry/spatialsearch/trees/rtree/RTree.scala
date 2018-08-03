@@ -7,7 +7,7 @@ import com.scilari.geometry.spatialsearch.SearchTree
 final class RTree[E <: Float2] private (bb: AABB, nodeElementCapacity: Int)
   extends RTreeLike[E] with SearchTree[E] {
 
-  var root: BaseType = new LeafType(bb, None, nodeElementCapacity)
+  var root: NodeType = new LeafType(bb, None, nodeElementCapacity)
 
   override def add(elems: Seq[E]): Unit = root = root.add(elems)
 

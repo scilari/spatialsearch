@@ -1,12 +1,12 @@
 package com.scilari.geometry.spatialsearch.searches
 
-import com.scilari.geometry.models.{AABB, Float2, ExtremePoint}
+import com.scilari.geometry.models.{Float2, ExtremePoint}
 import com.scilari.geometry.spatialsearch.core.IncrementallySearchable
 
 
 trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchable[P, E]{
   import Polygonal._
-  type BaseType <: Base with ExtremePoint
+  type NodeType <: Node with ExtremePoint
 
   def polygonal: SearchFn = search(new PolygonalParameters)
 
@@ -17,7 +17,7 @@ trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchabl
       !isDominatedBy(e, s.queryPoint, s.foundElements)
     }
 
-    override def filterNodes(n: BaseType, s: State): Boolean = {
+    override def filterNodes(n: NodeType, s: State): Boolean = {
       !isDominatedBy(n, s.queryPoint, s.foundElements)
     }
 
@@ -40,7 +40,7 @@ trait PolygonalSearches[P <: Float2, E <: Float2] extends IncrementallySearchabl
       elemDist(s.queryPoint, e) <= maxRange && !isDominatedBy(e, s.queryPoint, s.foundElements)
     }
 
-    override def filterNodes(n: BaseType, s: State): Boolean = {
+    override def filterNodes(n: NodeType, s: State): Boolean = {
       nodeDist(s.queryPoint, n) <= maxRange && !isDominatedBy(n, s.queryPoint, s.foundElements)
     }
 

@@ -3,16 +3,16 @@ package com.scilari.geometry.spatialsearch.core
 import scala.collection.mutable
 
 trait Tree[E] {
-  type BaseType <: Base
-  type NodeType <: BaseType with Node
-  type LeafType <: BaseType with Leaf
+  type NodeType <: Node
+  type BranchType <: NodeType with Branch
+  type LeafType <: NodeType with Leaf
 
-  trait Base {
-    this: BaseType =>
+  trait Node {
+    this: NodeType =>
 
     def elements: Seq[E]
 
-    def nodes: Seq[BaseType]
+    def nodes: Seq[NodeType]
 
     def leaves: Seq[LeafType]
 
@@ -22,15 +22,15 @@ trait Tree[E] {
 
     def childCount: Int
 
-    def add(e: E): BaseType
+    def add(e: E): NodeType
 
-    def add(elems: Seq[E]): BaseType = {
-      var n: BaseType = this
+    def add(elems: Seq[E]): NodeType = {
+      var n: NodeType = this
       elems.foreach(e => n = add(e)) // linter:ignore VariableAssignedUnusedValue
       n
     }
 
-    def parent: Option[BaseType]
+    def parent: Option[NodeType]
 
     def isRoot: Boolean = parent.isEmpty
 
@@ -48,14 +48,14 @@ trait Tree[E] {
   }
 
 
-  trait Node extends Base{
-    this: NodeType =>
+  trait Branch extends Node{
+    this: BranchType =>
 
-    val children: Array[BaseType]
+    val children: Array[NodeType]
 
     def elements: Seq[E] = children.flatMap(_.elements)
 
-    def nodes: Seq[BaseType] = Seq(this) ++ children.flatMap {
+    def nodes: Seq[NodeType] = Seq(this) ++ children.flatMap {
       _.nodes
     }
 
@@ -77,11 +77,11 @@ trait Tree[E] {
 
     def findChildIndex(e: E): Int
 
-    def getChild(i: Int): BaseType = children(i)
+    def getChild(i: Int): NodeType = children(i)
 
-    def setChild(i: Int, c: BaseType): Unit = children(i) = c
+    def setChild(i: Int, c: NodeType): Unit = children(i) = c
 
-    def add(e: E): NodeType = {
+    def add(e: E): BranchType = {
       val ix = findChildIndex(e)
       val child = getChild(ix)
       val newChild = child.add(e)
@@ -90,12 +90,12 @@ trait Tree[E] {
     }
   }
 
-  trait Leaf extends Base {
+  trait Leaf extends Node {
     this: LeafType =>
 
     val elements: mutable.Buffer[E]
 
-    def nodes: Seq[BaseType] = Seq(this)
+    def nodes: Seq[NodeType] = Seq(this)
 
     def leaves: Seq[LeafType] = Seq(this)
 
@@ -109,20 +109,20 @@ trait Tree[E] {
 
     def remove(e: E): Unit = elements -= e
 
-    def add(e: E): BaseType = {
+    def add(e: E): NodeType = {
       elements += e
       if (splitCondition) split() else this
     }
 
     def splitCondition: Boolean
 
-    def split(): NodeType = {
+    def split(): BranchType = {
       val newNode = toNode
       elements.foreach(newNode.add)
       newNode
     }
 
-    def toNode: NodeType
+    def toNode: BranchType
   }
 
 }

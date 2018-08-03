@@ -11,14 +11,14 @@ import com.scilari.geometry.spatialsearch.SearchTree
 final class QuadTree[E <: Float2] private (bb: AABB, parameters: Parameters = Parameters())
   extends QuadTreeLike[E] with SearchTree[E] {
 
-  var root: BaseType = new LeafType(bb, None, parameters)
+  var root: NodeType = new LeafType(bb, None, parameters)
 
   def addEnclose(e: E): Unit = {
     if(root.encloses(e)) {
       add(e)
     } else{
       val newAABB = QuadTreeUtils.expandAABB(e, root)
-      val newRoot = new NodeType(newAABB, parameters = parameters)
+      val newRoot = new BranchType(newAABB, parameters = parameters)
       newRoot.setChild(QuadTreeUtils.findQuadrant(root.center, newRoot), root)
       root = newRoot
       addEnclose(e)

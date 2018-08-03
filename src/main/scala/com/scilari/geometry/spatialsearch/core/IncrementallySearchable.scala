@@ -14,12 +14,12 @@ import scala.collection.mutable.ArrayBuffer
   * Created by iv on 1/17/2017.
   */
 trait IncrementallySearchable[P, E] extends Tree[E]{
-  type SearchFn = (P, BaseType) => Seq[E]
+  type SearchFn = (P, NodeType) => Seq[E]
 
   def elemDist(p: P, e: E): Float
-  def nodeDist(p: P, n: BaseType): Float
+  def nodeDist(p: P, n: NodeType): Float
 
-  def search(params: SearchParameters)(queryPoint: P, tree: BaseType): Seq[E] =
+  def search(params: SearchParameters)(queryPoint: P, tree: NodeType): Seq[E] =
     search(State.defaultInitialState(queryPoint, tree, params), params)
 
   @tailrec
@@ -37,7 +37,7 @@ trait IncrementallySearchable[P, E] extends Tree[E]{
         if (filterElements(candidate, state)) foundElements = foundElements += candidate
       } else {
         nodes.dequeueValue() match {
-          case node: Node =>
+          case node: Branch =>
             node.children.foreach { c => if (filterNodes(c, state)) nodes.enqueue(nodeDist(queryPoint, c), c) }
 
           case leaf: Leaf =>
@@ -51,7 +51,7 @@ trait IncrementallySearchable[P, E] extends Tree[E]{
 
   final class State(
     val queryPoint: P,
-    val nodes: FloatPriorityQueue[BaseType],
+    val nodes: FloatPriorityQueue[NodeType],
     val elements: FloatPriorityQueue[E] = new FloatHeap[E](),
     var foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()
   ){
@@ -62,16 +62,16 @@ trait IncrementallySearchable[P, E] extends Tree[E]{
   }
 
   object State{
-    def apply(queryPoint: P, trees: Seq[BaseType]): State = {
-      val initialNodes = new FloatHeap[BaseType]()
+    def apply(queryPoint: P, trees: Seq[NodeType]): State = {
+      val initialNodes = new FloatHeap[NodeType]()
       trees.foreach(tree => initialNodes.enqueue(nodeDist(queryPoint, tree), tree))
       new State(queryPoint, initialNodes)
     }
 
-    def defaultInitialState(queryPoint: P, tree: BaseType, params: SearchParameters): State = {
+    def defaultInitialState(queryPoint: P, tree: NodeType, params: SearchParameters): State = {
       new State(
         queryPoint,
-        new FloatHeap[BaseType](params.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
+        new FloatHeap[NodeType](params.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
         new FloatHeap[E](params.elemQueueSizeHint),
         new ArrayBuffer[E](params.foundElemSizeHint)
       )
@@ -81,7 +81,7 @@ trait IncrementallySearchable[P, E] extends Tree[E]{
   class SearchParameters{
     def endCondition(s: State): Boolean = false // linter:ignore UnusedParameter
     def filterElements(e: E, s: State): Boolean = true // linter:ignore UnusedParameter
-    def filterNodes(n: BaseType, s: State): Boolean = true // linter:ignore UnusedParameter
+    def filterNodes(n: NodeType, s: State): Boolean = true // linter:ignore UnusedParameter
     def modifyState(s: State): Unit = () // linter:ignore UnusedParameter
     val nodeQueueSizeHint: Int = 32
     val elemQueueSizeHint: Int = 32

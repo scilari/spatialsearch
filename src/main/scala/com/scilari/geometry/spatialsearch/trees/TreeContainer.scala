@@ -4,7 +4,7 @@ import com.scilari.geometry.spatialsearch.SpatialContainer
 import com.scilari.geometry.spatialsearch.core.Tree
 
 trait TreeContainer[E] extends Tree[E] with SpatialContainer[E] {
-  var root: BaseType
+  var root: NodeType
 
   def add(e: E): Unit = root = root.add(e)
 
@@ -23,7 +23,7 @@ trait TreeContainer[E] extends Tree[E] with SpatialContainer[E] {
 
   def foreach[U](f: E => U): Unit = root.foreach(f)
 
-  override def toString(): String = root.toString()
+  override def toString(): String = root.toString
 
   override def elements: Seq[E] = root.elements
 

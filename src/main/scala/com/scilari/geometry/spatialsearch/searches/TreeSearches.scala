@@ -7,10 +7,10 @@ import com.scilari.geometry.models.Float2
   */
 object TreeSearches{
   trait Base[P, E <: Float2] extends Searches[P, E] {
-    var root: BaseType
+    var root: NodeType
     // TODO: this is a horrible cast
     private[TreeSearches] def castRoot =
-      root.asInstanceOf[basicSearches.BaseType with polygonalSearches.BaseType with seqSearches.BaseType]
+      root.asInstanceOf[basicSearches.NodeType with polygonalSearches.NodeType with seqSearches.NodeType]
   }
 
   trait Basic[P,  E <: Float2] extends Base[P, E] {

@@ -12,10 +12,10 @@ import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
   */
 class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) extends SearchesImpl[E] with Searchable[E] {
 
-  var root: BaseType = null.asInstanceOf[BaseType] // scalastyle:ignore null
+  var root: NodeType = null.asInstanceOf[NodeType] // scalastyle:ignore null
 
   private[this] val roots = trees.map{tree =>
-    tree.root.asInstanceOf[basicSearches.BaseType with polygonalSearches.BaseType with seqSearches.BaseType]
+    tree.root.asInstanceOf[basicSearches.NodeType with polygonalSearches.NodeType with seqSearches.NodeType]
   }
 
   override def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {

@@ -8,19 +8,19 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 trait QuadTreeLike[E <: Float2] extends BoundedSearchTree[E]{
-    type BaseType = BoundedBase
-    type NodeType = QuadNode
+    type NodeType = BoundedNode
+    type BranchType = QuadBranch
     type LeafType = QuadLeaf
 
-    class QuadNode(
+    class QuadBranch(
       bb: AABB,
-      val parent: Option[NodeType] = None,
+      val parent: Option[BranchType] = None,
       parameters: Parameters
-    ) extends BaseType(bb) with Node {
+    ) extends NodeType(bb) with Branch {
 
-      val children: Array[BaseType] = {
+      val children: Array[NodeType] = {
         val parent = Some(this)
-        Array[BaseType](
+        Array[NodeType](
           new LeafType(topLeftAABB(this), parent, parameters),
           new LeafType(topRightAABB(this), parent, parameters),
           new LeafType(bottomLeftAABB(this), parent, parameters),
@@ -33,15 +33,15 @@ trait QuadTreeLike[E <: Float2] extends BoundedSearchTree[E]{
 
     class QuadLeaf(
       bb: AABB,
-      val parent: Option[NodeType] = None,
+      val parent: Option[BranchType] = None,
       parameters: Parameters
-    ) extends BaseType(bb) with Leaf{
+    ) extends NodeType(bb) with Leaf{
       val elements: mutable.Buffer[E] = new ArrayBuffer[E]()
 
       def splitCondition: Boolean =
         elements.lengthCompare(parameters.nodeElementCapacity) > 0 && width >= parameters.minNodeSize
 
-      def toNode: NodeType = new NodeType(this, this.parent, parameters)
+      def toNode: BranchType = new BranchType(this, this.parent, parameters)
 
     }
 }

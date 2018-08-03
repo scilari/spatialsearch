@@ -52,17 +52,17 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
   private object Range{
     val defaultRangeSizeHint: Int = 32
 
-    def range(queryPoint: P, rootNodes: Seq[BaseType],
+    def range(queryPoint: P, rootNodes: Seq[NodeType],
       r: Float, foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()): Seq[E] = {
       val rSq = r * r
 
       @tailrec
-      def rangeRec(nodes: List[Base]): Unit ={
+      def rangeRec(nodes: List[Node]): Unit ={
         nodes match{
-          case (leaf: Leaf) :: (tail: List[Base]) =>
+          case (leaf: Leaf) :: (tail: List[Node]) =>
             leaf.elements.foreach(e => if(elemDist(queryPoint, e) <= rSq) foundElements += e)
             rangeRec(tail)
-          case (node: Node) :: (tail: List[Base]) =>
+          case (node: Branch) :: (tail: List[Node]) =>
             var ns = tail
             val cs = node.children
             var i = 0; val n = cs.length
