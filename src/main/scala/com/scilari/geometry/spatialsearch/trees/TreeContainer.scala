@@ -21,8 +21,6 @@ trait TreeContainer[E] extends Tree[E] with SpatialContainer[E] {
   override def remove(filter: E => Boolean): Unit =
     for{l <- leaves; e <- l.elements if filter(e)} l.elements -= e
 
-  def foreach[U](f: E => U): Unit = root.foreach(f)
-
   override def toString(): String = root.toString
 
   override def elements: Seq[E] = root.elements
