@@ -1,16 +1,20 @@
 package com.scilari.geometry.spatialsearch.core
 
-import scala.collection.mutable
+import scala.collection.mutable.Buffer
 
 trait Tree[E] {
   type NodeType <: Node
   type BranchType <: NodeType with Branch
   type LeafType <: NodeType with Leaf
 
-  trait Node {
+  trait Node extends Traversable[E] {
     this: NodeType =>
 
+    def foreach[U](f: E => U): Unit = elements.foreach(f)
+
     def elements: Seq[E]
+
+    def nonEmptyIfNotEmptied: Boolean
 
     def elementCount: Int
 
@@ -38,10 +42,6 @@ trait Tree[E] {
 
     def nonLeaf: Boolean = !isLeaf
 
-    def isEmpty: Boolean = !nonEmpty
-
-    def nonEmpty: Boolean
-
     def encloses(e: E): Boolean
 
     def remove(e: E): Unit
@@ -54,6 +54,8 @@ trait Tree[E] {
     def children: Array[NodeType]
 
     def elements: Seq[E] = children.flatMap(_.elements)
+
+    def nonEmptyIfNotEmptied: Boolean = true
 
     def elementCount: Int = children.map{_.elementCount}.sum
 
@@ -72,8 +74,6 @@ trait Tree[E] {
     def childCount: Int = children.length
 
     def isLeaf: Boolean = false
-
-    def nonEmpty: Boolean = leaves.exists(_.nonEmpty)
 
     def remove(e: E): Unit = children.filter{_.encloses(e)}.foreach(_.remove(e))
 
@@ -95,7 +95,9 @@ trait Tree[E] {
   trait Leaf extends Node {
     this: LeafType =>
 
-    def elements: mutable.Buffer[E]
+    def elements: Buffer[E]
+
+    def nonEmptyIfNotEmptied: Boolean = elements.nonEmpty
 
     def elementCount: Int = elements.size
 
@@ -108,8 +110,6 @@ trait Tree[E] {
     def childCount: Int = elements.size
 
     def isLeaf: Boolean = true
-
-    def nonEmpty: Boolean = elements.nonEmpty
 
     def remove(e: E): Unit = elements -= e
 
