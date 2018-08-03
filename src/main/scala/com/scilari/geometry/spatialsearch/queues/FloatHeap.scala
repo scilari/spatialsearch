@@ -8,7 +8,7 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
   import FloatHeap._
   private[this] var values = new Array[Any](initialCapacity)
   private[this] var keys = new Array[Float](initialCapacity)
-  if(initialCapacity > 0) keys(0) = Float.MinValue // use as a sentinel in bubbleUp
+  if(initialCapacity > 0) keys(0) = Float.NegativeInfinity // use as a sentinel in bubbleUp
 
   private[this] var maxIndex = 0
   private[this] var capacity = initialCapacity
