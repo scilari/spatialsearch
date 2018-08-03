@@ -24,10 +24,10 @@ object TreeSearches{
     def isEmptyRange(queryPoint: P, r: Float): Boolean = basicSearches.rangeUntilFirstFound(r)(queryPoint, castRoot).isEmpty
   }
 
-  trait Polygonal[P <: Float2, E <: Float2] extends Base[P, E]{
-    def polygonalSearch(queryPoint: P with Float2): Seq[E] = polygonalSearches.polygonal(queryPoint, castRoot)
+  trait Polygonal[P, E <: Float2] extends Base[P, E]{
+    def polygonalSearch(queryPoint: Float2): Seq[E] = polygonalSearches.polygonal(queryPoint, castRoot)
 
-    def fastPolygonalSearch(queryPoint: P with Float2): Seq[E] = polygonalSearches.polygonalDynamicMaxRange()(queryPoint, castRoot)
+    def fastPolygonalSearch(queryPoint: Float2): Seq[E] = polygonalSearches.polygonalDynamicMaxRange()(queryPoint, castRoot)
   }
 
   trait Sequence[P <: Float2, E <: Float2] extends Base[P, E]{
