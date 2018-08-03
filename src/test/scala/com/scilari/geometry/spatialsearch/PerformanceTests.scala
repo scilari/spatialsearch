@@ -66,6 +66,8 @@ class PerformanceTests extends FlatSpec with Matchers {
     info("Knn k: " + queryK)
     info("Range: " + range + " out of total point area of " + bb.width + " x " + bb.height)
     info("Quadtree. depth: " +  quadTree.depth + " nodeCount: " + quadTree.root.nodes.size)
+    info("Quadtree. parameters: " +  quadTree.parameters)
+    info("Min node size: " + quadTree.leaves.map{_.width}.min)
     info("RTree. depth: " +  rTree.depth + " nodeCount: " + rTree.root.nodes.size)
     info("================")
   }
