@@ -67,7 +67,7 @@ class AABB private (var minPoint: Float2, var maxPoint: Float2) extends ExtremeP
   def enclose(p: Float2): AABB = { minPoint = Float2.min(minPoint, p); maxPoint = Float2.max(maxPoint, p); this }
   def enclose(ps: Seq[Float2]): AABB = { ps.foreach(enclose); this }
 
-  def enlarge(margin: Float): AABB = { minPoint -= margin; maxPoint -= margin; this}
+  def enlarge(margin: Float): AABB = { minPoint -= margin; maxPoint += margin; this}
 
   def contains(p: Float2): Boolean = p.x >= minX && p.y >= minY && p.x <= maxX && p.y <= maxY
 
