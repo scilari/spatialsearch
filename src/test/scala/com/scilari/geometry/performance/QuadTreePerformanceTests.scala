@@ -1,10 +1,9 @@
 package com.scilari.geometry.performance
 
-import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch.TestUtils.Timing._
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
-import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 import org.scalatest.{FlatSpec, Matchers}
 import com.csdgn.util.KDTree
 
