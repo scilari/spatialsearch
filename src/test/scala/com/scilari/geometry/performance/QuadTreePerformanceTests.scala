@@ -1,54 +1,17 @@
-package com.scilari.geometry.spatialsearch
+package com.scilari.geometry.performance
 
 import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.spatialsearch.TestUtils.Timing._
+import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import com.scilari.geometry.spatialsearch.trees.rtree.RTree
-import TestUtils.Timing._
-import com.scilari.geometry.spatialsearch.plotting.TreePlotter
-import org.csdgn.util.KDTree
 import org.scalatest.{FlatSpec, Matchers}
+import com.csdgn.util.KDTree
 
 import scala.collection.mutable
 
 
-class PerformanceTests extends FlatSpec with Matchers {
-  val plotting = true
-
-  val runCount: Int = 200
-  val insertRunCount: Int = 10*runCount
-  val warmUpCount: Int = 2
-  val pointCount: Int = 10000
-  val queryCount: Int = 1000
-  val bb: AABB = AABB(1000f)
-  val range: Float = 0.25f*bb.width
-  val queryK: Int = 100 //pointCount/10
-
-
-  val totalQueryCount: Int = runCount * queryCount
-  val totalInsertCount: Int = insertRunCount * pointCount
-
-
-  val f2: Float2 = Float2.random
-
-  // Data with two clusters and a small number of random points elsewhere
-  val points: Seq[Float2]  =
-    Seq.fill(pointCount*9/20)(Float2.random(0.2f*bb.width) + 0.1f*bb.width) ++
-      Seq.fill(pointCount*9/20)(Float2.random(0.5f*bb.width) + 0.45f*bb.width) ++
-      Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
-
-
-  val queryPoints: IndexedSeq[Float2] = {
-    mutable.IndexedSeq.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
-  }
-
-  val pointsArray: Seq[Array[Double]] = points.map{_.toDoubleArray}
-  val queryArray: Seq[Array[Double]] = queryPoints.map{_.toDoubleArray}
-  val kdTree = new KDTree[Float2](2)
-  pointsArray.foreach(k => kdTree.add(k, Float2.random))
-  val quadTree: QuadTree[Float2] = QuadTree(points)
-  val rTree: RTree[Float2] = RTree(points)
-
-
+class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBase  {
 
   def testInfo(): Unit ={
     if(plotting){
@@ -331,68 +294,6 @@ class PerformanceTests extends FlatSpec with Matchers {
     tSingle should be < tRebuildKd
   }
 
-
-  "RTree" should "have even somewhat comparable insertion performance to KDTree" in {
-    val tKd = warmUpAndMeasureTime({
-      val kdTree = new KDTree[Float2](2, 48)
-      pointsArray.foreach(k => kdTree.add(k, f2))
-    }, insertRunCount, warmUpCount)
-
-    val tRt = warmUpAndMeasureTime({
-      val rTree = RTree[Float2]()
-      points.foreach(rTree.add)
-    }, insertRunCount, warmUpCount)
-
-    info("\n== Insert time == ")
-    info("KDTree: " + tKd/totalInsertCount  + " (ms/insert)" )
-    info("RTree: " + tRt/totalInsertCount  + " (ms/insert)" )
-    info("Ratio (Rtree/KD): " + tRt/tKd)
-    assert(similarTime(tKd, tRt, similarityRatio = 20))
-  }
-
-
-  it should "have similar knn query performance to KDTree" in {
-    val tKd = warmUpAndMeasureTime({
-      for(q <- queryArray){
-        val neighbors = kdTree.getNearestNeighbors(q, queryK)
-      }
-    }, runCount, warmUpCount)
-
-    val tRt = warmUpAndMeasureTime({
-      for(q <- queryPoints){
-        val neighbors = rTree.knnSearch(q, queryK)
-      }
-    }, runCount, warmUpCount)
-
-    info("\n== Knn query time ==")
-    info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
-    info("RTree: " + tRt/totalQueryCount + " (ms/query)")
-    info("Ratio (Rtree/KD): " + tRt/tKd)
-    assert(similarTime(tKd, tRt))
-
-  }
-
-  it should "have similar range query performance to KDTree" in {
-    val tKd = warmUpAndMeasureTime({
-      for(q <- queryArray){
-        val kdRangeLow = Array(q(0) - range, q(1) - range)
-        val kdRangeHigh = Array(q(0) + range, q(1) + range)
-        val neighbors = kdTree.getRange(kdRangeLow, kdRangeHigh)
-      }
-    }, runCount, warmUpCount)
-
-    val tRt = warmUpAndMeasureTime({
-      for(q <- queryPoints){
-        val neighbors = rTree.rangeSearch(q, range)
-      }
-    }, runCount, warmUpCount)
-
-    info("\n== Range query time ==")
-    info("KDTree: " + tKd/totalQueryCount + " (ms/query)")
-    info("RTree: " + tRt/totalQueryCount + " (ms/query)")
-    info("Ratio (Rtree/KD): " + tRt/tKd)
-    assert(similarTime(tKd, tRt))
-  }
 
 
 }

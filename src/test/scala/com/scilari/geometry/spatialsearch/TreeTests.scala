@@ -2,9 +2,8 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{DataPoint, Float2}
 import TestResources._
-import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
-import org.csdgn.util.KDTree
 import org.scalatest.{FlatSpec, Matchers}
+import com.csdgn.util.KDTree
 
 /**
   * Created by iv on 1/17/2017.

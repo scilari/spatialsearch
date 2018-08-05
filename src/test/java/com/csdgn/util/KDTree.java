@@ -1,4 +1,4 @@
-package org.csdgn.util;
+package com.csdgn.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

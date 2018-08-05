@@ -1,4 +1,4 @@
-package org.csdgn.util;
+package com.csdgn.util;
 
 /**
  * @author Chase
