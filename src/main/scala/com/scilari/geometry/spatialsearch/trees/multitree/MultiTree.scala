@@ -16,7 +16,7 @@ class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) 
 
   private[this] val roots = trees.map{tree =>
     tree.root.asInstanceOf[basicSearches.NodeType with polygonalSearches.NodeType with seqSearches.NodeType]
-  }
+  }.toList
 
   override def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
     import basicSearches._
