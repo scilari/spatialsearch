@@ -16,6 +16,8 @@ trait TreeContainer[E] extends Tree[E] with SpatialContainer[E] {
 
   override def nonEmpty: Boolean = root.nonEmpty
 
+  def nonEmptyIfNotEmptied: Boolean = root.nonEmptyIfNotEmptied
+
   override def remove(elems: Seq[E]): Unit = elems.foreach{ root.remove }
 
   override def remove(filter: E => Boolean): Unit =

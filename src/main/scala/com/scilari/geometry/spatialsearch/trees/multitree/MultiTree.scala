@@ -56,6 +56,8 @@ class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) 
   def isEmpty: Boolean = !nonEmpty
   def nonEmpty: Boolean = roots.exists(_.nonEmpty)
 
+  def nonEmptyIfNotEmptied: Boolean = roots.exists(_.nonEmptyIfNotEmptied)
+
   def elements: Seq[E] = roots.flatMap(_.elements)
 
 }

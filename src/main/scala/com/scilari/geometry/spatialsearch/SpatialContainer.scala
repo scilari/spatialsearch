@@ -43,4 +43,11 @@ trait SpatialContainer[E] extends Traversable[E]{
   def isEmpty: Boolean
 
   override def nonEmpty: Boolean = !isEmpty
+
+  /**
+    * Returns true if elements have been added to the container. This can offer better performance in cases, when it
+    * is known that the container is not emptied in between.
+    * @return True, if elements have been added to the container.
+    */
+  def nonEmptyIfNotEmptied: Boolean
 }
