@@ -10,7 +10,7 @@ trait SearchesImpl[E <: Float2] extends TreeSearches.Combined[Float2, E] {
   import SearchesImpl._
   val basicSearches: BasicSearches[Float2, E] = new PointDistances[E]
   val polygonalSearches: PolygonalSearches[E] = new PointDistances[E]
-  val seqSearches: BasicSearches[Seq[Float2], E] = new SeqDistances[Seq[Float2], E]
+  val seqSearches: BasicSearches[IndexedSeq[Float2], E] = new SeqDistances[IndexedSeq[Float2], E]
 }
 
 object SearchesImpl{
@@ -20,7 +20,7 @@ object SearchesImpl{
       override def nodeDist(p: Float2, n: NodeType): Float = n.distanceSq(p)
     }
 
-    class SeqDistances[P <: Seq[Float2], E <: Float2] extends BasicSearches[P, E] {
+    class SeqDistances[P <: IndexedSeq[Float2], E <: Float2] extends BasicSearches[P, E] {
       override type NodeType <: Node with AABB
 
       override def elemDist(ps: P, e: E): Float = {
