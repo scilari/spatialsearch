@@ -54,9 +54,9 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
   }
 
   override def getValues: Seq[E] = {
-    val b = new ArrayBuffer[E](maxIndex)
-    for(i <- firstIndex to maxIndex) b += values(i).asInstanceOf[E]
-    b
+    val a = new Array[Any](maxIndex)
+    Array.copy(values, firstIndex, a, 0, maxIndex)
+    a.asInstanceOf[Array[E]].toBuffer
   }
 
   private[this] def popFirst(): Unit ={
