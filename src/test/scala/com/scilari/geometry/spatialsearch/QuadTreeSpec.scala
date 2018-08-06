@@ -18,7 +18,9 @@ object QuadTreeSpec {
   val maxKnnPointCount: Int = 200
 
   val genK: Gen[Int] = Gen.choose[Int](minKnnPointCount, maxKnnPointCount)
-  val genRadius: Gen[Float] = Gen.choose[Float](0f, 500f)
+
+  // I have no idea why the below returns negative values
+  val genRadius: Gen[Float] = Gen.choose[Float](0.00f, 500f) suchThat(_ >= 0f)
 
   val bb = AABB(minX, minY, maxX, maxY)
 
