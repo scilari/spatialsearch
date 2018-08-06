@@ -137,7 +137,7 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
   }
 
   it should "have similar sequence range query performance than with separate queries" in {
-    val slidingQueryPoints = queryPoints.sliding(20)
+    val slidingQueryPoints = queryPoints.toArray.sliding(20)
 
     val tSeq = warmUpAndMeasureTime({
       for(qs <- slidingQueryPoints){
@@ -212,6 +212,7 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
 
       info(s"\n== Sequence path query test with $pathPoints points ==")
       info(s"Total sequence-based time: $tSeq (ms)")
+      info(s"Total separate time: $tSep (ms)")
       info(s"Sequence-based vs separate range query time: ${tSeq/tSep}")
       info(s"Sequence-based vs separate unique range query time: ${tSeq/tSepSet}")
       info(s"Sequence-based vs separate unique range query time 2: ${tSeq/tSepSet2}")
@@ -220,7 +221,7 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
   }
 
   it should "have similar sequence knn query performance than with separate queries" in {
-    val slidingQueryPoints = queryPoints.sliding(20)
+    val slidingQueryPoints = queryPoints.toArray.sliding(20)
 
     val tSeq = warmUpAndMeasureTime({
       for(qs <- slidingQueryPoints){
