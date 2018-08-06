@@ -2,6 +2,8 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.Float2
 
+import scala.collection.mutable
+
 trait Searchable[E] {
 
   def knnSearch(queryPoint: Float2, k: Int): Seq[E]
@@ -14,9 +16,9 @@ trait Searchable[E] {
 
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E]
 
-  def seqKnnSearch(queryPoints: IndexedSeq[Float2], k: Int): Seq[E]
+  def seqKnnSearch(queryPoints: mutable.Buffer[Float2], k: Int): Seq[E]
 
-  def seqRangeSearch(queryPoints: IndexedSeq[Float2], r: Float): Seq[E]
+  def seqRangeSearch(queryPoints: mutable.Buffer[Float2], r: Float): Seq[E]
 
   def isEmptyRange(queryPoint: Float2, r: Float): Boolean
 

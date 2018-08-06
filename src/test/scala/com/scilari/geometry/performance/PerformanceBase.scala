@@ -33,8 +33,8 @@ trait PerformanceBase {
       Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
 
 
-  val queryPoints: IndexedSeq[Float2] = {
-    mutable.IndexedSeq.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
+  val queryPoints: mutable.Buffer[Float2] = {
+    mutable.Buffer.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
   }
 
   val pointsArray: Seq[Array[Double]] = points.map{_.toDoubleArray}

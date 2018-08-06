@@ -24,7 +24,7 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
   final class RangeParameters(r: Float, sizeHint: Int = Range.defaultRangeSizeHint) extends SearchParameters{
     // Skipping the queues in favor of performance, as we do not need the elements in order
     override def modifyState(s: State): Unit = {
-      Range.range(s.queryPoint, s.nodes.getValues, r, s.foundElements)
+      Range.range(s.queryPoint, s.nodes.getValues.toList, r, s.foundElements)
     }
 
     override def endCondition(s: State): Boolean = true
@@ -52,7 +52,7 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
   private object Range{
     val defaultRangeSizeHint: Int = 32
 
-    def range(queryPoint: P, rootNodes: Seq[NodeType],
+    def range(queryPoint: P, rootNodes: List[NodeType],
       r: Float, foundElements: mutable.Buffer[E] = new ArrayBuffer[E]()): Seq[E] = {
       val rSq = r * r
 
@@ -76,7 +76,7 @@ trait BasicSearches[P, E] extends IncrementallySearchable[P, E]{
         }
       }
 
-      rangeRec(rootNodes.toList)
+      rangeRec(rootNodes)
       foundElements
     }
   }
