@@ -32,6 +32,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
   it should "be nonEmptyIfNotEmptied after adding points and also after removing all points" in {
     val tree = createEmptyUnitTree
     assert(tree.isEmpty)
+    assert(!tree.nonEmptyIfNotEmptied)
     points.foreach {
       tree.add
     }
