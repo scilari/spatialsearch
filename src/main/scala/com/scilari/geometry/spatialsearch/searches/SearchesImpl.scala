@@ -39,16 +39,16 @@ object SearchesImpl{
       override def nodeDist(ps: P, node: NodeType): Float = {
         // Optimized by using a sentinel with early exit with distance == 0f
         val lastIndex = ps.size - 1
-        val last = ps.last
-        ps.asInstanceOf[mutable.IndexedSeq[Float2]](lastIndex) = node.center
-        val lastDistance = node.distanceSq(last)
+        val lastQueryPoint = ps.last
+        ps(lastIndex) = node.center
+        val lastDistance = node.distanceSq(lastQueryPoint)
         var minD = lastDistance
         var i = 0
         while(minD > 0f){
           minD = math.min(minD, node.distanceSq(ps(i)))
           i += 1
         }
-        ps.asInstanceOf[mutable.IndexedSeq[Float2]](lastIndex) = last
+        ps(lastIndex) = lastQueryPoint
         if(i == ps.size) lastDistance else minD
       }
     }
