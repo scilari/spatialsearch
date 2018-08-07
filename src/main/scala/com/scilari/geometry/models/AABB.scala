@@ -32,7 +32,14 @@ class AABB private (var minPoint: Float2, var maxPoint: Float2) extends ExtremeP
 
   def corners: Array[Float2] = Array(topLeft, topRight, bottomLeft, bottomRight)
 
-  def distanceSq(p: Float2): Float = Float2.distanceSq(p, closestBorderPoint(p))
+  def distanceSq(p: Float2): Float = {
+    // Float2.distanceSq(p, closestBorderPoint(p)) // written open to avoid object creation
+    val borderX = com.scilari.math.clamp(p.x, minX, maxX)
+    val borderY = com.scilari.math.clamp(p.y, minY, maxY)
+    val dx = borderX - p.x
+    val dy = borderY - p.y
+    dx*dx + dy*dy
+  }
 
   def distance(p: Float2): Float = com.scilari.math.sqrt(distanceSq(p))
 
