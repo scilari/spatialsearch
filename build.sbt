@@ -25,7 +25,7 @@ publishTo := {
 }
 
 javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
-scalacOptions ++= Seq("-target:jvm-1.7", "-optimize")
+scalacOptions ++= Seq("-target:jvm-1.7")
 
 publishArtifact in Test := false
 
