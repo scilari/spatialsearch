@@ -294,6 +294,40 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
     tSingle should be < tRebuildKd
   }
 
+  it should "have balanced range-until-first-found search performance" in {
+    val ranges = Seq(0.001f, 0.005f, 0.01f, 0.1f, 0.2f).map{_ * bb.width}
+    for(r <- ranges){
+      val t = warmUpAndMeasureTime({
+        for (q <- queryPoints) {
+          BlackHole.consumeAny(quadTree.rangeUntilFirstFound(q, r))
+        }
+      }, runCount, warmUpCount)
+
+      val tRange = warmUpAndMeasureTime({
+        for (q <- queryPoints) {
+          BlackHole.consumeAny(quadTree.rangeSearch(q, r).headOption)
+        }
+      }, runCount, warmUpCount)
+
+      val tNN = warmUpAndMeasureTime({
+        for (q <- queryPoints) {
+          BlackHole.consumeAny(quadTree.nearestNeighborSearch(q))
+        }
+      }, runCount, warmUpCount)
+
+      info(s"\nRangeUntilFirstFound with r = $r")
+      info(s"Ratio (rangeUntilF/range.headOption: ${t/tRange}")
+      if(r >= 0.1f*bb.width){
+        assert(similarOrBetterTime(t, tRange))
+      }
+
+      info(s"Ratio (rangeUntilF/nearestNeighbor: ${t/tNN}")
+
+    }
+
+
+  }
+
 
 
 }

@@ -23,6 +23,10 @@ object TreeSearches{
     def knnSearchWithCondition(queryPoint: P, k: Int, condition: E => Boolean): Seq[E] =
       basicSearches.knnWithCondition(k, condition)(queryPoint, castRoot)
 
+    def rangeUntilFirstFound(queryPoint: P, r: Float): Seq[E] = {
+      basicSearches.rangeUntilFirstFound(r)(queryPoint, castRoot)
+    }
+
     def isEmptyRange(queryPoint: P, r: Float): Boolean = basicSearches.rangeUntilFirstFound(r)(queryPoint, castRoot).isEmpty
   }
 
