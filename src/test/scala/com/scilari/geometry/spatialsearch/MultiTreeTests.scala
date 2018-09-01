@@ -4,8 +4,8 @@ import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import org.scalatest.{FlatSpec, Matchers}
 import TestResources._
 import com.scilari.geometry.models.{AABB, DataPoint, Float2}
-import com.scilari.geometry.spatialsearch.SearchTree.MultiTree
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
+import com.scilari.geometry.spatialsearch.trees.multitree.MultiTree
 
 class MultiTreeTests extends FlatSpec with Matchers{
   val bb: AABB = AABB(cityData)
@@ -19,9 +19,9 @@ class MultiTreeTests extends FlatSpec with Matchers{
   val quadLarge: QuadTree[DataPoint[City]] = QuadTree(large, parameters)
   val multiTree = MultiTree(Seq(quadSmall, quadLarge))
 
-  TreePlotter.plot(quadTree, elemRadius = 10)
-  TreePlotter.plot(quadSmall, elemRadius = 10)
-  TreePlotter.plot(quadLarge, elemRadius = 10)
+  // TreePlotter.plot(quadTree, elemRadius = 10)
+  // TreePlotter.plot(quadSmall, elemRadius = 10)
+  // TreePlotter.plot(quadLarge, elemRadius = 10)
 
   val queryPoints: Seq[Float2] = Seq.fill(100)(bb.randomEnclosedPoint)
 

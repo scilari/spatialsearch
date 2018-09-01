@@ -1,8 +1,7 @@
 package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{AABB, Float2}
-import SearchTree.QuadTree
-
+import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 import org.scalacheck.Gen
 import org.scalatest.{Matchers, PropSpec}
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
