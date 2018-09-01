@@ -9,45 +9,66 @@ e.g. in Samet: Foundations of Multidimensional and Metric Data Structures.
 * The purpose is to offer very general framework
 to build on: the incremental spatial search allows very flexible queries where
 e.g. the search state is manipulated on the fly (e.g. filter elements and prune nodes in the queues)
+
+* In addition to basic queries (knn, range), also a sequence-based query is supported.
+This finds the closest points (or points inside a range) for a sequence of query points.
+Useful for finding points along a path, for example.
+
 * Currently only quadtree is implemented as a concrete and well-optimized class (QuadTree)
-* R-tree implemented as a proof-of-concept (RTree)
+
+* R-tree implemented only as a proof-of-concept (RTree)
+
 * Work in progress
-
-
 
 
 ## Usage
 ### Insertion
 #### If the points are known
 ``` scala
-class MyData()
+import com.scilari.geometry.models.{Float2, DataPoint}
+import com.scilari.geometry.spatialsearch.SearchTree
+
+class MyData() // dummy data class
+
+// create some random points
 val points = Seq.fill(100)(Float2.random)
+
 // wrap your data with coordinates
 val dataPoints = points.map{p => DataPoint(p, new MyData())}
-val quadTree = QuadTree[DataPoint[MyData]](dataPoints)
+val tree1 = SearchTree[DataPoint[MyData]](dataPoints)
 ```
 #### If the area is known
 ``` scala
-val quadTree = QuadTree[Float2](AABB.unit)
-points.foreach(quadTree.add)
+import com.scilari.geometry.models.AABB
+
+val tree2 = SearchTree[DataPoint[MyData]](AABB.unit)
+tree2.add(dataPoints)
 ```
 
 #### If the area must expand based on incoming data
 ``` scala
-val quadTree = QuadTree(points)
+val tree3 = SearchTree(points)
 val outsidePoints = Seq.fill(100)(Float2(1, 1) + Float2.random)
-outsidePoints.foreach(quadTree.addEnclose)
-
+outsidePoints.foreach(tree3.addEnclose)
 ```
 
-### Queries
+### Basic Queries
 ``` scala
 val queryPoint = Float2(0.5, 0.5)
-val knn = quadTree.knnSearch(queryPoint, 10)
-val range = quadTree.rangeSearch(queryPoint, 0.2)
-val poly = quadTree.polygonalSearch(queryPoint)
-
+val knn = tree.knnSearch(queryPoint, 10)
+val range = tree.rangeSearch(queryPoint, 0.2f)
+val poly = tree.polygonalSearch(queryPoint)
 ```
+
+### Queries using sequences of points
+Useful for finding the elements that are closest to a path (defined as points), for example.
+Buffer used for performance (thread-unsafe sentinel tricks).
+``` scala
+val queryPoints = mutable.Buffer.fill(10)(Float2.random)
+val knn = tree.seqKnnSearch(queryPoints, k = 10)
+val range = tree.seqRangeSearch(queryPoints, r = 0.2f)
+```
+
 
 ### Point removal
 ``` scala
@@ -55,7 +76,6 @@ val toBeRemoved = points.take(20)
 
 // Using coordinates to traverse straight to the leaf
 points.foreach(p => quadTree.remove(p))
-
 ```
 
 For more detailed examples, see test cases.
@@ -95,5 +115,5 @@ Ratio (Quad/KD): 0.6552045554880498
 
 ## TODO:
 * Improve this document (usage, visualization etc.)
-* Searches with query point of type Seq[Float2]
 * Optimize r-tree (performance is not very good ATM)
+* Using as a dependency
