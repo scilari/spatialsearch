@@ -19,7 +19,7 @@ package object math {
   @inline def sin(x: Double): Double = Math.sin(x)
   @inline def atan2(y: Double, x: Double): Double = Math.atan2(y, x)
 
-  // float versions of trigonometric functions  TODO: find out if there is faster versions
+  // float versions of trigonometric functions
   @inline def cos(x: Float): Float = Math.cos(x).toFloat
   @inline def sin(x: Float): Float = Math.sin(x).toFloat
   @inline def atan2(y: Float, x: Float): Float = Math.atan2(y, x).toFloat
