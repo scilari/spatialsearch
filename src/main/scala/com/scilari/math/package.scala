@@ -42,14 +42,6 @@ package object math {
 
   @inline def clampNormalize(x: Float, floor: Float, ceil: Float): Float = clamp(x, floor, ceil)/(ceil - floor)
 
-  @inline def invSqrt(x: Float): Float = {
-    val halfX = 0.5f*x
-    val i = java.lang.Float.floatToIntBits(x)
-    val j = 0x5f3759df - (i >> 1)
-    val y = java.lang.Float.intBitsToFloat(j)
-    y*(1.5f - halfX*y*y)
-  }
-
   @inline def mean(xs: Seq[Float]): Float = xs.sum/xs.length
 
   @inline def variance(xs: Seq[Float]): Float = {
