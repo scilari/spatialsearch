@@ -169,7 +169,7 @@ object Float2{
   }
 
   def fastCosBetween(a: Float2, b: Float2): Float ={
-    a.dot(b)*com.scilari.math.invSqrt(a.lengthSq*b.lengthSq)
+    a.dot(b)*com.scilari.math.FastMath.invSqrt(a.lengthSq*b.lengthSq)
   }
 
   def cosBetween(a: Float2, b: Float2): Float ={
