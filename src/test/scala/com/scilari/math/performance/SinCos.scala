@@ -28,8 +28,8 @@ class SinCos extends FlatSpec with Matchers {
     }, runCount, warmUpCount)
 
     t should be < tLib
-    info(s"Ratio of FastMath sin to lib sin: ${t.toDouble/tLib}")
-    info(s"Time taken per operation: ${t.toDouble/(runCount*valCount)}")
+    info(s"Ratio of FastMath sin to lib sin: ${t/tLib}")
+    info(s"Time taken per operation: ${t/(runCount*valCount)}")
   }
 
   "Cosine" should "be more performant than standard library version" in {
@@ -50,8 +50,8 @@ class SinCos extends FlatSpec with Matchers {
     }, runCount, warmUpCount)
 
     t should be < tLib
-    info(s"Ratio of FastMath cos to lib cos: ${t.toDouble/tLib}")
-    info(s"Time taken per operation: ${t.toDouble/(runCount*valCount)}")
+    info(s"Ratio of FastMath cos to lib cos: ${t/tLib}")
+    info(s"Time taken per operation: ${t/(runCount*valCount)}")
   }
 
 
