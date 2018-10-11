@@ -6,13 +6,20 @@
 
 Scala implementation of the incremental spatial search implementation described
 e.g. in Samet: Foundations of Multidimensional and Metric Data Structures.
-* The purpose is to offer very general framework
-to build on: the incremental spatial search allows very flexible queries where
+* The main purpose is two-fold:
+  * Offer a performant and very feature-rich default search tree implementation
+  * Offer a very general framework to build future features on: the incremental spatial search allows very flexible queries where
 e.g. the search state is manipulated on the fly (e.g. filter elements and prune nodes in the queues)
 
-* In addition to basic queries (knn, range), also a sequence-based query is supported.
+* In addition to basic queries (range, knn, knnWithCondition), also a sequence-based query is supported.
 This finds the closest points (or points inside a range) for a sequence of query points.
 Useful for finding points along a path, for example.
+
+* MultiTree implementation takes in multiple search trees to offer convenient queries from
+the combined hierarchies. This can be utilized e.g. in 
+[ancestry tree-based SLAM](https://www.tandfonline.com/doi/abs/10.1080/01691864.2018.1436468?journalCode=tadr20)
+or whenever different sets of objects are stored in different trees.
+This is implemented by initializing the search state with the tree roots.
 
 * Currently only quadtree is implemented as a concrete and well-optimized class (QuadTree)
 
@@ -78,6 +85,15 @@ val toBeRemoved = points.take(20)
 points.foreach(p => quadTree.remove(p))
 ```
 
+### MultiTree functionality
+``` scala
+// Combining two different trees
+val multiTree = MultiTree(Seq(tree, tree3))
+
+// Using for queries as before
+val knn = multiTree.knnSearch(queryPoint, 10)
+```
+
 For more detailed examples, see test cases.
 
 ## Performance
@@ -114,6 +130,7 @@ Ratio (Quad/KD): 0.6552045554880498
 ```
 
 ## TODO:
+* Support for Manhattan and rectangular range queries
 * Improve this document (usage, visualization etc.)
 * Optimize r-tree (performance is not very good ATM)
 * Using as a dependency
