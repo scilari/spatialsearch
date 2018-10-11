@@ -1,7 +1,8 @@
 package com.scilari.geometry.examples
 
 import com.scilari.geometry.models.Float2
-import com.scilari.geometry.spatialsearch.SearchTree
+import com.scilari.geometry.spatialsearch.trees.multitree.MultiTree
+import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 
 import scala.collection.mutable
 
@@ -9,7 +10,9 @@ import scala.collection.mutable
 object Examples {
 
   val points = Seq.fill(100)(Float2.random)
-  val tree = SearchTree(points)
+  val tree = QuadTree(points)
+  val tree3 = QuadTree(points.map(_ + Float2(1.0, 1.0)))
+  val queryPoint = Float2(0.5, 0.5)
 
   object Insertion{
 
@@ -55,6 +58,14 @@ object Examples {
 
     // Using coordinates to traverse straight to the leaf
     points.foreach(p => tree.remove(p))
+  }
+
+  object MultiTreeSearch{
+    // Combining two different trees
+    val multiTree = MultiTree(Seq(tree, tree3))
+
+    // Using for queries as before
+    val knn = multiTree.knnSearch(queryPoint, 10)
   }
 
 }
