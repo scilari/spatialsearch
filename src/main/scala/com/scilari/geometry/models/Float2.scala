@@ -55,10 +55,13 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends ExtremePoint {
 
   def rotated(angle: Float): Float2 = rotated(cos(angle), sin(angle))
 
+  def rotatedX(cos: Float, sin: Float): Float = x*cos - y*sin
+
+  def rotatedY(cos: Float, sin: Float): Float = x*sin + y*cos
+
   def rotate(cos: Float, sin: Float): Unit = {
-    val xx = x*cos - y*sin
-    val yy = x*sin + y*cos
-    x = xx; y = yy
+    x = rotatedX(cos, sin)
+    y = rotatedY(cos, sin)
   }
 
   def rotated(cos: Float, sin: Float): Float2 = {
