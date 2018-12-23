@@ -13,10 +13,13 @@ object QuadTreeSpec {
   val maxY: Float = 1000f
 
   val pointCount: Int = 1000
-  val minKnnPointCount: Int = 10
+  val minKnnPointCount: Int = 1
   val maxKnnPointCount: Int = 200
 
-  val genK: Gen[Int] = Gen.choose[Int](minKnnPointCount, maxKnnPointCount)
+  val seqQueryPointCount = 20
+
+  // For some reason, genK tries to return values below minKnnPointCount
+  val genK: Gen[Int] = Gen.choose[Int](minKnnPointCount, maxKnnPointCount) suchThat(_ >= 1)
 
   // I have no idea why the below returns negative values
   val genRadius: Gen[Float] = Gen.choose[Float](0.00f, 500f) suchThat(_ >= 0f)
@@ -31,6 +34,8 @@ object QuadTreeSpec {
 
   val genPoints: Gen[List[Float2]] = Gen.listOfN(pointCount, genPoint)
   val genDistinctPoints: Gen[Set[Float2]] = Gen.containerOfN[Set, Float2](pointCount, genPoint)
+
+  val genSeqQueryPoints: Gen[List[Float2]] = Gen.listOfN(seqQueryPointCount, genPoint) suchThat( _.nonEmpty)
 
   val genTree: Gen[SearchTree[Float2]] =
     for {
@@ -59,11 +64,18 @@ class QuadTreeSpec extends PropSpec with GeneratorDrivenPropertyChecks with Matc
         forAll(genPoint, genK){ (queryPoint, k) =>
           val knnPoints = tree.knnSearch(queryPoint, k).sortBy((point: Float2) => point.distanceSq(queryPoint))
           // Generate brute force data to compare to
-          val sortedPoints = allPoints.sortBy(_.distanceSq(queryPoint))
-          val maxAcceptableDist = sortedPoints(k-1).distanceSq(queryPoint)
-          val acceptablePoints = sortedPoints.filter{ _.distanceSq(queryPoint) <= maxAcceptableDist}
+          val boundaryDistance = knnPoints.last.distanceSq(queryPoint)
 
-          assert(knnPoints.toSet.subsetOf(acceptablePoints.toSet))
+          val foundInsidePoints = knnPoints.filter(p => p.distanceSq(queryPoint) < boundaryDistance)
+          val bruteInsidePoints = allPoints.filter(p => p.distanceSq(queryPoint) < boundaryDistance)
+
+          assert(foundInsidePoints.toSet == bruteInsidePoints.toSet)
+
+          val foundBoundaryPoints = knnPoints.filter(p => p.distanceSq(queryPoint) == boundaryDistance)
+          val bruteBoundaryPoints = allPoints.filter(p => p.distanceSq(queryPoint) == boundaryDistance)
+
+
+          assert(foundBoundaryPoints.toSet.subsetOf(bruteBoundaryPoints.toSet))
 
         }
       }

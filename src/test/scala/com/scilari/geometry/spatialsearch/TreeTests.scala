@@ -109,7 +109,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
 
   it should "find all neighbors when radius is infinite" in {
     for(queryPoint <- queryPoints.take(10)) {
-      tree.rangeSearch(queryPoint, Float.PositiveInfinity) should have size points.size
+      tree.rangeSearch(queryPoint, Float.MaxValue) should have size points.size
     }
   }
 
@@ -211,7 +211,7 @@ abstract class TreeTests extends FlatSpec with Matchers {
     val Oulu = Float2(22.155672,2.312214)
     val Helsinki = Float2(-3.330808,-537.687128)
     val range = 25
-    val queryPoints = ArrayBuffer(Oulu, Helsinki)
+    val queryPoints = Array(Oulu, Helsinki)
     val foundCities = cityTree.seqRangeSearch(queryPoints, range)
     val names = foundCities.map{_.data.name}
     names should contain theSameElementsAs Seq("Helsinki", "Vantaa", "Espoo", "Oulu", "Haukipudas", "Kempele")

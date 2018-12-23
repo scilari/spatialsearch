@@ -10,12 +10,24 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
   property("Sequence knn search should find the same elements as brute force") {
     forAll(genTree) { tree =>
       val allPoints = tree.elements
-      forAll(genPoints, genK){ (queryPoints: List[Float2], k: Int) =>
-        val foundPoints = tree.seqKnnSearch(queryPoints.toBuffer, k)
-        val sortedPoints = allPoints.sortBy(p => queryPoints.map{q => p.distanceSq(q)}.min)
-        val maxAcceptableDist = queryPoints.map{sortedPoints(k-1).distanceSq}.min
-        val acceptablePoints = sortedPoints.filter{ p => queryPoints.map{ q => p.distanceSq(q) }.min <= maxAcceptableDist}
-        assert(foundPoints.toSet.subsetOf(acceptablePoints.toSet))
+      forAll(genSeqQueryPoints, genK){ (queryPoints: List[Float2], k: Int) =>
+        def minDist(p: Float2): Float = queryPoints.map{ q => p.distanceSq(q) }.min
+
+        val foundPoints = tree.seqKnnSearch(queryPoints.toArray, k).sortBy(minDist)
+        val sortedPoints = allPoints.sortBy(minDist)
+
+        val boundaryPoint = sortedPoints(k-1)
+        val boundaryDistance = queryPoints.map{_.distanceSq(boundaryPoint)}.min
+
+        val foundInsidePoints = foundPoints.filter{ p => minDist(p) < boundaryDistance }
+        val insidePoints = allPoints.filter{ p => minDist(p) < boundaryDistance }
+
+        assert(foundInsidePoints.toSet == insidePoints.toSet)
+
+        val foundBoundaryPoints = foundPoints.filter{ p => minDist(p) == boundaryDistance }
+        val boundaryPoints = allPoints.filter{ p => minDist(p) == boundaryDistance }
+
+        assert(foundBoundaryPoints.toSet.subsetOf(boundaryPoints.toSet))
       }
     }
   }
@@ -25,7 +37,7 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
       val allPoints = tree.elements
       forAll(genPoints, genRadius){ (queryPoints: List[Float2], r: Float) =>
 
-        val foundPoints = tree.seqRangeSearch(queryPoints.toBuffer, r)
+        val foundPoints = tree.seqRangeSearch(queryPoints.toArray, r)
         val separatelyQueriedPoints = queryPoints.flatMap{ queryPoint =>
           tree.rangeSearch(queryPoint, r)
         }
