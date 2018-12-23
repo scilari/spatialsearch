@@ -5,7 +5,6 @@ import com.scilari.geometry.spatialsearch.Searchable
 import com.scilari.geometry.spatialsearch.searches.{SearchesImpl, TreeSearches}
 import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
 
-import scala.collection.mutable
 
 /**
   * Spatial search functionality from multiple trees at once
@@ -45,12 +44,12 @@ class MultiTree[E <: Float2] private (trees: Seq[TreeSearches.Base[Float2, E]]) 
     search(State(queryPoint, roots), new PolygonalDynamicMaxRange(3f))
   }
 
-  override def seqKnnSearch(queryPoints: mutable.Buffer[Float2], k: Int): Seq[E] = {
+  override def seqKnnSearch(queryPoints: Array[Float2], k: Int): Seq[E] = {
     import seqSearches._
     search(State(queryPoints, roots), new KnnParameters(k))
   }
 
-  override def seqRangeSearch(queryPoints: mutable.Buffer[Float2], r: Float): Seq[E] = {
+  override def seqRangeSearch(queryPoints: Array[Float2], r: Float): Seq[E] = {
     import seqSearches._
     search(State(queryPoints, roots), new RangeParameters(r))
   }
