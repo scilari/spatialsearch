@@ -4,8 +4,6 @@ import com.scilari.geometry.models.Float2
 import com.scilari.geometry.spatialsearch.trees.multitree.MultiTree
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 
-import scala.collection.mutable
-
 // scalastyle:off
 object Examples {
 
@@ -48,7 +46,7 @@ object Examples {
   }
 
   object SeqBasedSearches{
-    val queryPoints = mutable.Buffer.fill(10)(Float2.random)
+    val queryPoints = Array.fill(10)(Float2.random)
     val knn = tree.seqKnnSearch(queryPoints, k = 10)
     val range = tree.seqRangeSearch(queryPoints, r = 0.2f)
   }
