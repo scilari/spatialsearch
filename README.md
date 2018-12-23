@@ -69,9 +69,8 @@ val poly = tree.polygonalSearch(queryPoint)
 
 ### Queries using sequences of points
 Useful for finding the elements that are closest to a path (defined as points), for example.
-Buffer used for performance (thread-unsafe sentinel tricks).
 ``` scala
-val queryPoints = mutable.Buffer.fill(10)(Float2.random)
+val queryPoints = Array.fill(10)(Float2.random)
 val knn = tree.seqKnnSearch(queryPoints, k = 10)
 val range = tree.seqRangeSearch(queryPoints, r = 0.2f)
 ```
