@@ -1,9 +1,6 @@
 package com.scilari.geometry.models
 import com.scilari.math._
 
-import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
-
 
 /**
   * Two-dimensional point represented by Float coordinates
@@ -126,10 +123,10 @@ object Float2{
   def random(minX: Float, minY: Float, maxX: Float, maxY: Float): Float2 = Float2(minX, minY) + Float2.random*Float2(maxX - minX, maxY - minY)
   def random(minPoint: Float2, maxPoint: Float2): Float2 = random(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y)
 
-  def linSpace(start: Float2, end: Float2, n: Int): mutable.Buffer[Float2] = {
+  def linSpace(start: Float2, end: Float2, n: Int): Array[Float2] = {
     val diff = end - start
     val ts = (0 until n).map(_.toFloat/(n-1))
-    ts.map{ t => start + diff*t}.toBuffer
+    ts.map{ t => start + diff*t}.toArray
   }
 
   @inline
