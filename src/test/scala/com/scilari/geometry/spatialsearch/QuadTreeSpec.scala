@@ -18,11 +18,9 @@ object QuadTreeSpec {
 
   val seqQueryPointCount = 20
 
-  // For some reason, genK tries to return values below minKnnPointCount
-  val genK: Gen[Int] = Gen.choose[Int](minKnnPointCount, maxKnnPointCount) suchThat(_ >= 1)
+  val genK: Gen[Int] = Gen.choose[Int](minKnnPointCount, maxKnnPointCount)
 
-  // I have no idea why the below returns negative values
-  val genRadius: Gen[Float] = Gen.choose[Float](0.00f, 500f) suchThat(_ >= 0f)
+  val genRadius: Gen[Float] = Gen.choose[Float](0.00f, 500f)
 
   val bb = AABB(minX, minY, maxX, maxY)
 
@@ -35,7 +33,7 @@ object QuadTreeSpec {
   val genPoints: Gen[List[Float2]] = Gen.listOfN(pointCount, genPoint)
   val genDistinctPoints: Gen[Set[Float2]] = Gen.containerOfN[Set, Float2](pointCount, genPoint)
 
-  val genSeqQueryPoints: Gen[List[Float2]] = Gen.listOfN(seqQueryPointCount, genPoint) suchThat( _.nonEmpty)
+  val genSeqQueryPoints: Gen[List[Float2]] = Gen.listOfN(seqQueryPointCount, genPoint)
 
   val genTree: Gen[SearchTree[Float2]] =
     for {
