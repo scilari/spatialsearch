@@ -5,8 +5,6 @@ import com.scilari.geometry.models.{AABB, Float2}
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 
-import scala.collection.mutable
-
 trait PerformanceBase {
   val plotting = true
 
@@ -33,8 +31,8 @@ trait PerformanceBase {
       Seq.fill(pointCount*2/20)(bb.randomEnclosedPoint)
 
 
-  val queryPoints: mutable.Buffer[Float2] = {
-    mutable.Buffer.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
+  val queryPoints: Array[Float2] = {
+    Array.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
   }
 
   val pointsArray: Seq[Array[Double]] = points.map{_.toDoubleArray}
