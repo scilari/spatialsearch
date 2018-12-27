@@ -25,9 +25,9 @@ object SearchesImpl{
     override type NodeType <: Node with AABB
 
     override def elemDist(ps: P, e: E): Float = {
+      val n = ps.size
       var minD = Float.MaxValue
       var i = 0
-      val n = ps.size
       while (i < n) {
         minD = math.min(minD, e.distanceSq(ps(i)))
         i += 1
@@ -39,7 +39,7 @@ object SearchesImpl{
       val n = ps.size
       var minD = Float.MaxValue
       var i = 0
-      while(minD > 0 && i < n){
+      while(i < n){
         minD = math.min(minD, node.distanceSq(ps(i)))
         i += 1
       }
