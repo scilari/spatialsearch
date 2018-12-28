@@ -1,4 +1,7 @@
 package com.scilari.geometry.spatialsearch.plotting
+
+// scalastyle:off
+
 import java.awt.{Color, Graphics2D}
 import java.awt.image.BufferedImage
 import java.io.File
@@ -111,9 +114,6 @@ object DrawFinland extends App{
         0, 0, imageWidth, imageHeight,
         null)
     }
-
   }
-
-
 
 }
