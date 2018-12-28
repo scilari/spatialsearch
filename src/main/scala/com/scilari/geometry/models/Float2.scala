@@ -101,89 +101,17 @@ object Float2{
   def unitX: Float2 = Float2(1f, 0f)
   def unitY: Float2 = Float2(0f, 1f)
 
-  def up: Float2 = Float2(0, 1)
-  def down: Float2 = Float2(0, -1)
-  def left: Float2 = Float2(-1, 0)
-  def right: Float2 = Float2(1, 0)
-
-  def max(p1: Float2, p2: Float2): Float2 = Float2(com.scilari.math.max(p1.x, p2.x), com.scilari.math.max(p1.y, p2.y))
-  def min(p1: Float2, p2: Float2): Float2 = Float2(com.scilari.math.min(p1.x, p2.x), com.scilari.math.min(p1.y, p2.y))
-
-  def toArray(f: Float2): Array[Double] = f.toDoubleArray
-  def fromTuple(t: (Float, Float)): Float2 = Float2(t._1, t._2)
-
-  def fromArray(a: Array[Float]): Float2 = Float2(a(0), a(1))
-  def fromDoubleArray(a: Array[Double]): Float2 = Float2(a(0).toFloat, a(1).toFloat)
-
   def random: Float2 = randomZeroToOne
   def random(scale: Float): Float2 = random(Float2.zero, Float2(scale))
   def randomZeroToOne: Float2 = Float2(scala.util.Random.nextFloat(), scala.util.Random.nextFloat())
   def randomMinusOneToOne: Float2 = Float2(1f) - Float2.random*2f
-  def directed(angle: Float, length: Float = 1f): Float2 = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
   def random(minX: Float, minY: Float, maxX: Float, maxY: Float): Float2 = Float2(minX, minY) + Float2.random*Float2(maxX - minX, maxY - minY)
   def random(minPoint: Float2, maxPoint: Float2): Float2 = random(minPoint.x, minPoint.y, maxPoint.x, maxPoint.y)
 
-  def linSpace(start: Float2, end: Float2, n: Int): Array[Float2] = {
-    val diff = end - start
-    val ts = (0 until n).map(_.toFloat/(n-1))
-    ts.map{ t => start + diff*t}.toArray
-  }
-
-  @inline
-  def diffLengthSq(p1: Float2, p2: Float2): Float = {
-    val dx = p1.x - p2.x
-    val dy = p1.y - p2.y
-    dx*dx + dy*dy
-  }
-
-  def sortByAngle(points: Array[Float2]): Array[Float2] = {
-    def isUp(p: Float2): Boolean = p.y > 0f || (p.y == 0f && p.x > 0f)
-    def angleComparator (p1: Float2, p2: Float2): Boolean = {
-      val u1 = isUp(p1)
-      val u2 = isUp(p2)
-      (u1 && !u2) || (u1 == u2 &&  p1.perpDot(p2) > 0f)
-    }
-
-    points.sortWith(angleComparator)
-  }
-
-  @inline
-  def sortByAngle[E <: Float2](queryPoint: Float2, points: Seq[E]): Seq[E] = {
-    val q = queryPoint
-    def isUp(p: Float2): Boolean = p.y - q.y > 0f || (p.y - q.y == 0f && p.x - q.y > 0f)
-    def angleComparator (p1: Float2, p2: Float2): Boolean = {
-      val u1 = isUp(p1)
-      val u2 = isUp(p2)
-      (u1 && !u2) || (u1 == u2 &&  (p1-q).perpDot(p2-q) > 0f)
-    }
-
-    points.sortWith(angleComparator)
-
-  }
+  def directed(angle: Float, length: Float = 1f): Float2 = Float2(Math.cos(angle).toFloat*length, Math.sin(angle).toFloat*length)
 
   @inline
   def distanceSq(a: Float2, b: Float2): Float = { val dx = a.x - b.x; val dy = a.y - b.y; dx*dx + dy*dy}
 
   def distance(a: Float2, b: Float2): Float = sqrt(distanceSq(a, b))
-
-  def fastAngleBetween(a: Float2, b: Float2): Float = {
-    Math.acos(fastCosBetween(a, b)).toFloat
-  }
-
-  def angleBetween(a: Float2, b: Float2): Float = {
-    Math.acos(cosBetween(a, b)).toFloat
-  }
-
-  def fastCosBetween(a: Float2, b: Float2): Float ={
-    a.dot(b)*com.scilari.math.FastMath.invSqrt(a.lengthSq*b.lengthSq)
-  }
-
-  def cosBetween(a: Float2, b: Float2): Float ={
-    a.dot(b)/com.scilari.math.sqrt(a.lengthSq*b.lengthSq)
-  }
-
-  import scala.language.implicitConversions
-
-  implicit def Float2asDataPoint(p: Float2): DataPoint[Unit] = new DataPoint[Unit](p.x, p.y, ())
-
 }

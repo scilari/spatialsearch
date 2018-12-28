@@ -1,11 +1,12 @@
 package com.scilari.geometry.performance
 
+import com.csdgn.util.KDTree
 import com.scilari.geometry.models.Float2
+import com.scilari.geometry.models.utils.Float2Utils
 import com.scilari.geometry.spatialsearch.TestUtils.Timing._
 import com.scilari.geometry.spatialsearch.plotting.TreePlotter
 import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import org.scalatest.{FlatSpec, Matchers}
-import com.csdgn.util.KDTree
 
 import scala.collection.mutable
 
@@ -172,7 +173,7 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
     val pathCount = 100
     for(pathPoints <- Seq(10, 50, 200)){
       val paths = (0 until pathCount ).map { _ =>
-        Float2.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints)
+        Float2Utils.linSpace(bb.randomEnclosedPoint, bb.randomEnclosedPoint, pathPoints)
       }
 
       val tSeq = warmUpAndMeasureTime({

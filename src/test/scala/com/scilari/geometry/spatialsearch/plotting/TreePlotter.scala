@@ -4,10 +4,10 @@ import java.awt.{Color, Graphics2D}
 
 import com.scilari.geometry.models.{AABB, Float2}
 import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
-import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
-import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 import com.scilari.geometry.plotting._
 import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
+import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
+import com.scilari.geometry.spatialsearch.trees.rtree.RTree
 
 object TreePlotter {
   def plot[E <: Float2](
