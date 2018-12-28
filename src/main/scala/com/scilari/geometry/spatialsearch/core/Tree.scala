@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch.core
 
-import scala.collection.mutable.Buffer
+import scala.collection.mutable
 
 trait Tree[E] {
   type NodeType <: Node
@@ -95,7 +95,7 @@ trait Tree[E] {
   trait Leaf extends Node {
     this: LeafType =>
 
-    def elements: Buffer[E]
+    def elements: mutable.Buffer[E]
 
     def nonEmptyIfNotEmptied: Boolean = elements.nonEmpty
 
@@ -130,8 +130,3 @@ trait Tree[E] {
   }
 
 }
-
-
-
-
-
