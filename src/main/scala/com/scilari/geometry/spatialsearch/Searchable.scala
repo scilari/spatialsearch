@@ -15,9 +15,9 @@ trait Searchable[E] {
 
   def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E]
 
-  def seqKnnSearch(queryPoints: Array[Float2], k: Int): Seq[E]
+  def seqKnnSearch(queryPoints: IndexedSeq[Float2], k: Int): Seq[E]
 
-  def seqRangeSearch(queryPoints: Array[Float2], r: Float): Seq[E]
+  def seqRangeSearch(queryPoints: IndexedSeq[Float2], r: Float): Seq[E]
 
   def isEmptyRange(queryPoint: Float2, r: Float): Boolean
 

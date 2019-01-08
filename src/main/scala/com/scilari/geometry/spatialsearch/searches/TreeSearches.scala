@@ -36,11 +36,11 @@ object TreeSearches{
   }
 
   trait Sequence[P <: Float2, E <: Float2] extends Base[P, E]{
-    def seqRangeSearch(queryPoints: Array[P], r: Float): Seq[E] = {
+    def seqRangeSearch(queryPoints: IndexedSeq[P], r: Float): Seq[E] = {
       if(queryPoints.nonEmpty) seqSearches.range(r)(queryPoints, castRoot) else Seq.empty[E]
     }
 
-    def seqKnnSearch(queryPoints: Array[P], k: Int): Seq[E] = {
+    def seqKnnSearch(queryPoints: IndexedSeq[P], k: Int): Seq[E] = {
       if(queryPoints.nonEmpty) seqSearches.knn(k)(queryPoints, castRoot) else Seq.empty[E]
     }
   }

@@ -13,7 +13,7 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
       forAll(genSeqQueryPoints, genK){ (queryPoints: List[Float2], k: Int) =>
         def minDist(p: Float2): Float = queryPoints.map{ q => p.distanceSq(q) }.min
 
-        val foundPoints = tree.seqKnnSearch(queryPoints.toArray, k).sortBy(minDist)
+        val foundPoints = tree.seqKnnSearch(queryPoints.toIndexedSeq, k).sortBy(minDist)
         val sortedPoints = allPoints.sortBy(minDist)
 
         val boundaryPoint = sortedPoints(k-1)
@@ -37,7 +37,7 @@ class SeqSearchTest extends PropSpec with GeneratorDrivenPropertyChecks with Mat
       val allPoints = tree.elements
       forAll(genPoints, genRadius){ (queryPoints: List[Float2], r: Float) =>
 
-        val foundPoints = tree.seqRangeSearch(queryPoints.toArray, r)
+        val foundPoints = tree.seqRangeSearch(queryPoints.toIndexedSeq, r)
         val separatelyQueriedPoints = queryPoints.flatMap{ queryPoint =>
           tree.rangeSearch(queryPoint, r)
         }
