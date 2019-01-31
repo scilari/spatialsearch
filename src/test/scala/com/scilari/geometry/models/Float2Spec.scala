@@ -42,14 +42,19 @@ class Float2Spec extends PropSpec with GeneratorDrivenPropertyChecks with Matche
     }
   }
 
-  property("Dot product properties should hold"){
+  property("Dot product basic properties should hold"){
     forAll(nicePoint, nicePoint){ (p1, p2) =>
       p1.dot(p1) should be (p1.lengthSq)
       p1.dot(p2) should be (p2.dot(p1))
       p1.dot(p2) should be (p1.x*p2.x + p1.y*p2.y)
-      p1.dot(p2) should be (p1.length * p2.length * Float2Utils.cosBetween(p1, p2) +- 0.01f)
-      p1.perpDot(p2.rotated(-com.scilari.math.HalfPi)) should be (p1.dot(p2) +- 0.01f)
-      p1.rotated(com.scilari.math.HalfPi).dot(p1) should be (0.0f +- 0.01f)
+    }
+  }
+
+  property("Dot product trigonometric properties should hold") {
+    forAll(nicePoint, nicePoint) { (p1, p2) =>
+      p1.dot(p2) should be(p1.length * p2.length * Float2Utils.cosBetween(p1, p2) +- 0.01f)
+      p1.perpDot(p2.rotated(-com.scilari.math.HalfPi)) should be(p1.dot(p2) +- 0.01f)
+      p1.rotated(com.scilari.math.HalfPi).dot(p1) should be(0.0f +- 0.01f)
     }
   }
 
