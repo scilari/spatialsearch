@@ -317,15 +317,14 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
       }, runCount, warmUpCount)
 
       info(s"\nRangeUntilFirstFound with r = $r")
-      info(s"Ratio (rangeUntilF/range.headOption: ${t/tRange}")
+      info(s"Ratio (rangeUntilF/range.headOption): ${t/tRange}")
       if(r >= 0.1f*bb.width){
         assert(similarOrBetterTime(t, tRange))
       }
 
-      info(s"Ratio (rangeUntilF/nearestNeighbor: ${t/tNN}")
+      info(s"Ratio (rangeUntilF/nearestNeighbor): ${t/tNN}")
 
     }
-
 
   }
 
