@@ -58,14 +58,13 @@ class Float2(var x: Float = 0f, var y: Float = 0f) extends ExtremePoint {
 
   def rotate(cos: Float, sin: Float): Unit = {
     val xx = rotatedX(cos, sin)
-    y = rotatedY(cos, sin)
+    val yy = rotatedY(cos, sin)
     x = xx
+    y = yy
   }
 
   def rotated(cos: Float, sin: Float): Float2 = {
-    val cp = Float2(this)
-    cp.rotate(cos, sin)
-    cp
+    Float2(rotatedX(cos, sin), rotatedY(cos, sin))
   }
 
   def clamp(floor: Float2, ceil: Float2): Float2 =
