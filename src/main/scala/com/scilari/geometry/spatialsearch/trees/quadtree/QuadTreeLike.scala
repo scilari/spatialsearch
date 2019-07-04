@@ -1,49 +1,55 @@
 package com.scilari.geometry.spatialsearch.trees.quadtree
 
 import com.scilari.geometry.models.{AABB, Float2}
-import com.scilari.geometry.spatialsearch.trees.BoundedSearchTree
+import com.scilari.geometry.spatialsearch.core.Tree.{Branch, Leaf, Node}
+import com.scilari.geometry.spatialsearch.searches.euclidean.Bounded
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeUtils._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-trait QuadTreeLike[E <: Float2] extends BoundedSearchTree[E]{
-  type NodeType = BoundedNode
-  type BranchType = QuadBranch
-  type LeafType = QuadLeaf
+object QuadTreeLike{
 
-  protected class QuadBranch(
-    bb: AABB,
-    val parent: Option[BranchType] = None,
+  trait QuadNode[E <: Float2] extends Node[E, QuadNode[E]] with Bounded {
+    def bounds: AABB
+    def encloses(e: E): Boolean = bounds.contains(e)
+  }
+
+  class QuadBranch[E <: Float2](
+    val bounds: AABB,
+    val parent: Option[QuadNode[E]] = None,
     parameters: Parameters
-  ) extends NodeType(bb) with Branch {
+  ) extends QuadNode[E] with Branch[E, QuadNode[E]] {
+    type NodeType = QuadNode[E]
 
     val children: Array[NodeType] = {
-      val parent = Some(this)
-      Array[NodeType](
-        new LeafType(topLeftAABB(this), parent, parameters),
-        new LeafType(topRightAABB(this), parent, parameters),
-        new LeafType(bottomLeftAABB(this), parent, parameters),
-        new LeafType(bottomRightAABB(this), parent, parameters)
+      val parent = Some[NodeType](this)
+      val hhw = bounds.halfWidth/2
+      Array[QuadNode[E]](
+        new QuadLeaf(topLeftAABB(bounds.center, hhw), parent, parameters),
+        new QuadLeaf(topRightAABB(bounds.center, hhw), parent, parameters),
+        new QuadLeaf(bottomLeftAABB(bounds.center, hhw), parent, parameters),
+        new QuadLeaf(bottomRightAABB(bounds.center, hhw), parent, parameters)
       )
     }
 
-    def findChildIndex(elem: E): Int = findQuadrant(elem, this)
+    def findChildIndex(elem: E): Int = findQuadrant(elem, bounds)
 
   }
 
 
-  protected class QuadLeaf(
-    bb: AABB,
-    val parent: Option[BranchType] = None,
+  class QuadLeaf[E <: Float2](
+    val bounds: AABB,
+    val parent: Option[QuadNode[E]] = None,
     parameters: Parameters
-  ) extends NodeType(bb) with Leaf{
+  ) extends QuadNode[E] with Leaf[E, QuadNode[E]]{
+    type NodeType = QuadNode[E]
     val elements: mutable.Buffer[E] = new ArrayBuffer[E]()
 
     def splitCondition: Boolean =
-      elements.lengthCompare(parameters.nodeElementCapacity) > 0 && width > parameters.minNodeSize
+      elements.lengthCompare(parameters.nodeElementCapacity) > 0 && bounds.width > parameters.minNodeSize
 
-    def toNode: BranchType = new BranchType(this, this.parent, parameters)
+    def toNode: NodeType = new QuadBranch(bounds, this.parent, parameters)
 
   }
 }

@@ -2,17 +2,16 @@ package com.scilari.geometry.spatialsearch.core
 
 import scala.collection.mutable
 
-trait Tree[E] {
-  type NodeType <: Node
-  type BranchType <: NodeType with Branch
-  type LeafType <: NodeType with Leaf
+object Tree{
 
-  trait Node extends Traversable[E] {
+  trait Node[E, NodeType <: Node[E, NodeType]]{
     this: NodeType =>
 
     def foreach[U](f: E => U): Unit = elements.foreach(f)
 
-    def elements: Seq[E]
+    def elements: mutable.Buffer[E]
+
+    def children: Array[NodeType]
 
     def nonEmptyIfNotEmptied: Boolean
 
@@ -20,7 +19,7 @@ trait Tree[E] {
 
     def nodes: Seq[NodeType]
 
-    def leaves: Seq[LeafType]
+    def leaves: Seq[NodeType]
 
     def depth: Int
 
@@ -48,12 +47,12 @@ trait Tree[E] {
   }
 
 
-  trait Branch extends Node{
-    this: BranchType =>
+  trait Branch[E, NodeType <: Node[E, NodeType]] {
+    this: NodeType =>
 
-    def children: Array[NodeType]
+    val children: Array[NodeType]
 
-    def elements: Seq[E] = children.flatMap(_.elements)
+    def elements: mutable.Buffer[E] = children.flatMap(_.elements).toBuffer
 
     def nonEmptyIfNotEmptied: Boolean = true
 
@@ -63,7 +62,7 @@ trait Tree[E] {
       _.nodes
     }
 
-    def leaves: Seq[LeafType] = children.flatMap {
+    def leaves: Seq[NodeType] = children.flatMap {
       _.leaves
     }
 
@@ -83,7 +82,7 @@ trait Tree[E] {
 
     def setChild(i: Int, c: NodeType): Unit = children(i) = c
 
-    def add(e: E): BranchType = {
+    def add(e: E): NodeType = {
       val ix = findChildIndex(e)
       val child = getChild(ix)
       val newChild = child.add(e)
@@ -92,10 +91,12 @@ trait Tree[E] {
     }
   }
 
-  trait Leaf extends Node {
-    this: LeafType =>
+  trait Leaf[E, NodeType <: Node[E, NodeType]] {
+    this: NodeType =>
 
     def elements: mutable.Buffer[E]
+
+    override def children: Array[NodeType] = ???
 
     def nonEmptyIfNotEmptied: Boolean = elements.nonEmpty
 
@@ -103,7 +104,7 @@ trait Tree[E] {
 
     def nodes: Seq[NodeType] = Seq(this)
 
-    def leaves: Seq[LeafType] = Seq(this)
+    def leaves: Seq[NodeType] = Seq(this)
 
     def depth: Int = 1
 
@@ -120,13 +121,13 @@ trait Tree[E] {
 
     def splitCondition: Boolean
 
-    def split(): BranchType = {
+    def split(): NodeType = {
       val newNode = toNode
       elements.foreach(newNode.add)
       newNode
     }
 
-    def toNode: BranchType
-  }
+    def toNode: NodeType
+ }
 
 }

@@ -66,5 +66,12 @@ class ArrayHeap[E](initialCapacity: Int = ArrayHeap.defaultInitialCapacity) exte
 }
 
 object ArrayHeap{
+  def apply[E](k: Float, e: E, initialCapacity: Int = defaultInitialCapacity): ArrayHeap[E] ={
+    val h = new ArrayHeap[E](initialCapacity)
+    h.enqueue(k, e)
+    h
+  }
+
+
   val defaultInitialCapacity: Int = 32
 }

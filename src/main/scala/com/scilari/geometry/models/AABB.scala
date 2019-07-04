@@ -1,49 +1,46 @@
 package com.scilari.geometry.models
 
-import com.scilari.geometry.models.utils.Float2Utils
+trait AABB extends ExtremePoint {
+  def centerX: Float
+  def centerY: Float
+  def halfWidth: Float
+  def halfHeight: Float
 
-
-/**
-  * Axis-aligned bounding box
- * Created by iv on 25.2.2014.
- */
-
-class AABB private (var minPoint: Float2, var maxPoint: Float2) extends ExtremePoint {
-  def this(minX: Float, minY: Float, maxX: Float, maxY: Float) = this(Float2(minX, minY), Float2(maxX, maxY))
-  def this(box: AABB) = this(box.minPoint, box.maxPoint)
-  def this(center: Float2, halfWidth: Float) = this(center - Float2(halfWidth), center + Float2(halfWidth))
-  def set(box: AABB): Unit = { minPoint = box.minPoint; maxPoint = box.maxPoint }
-
-  def width: Float = maxPoint.x - minPoint.x
-  def height: Float = maxPoint.y - minPoint.y
-  def centerX: Float = (minPoint.x + maxPoint.x)/2
-  def centerY: Float = (minPoint.y + maxPoint.y)/2
   def center: Float2 = Float2(centerX, centerY)
 
-  def topLeft: Float2 = Float2(minPoint.x, maxPoint.y)
-  def topRight: Float2 = Float2(maxPoint)
-  def bottomLeft: Float2 = Float2(minPoint)
-  def bottomRight: Float2 = Float2(maxPoint.x, minPoint.y)
+  def minPoint: Float2 = Float2(centerX - halfWidth, centerY - halfHeight)
+  def maxPoint: Float2 = Float2(centerX + halfWidth, centerY + halfHeight)
 
-  def minX: Float = minPoint.x
-  def minY: Float = minPoint.y
-  def maxX: Float = maxPoint.x
-  def maxY: Float = maxPoint.y
+  def width: Float = 2*halfWidth
+  def height: Float = 2*halfHeight
+
+  def topLeft: Float2 = Float2(centerX - halfWidth, centerY + halfHeight)
+  def topRight: Float2 = maxPoint
+  def bottomLeft: Float2 = minPoint
+  def bottomRight: Float2 = Float2(centerX + halfWidth, centerY - halfHeight)
+
+  def minX: Float = centerX - halfWidth
+  def minY: Float = centerY - halfHeight
+  def maxX: Float = centerX + halfWidth
+  def maxY: Float = centerY + halfHeight
 
   def area: Float = width * height
 
   def corners: Array[Float2] = Array(topLeft, topRight, bottomLeft, bottomRight)
 
   def distanceSq(p: Float2): Float = {
-    // Float2.distanceSq(p, closestBorderPoint(p)) // written open to avoid object creation
-    val borderX = com.scilari.math.clamp(p.x, minX, maxX)
-    val borderY = com.scilari.math.clamp(p.y, minY, maxY)
-    val dx = borderX - p.x
-    val dy = borderY - p.y
-    dx*dx + dy*dy
+      val dx = math.max(0, math.abs(p.x - centerX) - halfWidth)
+      val dy = math.max(0, math.abs(p.y - centerY) - halfHeight)
+      dx*dx + dy*dy
   }
 
   def distance(p: Float2): Float = com.scilari.math.sqrt(distanceSq(p))
+
+  def manhattan(p: Float2): Float = {
+    val dx = math.abs(x - p.x) - halfWidth
+    val dy = math.abs(y - p.y) - halfWidth
+    math.max(dx, 0f) + math.max(dy, 0f)
+  }
 
   def closestCorner(p: Float2): Float2 = {
     val left = p.x <= centerX
@@ -73,20 +70,11 @@ class AABB private (var minPoint: Float2, var maxPoint: Float2) extends ExtremeP
 
   def closestBorderPoint(p: Float2): Float2 = p.clamp(minPoint, maxPoint)
 
-  def enclose(p: Float2): AABB = { minPoint = Float2Utils.min(minPoint, p); maxPoint = Float2Utils.max(maxPoint, p); this }
-  def enclose(ps: Seq[Float2]): AABB = { ps.foreach(enclose); this }
-
-  def enlarge(margin: Float): AABB = { minPoint -= margin; maxPoint += margin; this}
-
   def contains(p: Float2): Boolean = p.x >= minX && p.y >= minY && p.x <= maxX && p.y <= maxY
 
   def contains(box: AABB): Boolean = contains(box.minPoint) && contains(box.maxPoint)
 
   def intersects(box: AABB): Boolean = maxX >= box.minX && maxY >= box.minY && minX <= box.minX && maxX <= box.maxY
-
-
-  def +(p: Float2): AABB = AABB(minPoint + p, maxPoint + p)
-  def -(p: Float2): AABB = AABB(minPoint - p, maxPoint - p)
 
   override def toString: String = {
      "AABB: " + minPoint.toString + maxPoint.toString
@@ -99,26 +87,54 @@ class AABB private (var minPoint: Float2, var maxPoint: Float2) extends ExtremeP
 }
 
 object AABB{
-  def apply(): AABB = empty()
-  def apply(minPoint: Float2, maxPoint: Float2): AABB = {
-    val b = new AABB(minPoint, maxPoint)
-    require(b.area >= 0f, s"AABB area must be non-negative. Check corners, minPoint: $minPoint, maxPoint: $maxPoint")
-    b
+  private class AABBImpl(val centerX: Float, val centerY: Float, val halfWidth: Float, val halfHeight: Float) extends AABB
+
+  private class Square(val centerX: Float, val centerY: Float, val halfWidth: Float) extends AABB {
+    override def halfHeight: Float = halfWidth
   }
 
-  def apply(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB = new AABB(minX, minY, maxX, maxY)
-  def apply(box: AABB): AABB = AABB(box.minPoint, box.maxPoint)
-  def apply(scale: Float): AABB = apply(Float2.zero, Float2(scale))
-
-  def apply(points: Seq[Float2], margin: Float = 0f): AABB = {
-    val b = empty()
-    b.enclose(points)
-    b.enlarge(margin)
+  def apply(centerX: Float, centerY: Float, halfWidth: Float, halfHeight: Float): AABB = {
+    if(halfWidth == halfHeight){
+      new Square(centerX, centerY, halfWidth)
+    } else{
+      new AABBImpl(centerX, centerY, halfWidth, halfHeight)
+    }
   }
+
+  def apply(center: Float2, halfWidth: Float, halfHeight: Float): AABB = AABB(center.x, center.y, halfWidth, halfHeight)
+
+  def apply(box: AABB): AABB = AABB(box.centerX, box.centerY, box.halfWidth, box.halfHeight)
+
+  // Square implementations
+  def apply(centerX: Float, centerY: Float, halfWidth: Float): AABB = new Square(centerX, centerY, halfWidth)
+  def apply(center: Float2, halfWidth: Float): AABB = AABB(center.x, center.y, halfWidth)
+
+  def apply(points: Seq[Float2]): AABB = {
+    var minX, minY = Float.MaxValue
+    var maxX, maxY = Float.MinValue
+    points.foreach{ p =>
+      minX = math.min(minX, p.x)
+      minY = math.min(minY, p.y)
+      maxX = math.max(maxX, p.x)
+      maxY = math.max(maxY, p.y)
+    }
+    fromMinMax(minX, minY, maxX, maxY)
+  }
+
+  def fromMinMax(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB = {
+    val centerX = (minX + maxX)/2
+    val centerY = (minY + maxY)/2
+    val halfWidth = (maxX - minX)/2
+    val halfHeight = (maxY - minY)/2
+    AABB(centerX, centerY, halfWidth, halfHeight)
+  }
+
+  def addMargin(b: AABB, margin: Float): AABB = AABB(b.centerX, b.centerY, b.halfWidth + margin, b.halfHeight + margin)
 
   def enclosingSquare(points: Seq[Float2], margin: Float = 0f): AABB = {
-    val fitBox = AABB.apply(points, margin)
-    new AABB(center = fitBox.center, halfWidth = Math.max(fitBox.width, fitBox.height)/2)
+    val fitBox = AABB.apply(points)
+    val square = AABB(fitBox.centerX, fitBox.centerY, Math.max(fitBox.halfWidth, fitBox.halfHeight))
+    if(margin != 0) addMargin(square, margin) else square
   }
 
   def enclosingSquare(minX: Float, minY: Float, maxX: Float, maxY: Float): AABB ={
@@ -129,10 +145,11 @@ object AABB{
     if(b.isSquare) b else enclosingSquare(Seq(b.minPoint, b.maxPoint))
   }
 
-  val unit: AABB = AABB(0, 0, 1, 1)
-  def zero: AABB = AABB(0, 0, 0, 0)
-  def random: AABB = AABB(Float2.zero, Float2.random)
+  def positiveSquare(w: Float): AABB = AABB(w/2, w/2, w/2, w/2)
 
-  def empty(): AABB = new AABB(Float2.inf, -Float2.inf)
+  def unit: AABB = AABB(0, 0, 1, 1)
+  def zero: AABB = AABB(0, 0, 0, 0)
+
+  def empty(): AABB = AABB(0, 0, Float.NegativeInfinity, Float.NegativeInfinity)
 
 }

@@ -9,35 +9,38 @@ object QuadTreeUtils {
     val bottomRightIndex: Int = 3
 
 
-    def topLeftAABB(b: AABB): AABB = AABB(b.minPoint.x, b.centerY, b.centerX, b.maxPoint.y)
+    // Create the quadrants using the old center point and new halfWidth
+    def topLeftAABB(c: Float2, hhw: Float): AABB = AABB(c.x - hhw, c.y + hhw, hhw)
 
-    def topRightAABB(b: AABB): AABB = AABB(b.center, b.maxPoint)
+    def topRightAABB(c:Float2, hhw: Float): AABB = AABB(c.x + hhw, c.y + hhw, hhw)
 
-    def bottomLeftAABB(b: AABB): AABB = AABB(b.minPoint, b.center)
+    def bottomLeftAABB(c: Float2, hhw: Float): AABB = AABB(c.x - hhw, c.y - hhw, hhw)
 
-    def bottomRightAABB(b: AABB): AABB = AABB(b.centerX, b.minPoint.y, b.maxPoint.x, b.centerY)
+    def bottomRightAABB(c: Float2, hhw: Float): AABB = AABB(c.x + hhw, c.y - hhw, hhw)
 
-    def topLeftAABB(b: AABB, centerPoint: Float2): AABB = AABB(b.minPoint.x, centerPoint.y, centerPoint.x, b.maxPoint.y)
+    //def topLeftAABB(b: AABB, centerPoint: Float2): AABB = AABB(b.minX, centerPoint.y, centerPoint.x, b.maxY)
 
-    def topRightAABB(b: AABB, centerPoint: Float2): AABB = AABB(centerPoint, b.maxPoint)
+    //def topRightAABB(b: AABB, centerPoint: Float2): AABB = AABB(centerPoint, b.maxPoint)
 
-    def bottomLeftAABB(b: AABB, centerPoint: Float2): AABB = AABB(b.minPoint, centerPoint)
+    //def bottomLeftAABB(b: AABB, centerPoint: Float2): AABB = AABB(b.minPoint, centerPoint)
 
-    def bottomRightAABB(b: AABB, centerPoint: Float2): AABB = AABB(centerPoint.x, b.minPoint.y, b.maxPoint.x, centerPoint.y)
+    //def bottomRightAABB(b: AABB, centerPoint: Float2): AABB = AABB(centerPoint.x, b.minPoint.y, b.maxPoint.x, centerPoint.y)
 
     def quadrantByIndex(b: AABB, index: Int): AABB = {
+      val c = b.center
+      val hhw = b.halfWidth/2
       index match {
-        case `topLeftIndex` => topLeftAABB(b)
-        case `topRightIndex` => topRightAABB(b)
-        case `bottomLeftIndex` => bottomLeftAABB(b)
-        case `bottomRightIndex` => bottomRightAABB(b)
+        case `topLeftIndex` => topLeftAABB(c, hhw)
+        case `topRightIndex` => topRightAABB(c, hhw)
+        case `bottomLeftIndex` => bottomLeftAABB(c, hhw)
+        case `bottomRightIndex` => bottomRightAABB(c, hhw)
       }
     }
 
     // Computes the AABB that has b as its quadrant and that expands most towards the given point
-    def expandAABB(point: Float2, b: AABB): AABB = {
+    def expandedAABB(point: Float2, b: AABB): AABB = {
       val corner = b.closestCorner(point)
-      new AABB(center = corner, halfWidth = b.width)
+      AABB(center = corner, halfWidth = b.width)
     }
 
     def findQuadrant(point: Float2, centerX: Float, centerY: Float): Int = {

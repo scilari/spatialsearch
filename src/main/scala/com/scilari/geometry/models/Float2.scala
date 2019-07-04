@@ -114,4 +114,6 @@ object Float2{
   def distanceSq(a: Float2, b: Float2): Float = { val dx = a.x - b.x; val dy = a.y - b.y; dx*dx + dy*dy}
 
   def distance(a: Float2, b: Float2): Float = sqrt(distanceSq(a, b))
+
+  def manhattan(a: Float2, b: Float2): Float = abs(a.x - b.x) + abs(a.y - b.y)
 }

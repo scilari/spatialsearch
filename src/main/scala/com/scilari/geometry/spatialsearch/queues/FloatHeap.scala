@@ -1,17 +1,30 @@
 package com.scilari.geometry.spatialsearch.queues
 
 import scala.annotation.tailrec
-import scala.collection.mutable.ArrayBuffer
 import scala.language.implicitConversions
 
-final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) extends FloatPriorityQueue[E] {
-  import FloatHeap._
-  private[this] var values = new Array[Any](initialCapacity)
-  private[this] var keys = new Array[Float](initialCapacity)
-  if(initialCapacity > 0) keys(0) = Float.NegativeInfinity // use as a sentinel in bubbleUp
 
-  private[this] var maxIndex = 0
-  private[this] var capacity = initialCapacity
+class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialCapacity) extends FloatPriorityQueue[E] {
+
+  val firstIndex = 1
+  protected def left(k: Int): Int = k << 1
+  protected def right(k: Int): Int = (k << 1) + 1
+  protected def parent(k: Int): Int = k >> 1
+  protected def leftAndRight(k: Int, arr: Array[Int]): Unit = {
+    val l = k << 1
+    arr(0) = l
+    arr(1) = l + 1
+  }
+
+  protected[this] var capacity: Int = initialCapacity + 1
+  private[this] var values = new Array[Any](capacity)
+  private[this] var keys = new Array[Float](capacity)
+
+  protected[this] var maxIndex = 0
+
+  protected[this] def cmp(key1: Float, key2: Float): Boolean = key1 < key2
+
+  keys(0) = if(cmp(0f, 1f)) Float.MinValue else Float.MaxValue // use as a sentinel in bubbleUp
 
   private[this] def move(to: Int, from: Int): Unit ={
     keys(to) = keys(from)
@@ -24,17 +37,19 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
   }
 
   override def enqueue(key: Float, value: E): Unit = {
-    if(maxIndex == capacity - 1) doubleCapacity()
     maxIndex += 1
+    if(maxIndex == capacity) doubleCapacity()
+
     bubbleUp(key, value)
   }
 
-  private[this] def doubleCapacity(): Unit ={
+
+  protected[this] def doubleCapacity(): Unit ={
     capacity *= 2
     val newValues = new Array[Any](capacity)
     val newKeys = new Array[Float](capacity)
-    Array.copy(values, firstIndex, newValues, firstIndex, maxIndex)
-    Array.copy(keys, 0, newKeys, 0, maxIndex + 1) // copy sentinel as well
+    Array.copy(values, firstIndex, newValues, firstIndex, maxIndex - 1)
+    Array.copy(keys, 0, newKeys, 0, maxIndex) // copy sentinel as well
     values = newValues
     keys = newKeys
   }
@@ -60,55 +75,64 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
   }
 
   private[this] def popFirst(): Unit ={
-    move(firstIndex, maxIndex)
     maxIndex -= 1
-    bubbleDown()
+    bubbleDown(keys(maxIndex + 1), getValue(maxIndex + 1))
   }
 
   private[this] def bubbleUp(key: Float, value: E): Unit ={
 
     @tailrec
-    def makeRoom(pos: Int): Int = {
+    def makeRoomUp(pos: Int): Int = {
       val par = parent(pos)
-      if(key < keys(par)){
+      if(cmp(key, keys(par))){
         move(pos, par)
-        makeRoom(par)
+        makeRoomUp(par)
       } else {
         pos
       }
     }
 
-    update(makeRoom(maxIndex), key, value)
+    update(makeRoomUp(maxIndex), key, value)
   }
 
-  private[this] def bubbleDown(): Unit ={
-    val headKey = keys(firstIndex)
-    val headValue = getValue(firstIndex)
+  protected[this] def bubbleDown(key: Float, value: E): Unit ={
+    val lr = new Array[Int](2)
 
     @tailrec
-    def makeRoom(k: Int): Int = {
-      val L = left(k)
-      if(L > maxIndex) {
+    def makeRoomDown(k: Int): Int = {
+      leftAndRight(k, lr)
+      val l = lr(0)
+      val r = lr(1)
+
+      if(l > maxIndex) {
         k
       } else {
-        val R = L + 1
-        val child = if(L != maxIndex && keys(L) > keys(R)) R else L
-        if (headKey > keys(child)){
+        val child = if(l != maxIndex){
+          if(cmp(keys(l), keys(r))) l else r
+        } else {
+          l
+        }
+
+        if (cmp(keys(child), key)) {
           move(k, child)
-          makeRoom(child)
+          makeRoomDown(child)
         } else {
           k
         }
       }
     }
 
-    update(makeRoom(firstIndex), headKey, headValue)
+    update(makeRoomDown(firstIndex), key, value)
   }
 
 
   override def head: FloatKey[E] = new FloatKey(keys(firstIndex), getValue(firstIndex))
 
   override def headKey: Float = keys(firstIndex)
+
+  def minKey: Float = headKey
+
+  def maxKey: Float = ???
 
   override def isEmpty: Boolean = maxIndex == 0
 
@@ -120,9 +144,12 @@ final class FloatHeap[E](initialCapacity: Int = FloatHeap.defaultInitialSize) ex
 }
 
 object FloatHeap{
-  val defaultInitialSize = 32
+  def apply[E](k: Float, e: E, initialCapacity: Int = defaultInitialCapacity): FloatHeap[E] ={
+    val h = new FloatHeap[E](initialCapacity)
+    h.enqueue(k, e)
+    h
+  }
 
-  private val firstIndex = 1
-  private def left(k: Int) = 2*k
-  private def parent(k: Int) = k/2
+  val defaultInitialCapacity = 7
+
 }

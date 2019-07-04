@@ -1,0 +1,44 @@
+package com.scilari.geometry.spatialsearch.core
+
+import com.scilari.geometry.spatialsearch.queues.{FloatHeap, FloatPriorityQueue}
+import com.scilari.math.sqrt
+
+import scala.collection.mutable
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+
+final class SearchState[Q, E, NodeType](
+  val queryPoint: Q,
+  val nodes: FloatPriorityQueue[NodeType],
+  val elements: FloatPriorityQueue[E], // = new FloatHeap[E](),
+  var foundElements: mutable.Buffer[E] // = new ArrayBuffer[E]()
+){
+
+  def minElemDist: Float = if(elements.nonEmpty) elements.headKey else Float.PositiveInfinity
+  def minNodeDist: Float = if(nodes.nonEmpty) nodes.headKey else Float.PositiveInfinity
+
+}
+
+object SearchState{
+  def debugState(state: SearchState[_, _, _]): String ={
+    ("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.minNodeDist)) + "\n" +
+      ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.minElemDist)) + "\n" +
+      ("Found elements: " + state.foundElements.size)
+  }
+}
+
+//object State{
+//  def apply[Q, E, NodeType](queryPoint: Q, trees: Seq[NodeType]): State[Q, E, NodeType] = {
+//    val initialNodes = new FloatHeap[NodeType]()
+//    trees.foreach(tree => initialNodes.enqueue(nodeDist(queryPoint, tree), tree))
+//    new State(queryPoint, initialNodes)
+//  }
+//
+//  def defaultInitialState(queryPoint: P, tree: NodeType, params: SearchParameters): State = {
+//    new State(
+//      queryPoint,
+//      new FloatHeap[NodeType](params.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
+//      new FloatHeap[E](params.elemQueueSizeHint),
+//      new ArrayBuffer[E](params.foundElemSizeHint)
+//    )
+//  }
+//}
