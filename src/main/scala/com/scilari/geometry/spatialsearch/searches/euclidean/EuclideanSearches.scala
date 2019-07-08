@@ -15,4 +15,3 @@ trait EuclideanSearches[EE <: Float2] extends EuclideanTypes[EE] {
 
   // TODO: add range etc. here
 }
-
