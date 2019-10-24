@@ -22,14 +22,15 @@ object SearchConfig{
     def filterElements(e: E, s: State): Boolean = true // linter:ignore UnusedParameter
     def filterNodes(n: NodeType, s: State): Boolean = true // linter:ignore UnusedParameter
     def modifyState(s: State): Unit = () // linter:ignore UnusedParameter
+  }
+
+  trait InitialState extends Types {
+    def initialState(q: Q): SearchState[Q, E, NodeType]
+
     def nodeQueueSizeHint: Int = 32
     def elemQueueSizeHint: Int = 32
     def foundElemSizeHint: Int = 32
   }
 
-  trait InitialState extends Types {
-    def initialState(q: Q): SearchState[Q, E, NodeType]
-    // def initialState(q: Q, n: NodeType): SearchState[Q, E, NodeType]
-  }
 
 }

@@ -96,46 +96,46 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
     assert(similarTime(result.millis1, result.millis2))
   }
 
-//  it should "have similar performance with polygonal search and range search with similar range" in {
-//    // polygonal search improves with smaller nodeElementCapacity
-//    val quadTree = QuadTree(points, Parameters(nodeElementCapacity = 15))
-//
-//    val maxRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.max
-//    val meanRange = maxRanges.sum/maxRanges.size
-//
-//    val tPol = warmUpAndMeasureTime({
-//      for(q <- queryPoints){
-//        val neighbors = quadTree.polygonalSearch(q)
-//      }
-//    }, runCount, warmUpCount)
-//
-//
-//    val tFastPol = warmUpAndMeasureTime({
-//      for(q <- queryPoints){
-//        val neighbors = quadTree.fastPolygonalSearch(q)
-//      }
-//    }, runCount, warmUpCount)
-//
-//    val tR = warmUpAndMeasureTime({
-//      for((q, r) <- queryPoints zip maxRanges){
-//        val neighbors = quadTree.rangeSearch(q, r)
-//      }
-//    }, runCount, warmUpCount)
-//
-//    val tMeanRange = warmUpAndMeasureTime({
-//      for(q <- queryPoints){
-//        val neighbors = quadTree.rangeSearch(q, meanRange)
-//      }
-//    }, runCount, warmUpCount)
-//
-//    assert(tPol > tFastPol)
-//
-//    info("\n== Polygonal vs. range time ==")
-//    info("QuadTree (polygonal): " + tPol/totalQueryCount + " (ms/query)")
-//    info("QuadTree (fast poly): " + tFastPol/totalQueryCount + " (ms/query)")
-//    info("QuadTree (range): " + tR/totalQueryCount + " (ms/query)")
-//    info("QuadTree (range: " + meanRange +  "): " + tMeanRange/totalQueryCount + " (ms/query)")
-//  }
+  it should "have similar performance with polygonal search and range search with similar range" in {
+    // polygonal search improves with smaller nodeElementCapacity
+    val quadTree = QuadTree(points, Parameters(nodeElementCapacity = 15))
+
+    val maxRanges: Seq[Float] = for(q <- queryPoints) yield quadTree.polygonalSearch(q).map{_.distance(q)}.max
+    val queryPointsWithMaxRanges = queryPoints zip maxRanges
+    val meanRange = maxRanges.sum/maxRanges.size
+
+    val result = compareTime(
+      "QuadTree (polygonal)",
+      for(q <- queryPoints){
+        val neighbors = quadTree.polygonalSearch(q)
+      },
+      "QuadTree (mean range)",
+      for(q <- queryPoints){
+        val neighbors = quadTree.rangeSearch(q, meanRange)
+      },
+      runCount
+    )
+
+    val resultFast = compareTime(
+      "QuadTree (fast polygonal)",
+      for (q <- queryPoints) {
+        val neighbors = quadTree.fastPolygonalSearch(q)
+      },
+      "QuadTree (max range)",
+      for ((q, r) <- queryPointsWithMaxRanges) {
+        val neighbors = quadTree.rangeSearch(q, r)
+      },
+      runCount
+    )
+
+    //assert(result.millis1 > resultFast.millis1)
+
+    info("\n== Polygonal query times ==")
+    info(result.toInfo(totalQueryCount))
+    info(resultFast.toInfo(totalQueryCount))
+
+    //assert(similarOrBetterTime(resultFast.millis1, resultFast.millis2))
+  }
 //
 //  it should "have similar sequence range query performance than with separate queries" in {
 //    val slidingQueryPoints = queryPoints.sliding(20)

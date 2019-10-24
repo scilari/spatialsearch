@@ -6,7 +6,8 @@ import com.scilari.geometry.spatialsearch.searches.euclidean.Bounded
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeUtils._
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+import scala.reflect.ClassTag
 
 object QuadTreeLike{
 
@@ -44,10 +45,10 @@ object QuadTreeLike{
     parameters: Parameters
   ) extends QuadNode[E] with Leaf[E, QuadNode[E]]{
     type NodeType = QuadNode[E]
-    val elements: mutable.Buffer[E] = new ArrayBuffer[E]()
+    val elements = new ArrayBuffer[E](12)
 
     def splitCondition: Boolean =
-      elements.lengthCompare(parameters.nodeElementCapacity) > 0 && bounds.width > parameters.minNodeSize
+      elementCount > parameters.nodeElementCapacity && bounds.width > parameters.minNodeSize
 
     def toNode: NodeType = new QuadBranch(bounds, this.parent, parameters)
 

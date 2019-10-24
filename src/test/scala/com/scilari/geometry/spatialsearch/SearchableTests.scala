@@ -79,21 +79,19 @@ abstract class SearchableTests extends TreeTestBase {
   //    }
   //  }
 
-  //  it should "find polygonal neighbors" in {
-  //    var neighborSum = 0
-  //    for(queryPoint <- queryPoints) {
-  //      val points = tree.polygonalSearch(queryPoint)
-  //      neighborSum += points.size
-  //    }
-  //
-  //    val avg = neighborSum.toDouble/queryPoints.size
-  //    assert(avg > 3 && avg < 6)
-  //  }
-  //
-  //
-  //
-  //
-  val searchableCityTree = createCityTree
+    it should "find polygonal neighbors" in {
+      var neighborSum = 0
+      for(queryPoint <- queryPoints) {
+        val points = filledTree.polygonalSearch(queryPoint)
+        neighborSum += points.size
+      }
+
+      val avg = neighborSum.toDouble/queryPoints.size
+      assert(avg > 3 && avg < 6)
+    }
+
+
+
 
   it should "find the five nearest cities to WGS 65.0 25.0 (ENU origo there)" in {
     val cities = searchableCityTree.knnSearch(Float2(0, 0), 5)
@@ -119,11 +117,11 @@ abstract class SearchableTests extends TreeTestBase {
   //
   //  }
   //
-  //  it should "find polygonal neighborhood around ENU origo" in {
-  //    val cities = cityTree.polygonalSearch(Float2(0,0))
-  //    val names = cities.map{_.data.name}
-  //    names should contain theSameElementsAs List("Oulu", "Haukipudas", "Raahe")
-  //
-  //  }
+
+    it should "find polygonal neighborhood around ENU origo" in {
+      val cities = searchableCityTree.polygonalSearch(Float2(0,0))
+      val names = cities.map{_.data.name}
+      names should contain theSameElementsAs List("Oulu", "Haukipudas", "Raahe")
+    }
 
 }

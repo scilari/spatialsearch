@@ -15,7 +15,8 @@ trait TreeTestBase extends FlatSpec with Matchers {
 
   def treeName: String
 
-  val filledTree = createFilledTree
+  val filledTree: SearchableContainer[Float2]  = createFilledTree
+  val searchableCityTree: SearchableContainer[DataPoint[City]] = createCityTree
 
   val kdTree = new KDTree[Float2](2, 48)
 

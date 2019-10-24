@@ -29,10 +29,6 @@ final class QuadTree[EE <: Float2] private (bb: AABB, val parameters: Parameters
     }
   }
 
-  override def polygonalSearch(queryPoint: Float2): Seq[EE] = ???
-
-  override def fastPolygonalSearch(queryPoint: Float2): Seq[EE] = ???
-
   override def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: EE => Boolean): Seq[EE] = ???
 
   override def seqKnnSearch(queryPoints: IndexedSeq[Float2], k: Int): Seq[EE] = ???

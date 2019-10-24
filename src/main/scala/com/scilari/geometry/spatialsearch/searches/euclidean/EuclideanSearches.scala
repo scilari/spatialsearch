@@ -13,5 +13,19 @@ trait EuclideanSearches[EE <: Float2] extends EuclideanTypes[EE] {
     radius.search(queryPoint)
   }
 
-  // TODO: add range etc. here
+  def rangeSearchLeaves[Q <: Float2](queryPoint: Q, r: Float): Seq[NodeType] = {
+    val radius = new RadiusImpl[EE](root, r)
+    radius.searchLeaves(queryPoint)
+  }
+
+  def polygonalSearch(queryPoint: Float2): Seq[E] = {
+    val polygonal = new Polygonal.PolygonalImpl[E](root)
+    polygonal.search(queryPoint)
+  }
+
+  def fastPolygonalSearch(queryPoint: Float2): Seq[E] = {
+    val polygonal = new Polygonal.PolygonalDynamicMaxRange[E](root, 3)
+    polygonal.search(queryPoint)
+  }
+
 }

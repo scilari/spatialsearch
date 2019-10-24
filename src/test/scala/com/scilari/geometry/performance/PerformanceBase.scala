@@ -8,7 +8,7 @@ import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 trait PerformanceBase {
   val plotting = true
 
-  val runCount: Int = 100
+  val runCount: Int = 1000
   val insertRunCount: Int = 10*runCount
   val warmUpCount: Int = 2
   val pointCount: Int = 10000

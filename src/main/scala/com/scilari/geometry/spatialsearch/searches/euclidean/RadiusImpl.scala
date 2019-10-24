@@ -6,5 +6,5 @@ import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeLike.QuadNode
 
 // TODO: refactor to use bounded
 class RadiusImpl[E <: Float2](var root: QuadNode[E], r: Float) extends Radius with EuclideanTypes[E]{
-  val rSq = r * r
+  val rSq: Float = r * r
 }

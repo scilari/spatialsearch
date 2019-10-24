@@ -28,9 +28,15 @@ object Tree{
     def add(e: E): NodeType
 
     def add(elems: Seq[E]): NodeType = {
-      var n: NodeType = this
-      elems.foreach(e => n = add(e)) // linter:ignore VariableAssignedUnusedValue
-      n
+      var node: NodeType = this
+      val n = elems.size
+      var i = 0
+      while(i < n){
+        node = add(elems(i))
+        i += 1
+      }
+      //elems.foreach(e => node = add(e)) // linter:ignore VariableAssignedUnusedValue
+      node
     }
 
     def parent: Option[NodeType]
@@ -89,12 +95,13 @@ object Tree{
       setChild(ix, newChild)
       this
     }
+
   }
 
   trait Leaf[E, NodeType <: Node[E, NodeType]] {
     this: NodeType =>
 
-    def elements: mutable.Buffer[E]
+    val elements: mutable.Buffer[E]
 
     override def children: Array[NodeType] = ???
 
@@ -104,7 +111,7 @@ object Tree{
 
     def nodes: Seq[NodeType] = Seq(this)
 
-    def leaves: Seq[NodeType] = Seq(this)
+    def leaves: Seq[NodeType] = List(this)
 
     def depth: Int = 1
 
@@ -112,12 +119,13 @@ object Tree{
 
     def isLeaf: Boolean = true
 
-    def remove(e: E): Unit = elements -= e
+    def remove(e: E): Unit = ??? //elements -= e
 
     def add(e: E): NodeType = {
       elements += e
       if (splitCondition) split() else this
     }
+
 
     def splitCondition: Boolean
 

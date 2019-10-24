@@ -1,5 +1,6 @@
 package com.scilari.geometry.spatialsearch.core
 
+import com.scilari.geometry.spatialsearch.core.SearchConfig.InitialState
 import com.scilari.geometry.spatialsearch.queues.{FloatHeap, FloatPriorityQueue}
 import com.scilari.math.sqrt
 
@@ -19,6 +20,21 @@ final class SearchState[Q, E, NodeType](
 }
 
 object SearchState{
+  trait DefaultInitialState extends InitialState {
+    var root: NodeType
+    override val foundElemSizeHint: Int = 8
+
+    def initialState(q: Q): SearchState[Q, E, NodeType] = {
+      new SearchState[Q, E, NodeType](
+        q,
+        FloatHeap[NodeType](0, root, 7),
+        new FloatHeap[E](15),
+        new ArrayBuffer[E](foundElemSizeHint)
+      )
+    }
+  }
+
+
   def debugState(state: SearchState[_, _, _]): String ={
     ("Node queue length: " + state.nodes.size + ", closest at: " + sqrt(state.minNodeDist)) + "\n" +
       ("Elem queue length: " + state.elements.size + ", closest at: " + sqrt(state.minElemDist)) + "\n" +
