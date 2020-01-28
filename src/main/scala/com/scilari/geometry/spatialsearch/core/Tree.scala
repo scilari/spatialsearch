@@ -13,6 +13,10 @@ object Tree{
 
     def children: Array[NodeType]
 
+    def forEachChild(f: NodeType => Unit): Unit
+
+    def forEachElement(f: E => Unit): Unit
+
     def nonEmptyIfNotEmptied: Boolean
 
     def elementCount: Int
@@ -56,9 +60,9 @@ object Tree{
   trait Branch[E, NodeType <: Node[E, NodeType]] {
     this: NodeType =>
 
-    val children: Array[NodeType]
-
     def elements: mutable.Buffer[E] = children.flatMap(_.elements).toBuffer
+
+    override def forEachElement(f: E => Unit): Unit = ()
 
     def nonEmptyIfNotEmptied: Boolean = true
 
@@ -84,9 +88,9 @@ object Tree{
 
     def findChildIndex(e: E): Int
 
-    def getChild(i: Int): NodeType = children(i)
+    def getChild(i: Int): NodeType
 
-    def setChild(i: Int, c: NodeType): Unit = children(i) = c
+    def setChild(i: Int, c: NodeType): Unit
 
     def add(e: E): NodeType = {
       val ix = findChildIndex(e)
@@ -105,6 +109,8 @@ object Tree{
 
     override def children: Array[NodeType] = ???
 
+    override def forEachChild(f: NodeType => Unit): Unit = ()
+
     def nonEmptyIfNotEmptied: Boolean = elements.nonEmpty
 
     def elementCount: Int = elements.size
@@ -119,13 +125,12 @@ object Tree{
 
     def isLeaf: Boolean = true
 
-    def remove(e: E): Unit = ??? //elements -= e
+    def remove(e: E): Unit = elements -= e
 
     def add(e: E): NodeType = {
       elements += e
       if (splitCondition) split() else this
     }
-
 
     def splitCondition: Boolean
 

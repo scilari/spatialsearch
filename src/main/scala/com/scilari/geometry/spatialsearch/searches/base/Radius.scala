@@ -22,53 +22,22 @@ trait Radius extends DistanceConfig {
 
   private def range(queryPoint: Q, rootNodes: List[NodeType], rSq: Float): Seq[E] = {
     val foundElems = new ArrayBuffer[E](8)
+    @inline def handleElems(e: E): Unit = if (elemDist(queryPoint, e) <= rSq) foundElems += e
 
     @tailrec
-    def rangeRec(nodes: List[NodeType]): Seq[E] = {
+    def rangeRec(nodes: List[NodeType], foundElems: ArrayBuffer[E]): Seq[E] = {
       if(nodes.isEmpty){
         foundElems
       } else {
         val h = nodes.head
-        val t = nodes.tail
-
-        if (h.isLeaf) {
-          val es = h.elements
-          val n = es.size; var i = 0
-          while(i < n){
-            val e = h.elements(i)
-            if (elemDist(queryPoint, e) <= rSq) foundElems += e
-            i += 1
-          }
-//          @tailrec
-//          def rec(es: List[E]): Unit ={
-//            if (es.nonEmpty) {
-//              val t = es.tail
-//              if (t.nonEmpty) {
-//                val e = es.head
-//                if (elemDist(queryPoint, e) <= rSq) foundElems = e :: foundElems
-//                rec(t)
-//              }
-//            }
-//          }
-
-           // rec(h.elements)
-          rangeRec(t)
-        } else {
-          var ns = t
-          val cs = h.children
-          var i = 0
-          val n = cs.length
-          while (i < n) {
-            val c = cs(i)
-            if (nodeDist(queryPoint, c) <= rSq) ns = c :: ns
-            i += 1
-          }
-          rangeRec(ns)
-        }
+        var t = nodes.tail
+        h.forEachElement(handleElems)
+        h.forEachChild((c: NodeType) => if (nodeDist(queryPoint, c) <= rSq) t = c :: t)
+        rangeRec(t, foundElems)
       }
     }
 
-    rangeRec(rootNodes)
+    rangeRec(rootNodes, foundElems)
   }
 
   private def rangeLeaves(queryPoint: Q, rootNodes: List[NodeType], rSq: Float): Seq[NodeType] = {

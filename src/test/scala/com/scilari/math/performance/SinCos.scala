@@ -10,7 +10,7 @@ class SinCos extends FlatSpec with Matchers {
   val valCount = 1000
   val rs: Seq[Float] = Array.fill(valCount)(4*com.scilari.math.Pi*(random.nextFloat() - 0.5f))
 
-  "Sine" should "be more performant than standard library version" in {
+  "Sine" should "be faster than the standard library version" in {
     val t = warmUpAndMeasureTime({
       var i = 0
       while(i < valCount){
@@ -32,7 +32,7 @@ class SinCos extends FlatSpec with Matchers {
     info(s"Time taken per operation: ${t/(runCount*valCount)}")
   }
 
-  "Cosine" should "be more performant than standard library version" in {
+  "Cosine" should "be faster than the standard library version" in {
     val t = warmUpAndMeasureTime({
       var i = 0
       while(i < valCount){

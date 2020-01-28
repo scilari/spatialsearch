@@ -1,19 +1,31 @@
-name := "spatialsearch"
+import sbt.{Project, ProjectRef, uri}
 
-organization := "com.scilari"
+lazy val baseSettings = Seq(
+  name := "spatialsearch",
+  organization := "com.scilari",
+  version := "0.3.3-SNAPSHOT",
+  scalaVersion := "2.12.8"
+)
 
-version := "0.3.3-SNAPSHOT"
 
-scalaVersion := "2.12.4"
+lazy val root = project.in(sbt.file("."))
+  .dependsOn(geolib).aggregate(geolib)
+  .settings(libraryDependencies ++= Seq(
+    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+    "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+  ))
+  .settings(baseSettings: _*)
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
+
+
+lazy val geolib = RootProject(uri("ssh://git@github.com/scilari/geolib.git#master"))
+
 
 addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
 publishMavenStyle := true
 
-crossScalaVersions := Seq("2.11.8", "2.12.4")
+crossScalaVersions := Seq("2.11.8", "2.12.8")
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
@@ -25,7 +37,7 @@ publishTo := {
 }
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
-scalacOptions ++= Seq("-target:jvm-1.8")
+scalacOptions ++= Seq("-target:jvm-1.8"/*, "-optimize"*/)
 
 publishArtifact in Test := false
 
