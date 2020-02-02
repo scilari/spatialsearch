@@ -191,7 +191,7 @@ class CollisionPerformance extends FlatSpec with Matchers {
     tree = QuadTree[Body[Polygon]](bbWithMargin, treeParams)
     tree.add(ps)
     ps.foreach{ p =>
-      val neighbors = tree.rangeSearch(p, p.shape.radius)
+      val neighbors = tree.rangeSearch(p.position, p.shape.radius)
     }
     // updateCollisionStatus(tree, ps)
 
