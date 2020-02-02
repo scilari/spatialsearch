@@ -42,19 +42,3 @@ object SearchState{
   }
 }
 
-//object State{
-//  def apply[Q, E, NodeType](queryPoint: Q, trees: Seq[NodeType]): State[Q, E, NodeType] = {
-//    val initialNodes = new FloatHeap[NodeType]()
-//    trees.foreach(tree => initialNodes.enqueue(nodeDist(queryPoint, tree), tree))
-//    new State(queryPoint, initialNodes)
-//  }
-//
-//  def defaultInitialState(queryPoint: P, tree: NodeType, params: SearchParameters): State = {
-//    new State(
-//      queryPoint,
-//      new FloatHeap[NodeType](params.nodeQueueSizeHint)(nodeDist(queryPoint, tree), tree),
-//      new FloatHeap[E](params.elemQueueSizeHint),
-//      new ArrayBuffer[E](params.foundElemSizeHint)
-//    )
-//  }
-//}

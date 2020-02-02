@@ -15,7 +15,7 @@ trait PerformanceBase {
   val queryCount: Int = 1000
   val bb: AABB = AABB.positiveSquare(1000f)
   val range: Float = 0.1f*bb.width
-  val queryK: Int = 100 // math.min(pointCount/10, 100)
+  val queryK: Int = 10 // math.min(pointCount/10, 100)
 
   val totalQueryCount: Int = runCount * queryCount
   val totalInsertCount: Int = insertRunCount * pointCount
@@ -23,23 +23,24 @@ trait PerformanceBase {
   val f2: Float2 = Float2.random
 
   // Data with two clusters and a small number of random points elsewhere
-  val points: Seq[Float2]  =
+  val points: Seq[Float2]  = (
     Seq.fill(pointCount*49/100)(Float2.random(0.2f*bb.width) + 0.1f*bb.width) ++
       Seq.fill(pointCount*49/100)(Float2.random(0.5f*bb.width) + 0.45f*bb.width) ++
-      Seq.fill(pointCount*2/100)(bb.randomEnclosedPoint)
+      Seq.fill(pointCount*2/100)(bb.randomEnclosedPoint))
+
 
 
   val queryPoints: Array[Float2] = {
     Array.fill(queryCount){Float2.random(bb.minPoint, bb.maxPoint)}
   }
 
-  val pointsArray: Seq[Array[Double]] = points.map{_.toDoubleArray}
+  val pointsArray: Seq[Array[Double]] = points.map{_.position.toDoubleArray}
   val queryArray: Seq[Array[Double]] = queryPoints.map{_.toDoubleArray}
   val kdTree = new KDTree[Float2](2)
   pointsArray.foreach(k => kdTree.add(k, Float2.random))
   val kdRangeLows: Seq[Array[Double]] = queryArray.map{q => Array(q(0) - range, q(1) - range)}
   val kdRangeHighs: Seq[Array[Double]] = queryArray.map{q =>  Array(q(0) + range, q(1) + range)}
-  
+
   val quadTree: QuadTree[Float2] = QuadTree(points)
   //val rTree: RTree[Float2] = RTree(points)
 

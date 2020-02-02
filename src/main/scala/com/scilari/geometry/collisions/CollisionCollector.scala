@@ -16,45 +16,46 @@ class CollisionCollector(val objectCount: Int) {
     pairs.clear()
   }
 
-  def collect(bs: Seq[Body], tree: QuadTree[DataPoint[Body]]): Unit ={
-    bs.foreach{ a =>
-      if(!handled(a.ix)){
-        val candidates = tree.rangeSearch(a.shape.position, 2*a.shape.radius).map{_.data}
-        checkAndCollect(a, candidates)
-      }
-    }
+  def collect(bs: Seq[Body[_]], tree: QuadTree[_]): Unit ={
+    ???
+//    bs.foreach{ a =>
+//      if(!handled(a.ix)){
+//        val candidates = tree.rangeSearch(a.shape.position, 2*a.shape.radius).map{_.data}
+//        checkAndCollect(a, candidates)
+//      }
+//    }
   }
 
-  private[this] def checkAndCollect(a: Body, candidates: Seq[Body], startingIndex: Int = 0): Unit ={
+  private[this] def checkAndCollect(a: Body[_], candidates: Seq[Body[_]], startingIndex: Int = 0): Unit ={
     var i = startingIndex
     val n = candidates.size
     while(i < n){
-      val b = candidates(i)
-      if(a.shape.collides(b.shape)) {
-        pairs += ((a.ix, b.ix))
-        colliding(a.ix) = true
-        colliding(b.ix) = true
-        i += 1
-      }
+//      val b = candidates(i)
+//      if(a.shape.collides(b.shape)) {
+//        pairs += ((a.ix, b.ix))
+//        colliding(a.ix) = true
+//        colliding(b.ix) = true
+//        i += 1
+//      }
     }
   }
 
-  private[this] def updateCollisionLeaves(ps: Seq[Body], tree: QuadTree[DataPoint[Body]]): Unit ={
-    val leaves = tree.root.leaves
-    leaves.foreach{ leaf =>
-      val es = leaf.elements.map{_.data}
-      val n = es.length
-      var i = 0
-      while(i < n){
-        val a = es(i)
-        val aBox = AABB(a.shape.position, 2*a.shape.radius)
-        handled(a.ix) = leaf.bounds.contains(aBox)
-        if(handled(a.ix)){
-          checkAndCollect(a, es, i + 1)
-        }
-        i += 1
-      }
-    }
-  }
+//  private[this] def updateCollisionLeaves(ps: Seq[Body], tree: QuadTree[DataPoint[Body]]): Unit ={
+//    val leaves = tree.root.leaves
+//    leaves.foreach{ leaf =>
+//      val es = leaf.elements.map{_.data}
+//      val n = es.length
+//      var i = 0
+//      while(i < n){
+//        val a = es(i)
+//        val aBox = AABB(a.shape.position, 2*a.shape.radius)
+//        handled(a.ix) = leaf.bounds.contains(aBox)
+//        if(handled(a.ix)){
+//          checkAndCollect(a, es, i + 1)
+//        }
+//        i += 1
+//      }
+//    }
+//  }
 
 }

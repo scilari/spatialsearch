@@ -1,20 +1,20 @@
 package com.scilari.geometry.spatialsearch.trees.quadtree
 
-import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.models.{AABB, Float2, HasPosition}
 import com.scilari.geometry.spatialsearch.core.Tree.{Branch, Leaf, Node}
 import com.scilari.geometry.spatialsearch.searches.euclidean.Bounded
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeUtils._
 
-import scala.collection.mutable.{ArrayBuffer}
+import scala.collection.mutable.ArrayBuffer
 
 object QuadTreeLike{
 
-  trait QuadNode[E <: Float2] extends Node[E, QuadNode[E]] with Bounded {
+  trait QuadNode[E <: HasPosition] extends Node[E, QuadNode[E]] with Bounded {
     def bounds: AABB
-    def encloses(e: E): Boolean = bounds.contains(e)
+    def encloses(e: E): Boolean = bounds.contains(e.position)
   }
 
-  final class QuadBranch[E <: Float2](
+  final class QuadBranch[E <: HasPosition](
     val bounds: AABB,
     val parent: Option[QuadNode[E]] = None,
     parameters: Parameters
@@ -55,12 +55,12 @@ object QuadTreeLike{
       f(child3)
     }
 
-    def findChildIndex(elem: E): Int = findQuadrant(elem, bounds)
+    def findChildIndex(elem: E): Int = findQuadrant(elem.position, bounds)
 
   }
 
 
-  final class QuadLeaf[E <: Float2](
+  final class QuadLeaf[E <: HasPosition](
     val bounds: AABB,
     val parent: Option[QuadNode[E]] = None,
     parameters: Parameters

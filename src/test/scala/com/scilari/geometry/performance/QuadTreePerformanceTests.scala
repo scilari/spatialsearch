@@ -251,7 +251,7 @@ class QuadTreePerformanceTests extends FlatSpec with Matchers with PerformanceBa
 //    info(s"Sequence-based vs separate unique knn query time: ${tSeq/tSepSet}")
 //    assert(similarTime(tSeq, tSep))
 //  }
-
+  // TODO: may be broken
   ignore should "have better removal performance than rebuilding the KdTree" in {
     val removeCount = points.size/50
     val removedPoints = points.take(removeCount)

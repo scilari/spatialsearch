@@ -1,8 +1,8 @@
 package com.scilari.geometry.spatialsearch.searches.euclidean
 
-import com.scilari.geometry.models.Float2
+import com.scilari.geometry.models.{Float2, HasPosition}
 
-trait EuclideanSearches[EE <: Float2] extends EuclideanTypes[EE] {
+trait EuclideanSearches[EE <: HasPosition] extends EuclideanTypes[EE] {
   def knnSearch(queryPoint: Float2, k: Int): Seq[E] = {
     val knn = new KnnImpl(root, k)
     knn.search(queryPoint)

@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch.trees.quadtree
 
-import com.scilari.geometry.models.{AABB, Float2}
+import com.scilari.geometry.models.{AABB, Float2, HasPosition}
 import com.scilari.geometry.spatialsearch.SearchableContainer
 import com.scilari.geometry.spatialsearch.core.RootedContainer
 import com.scilari.geometry.spatialsearch.searches.euclidean.{EuclideanSearches, RadiusImpl}
@@ -11,7 +11,7 @@ import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeLike.{QuadBranc
   * @param bb Initial bounding box describing the root bounds
   * @tparam EE Element type
   */
-final class QuadTree[EE <: Float2] private (bb: AABB, val parameters: Parameters)
+final class QuadTree[EE <: HasPosition] private (bb: AABB, val parameters: Parameters)
   extends SearchableContainer[EE] with RootedContainer[EE, QuadNode[EE]] with EuclideanSearches[EE] {
   override type NodeType = QuadNode[E]
 
@@ -21,7 +21,7 @@ final class QuadTree[EE <: Float2] private (bb: AABB, val parameters: Parameters
     if(root.encloses(e)) {
       add(e)
     } else{
-      val newAABB = QuadTreeUtils.expandedAABB(e, root.bounds)
+      val newAABB = QuadTreeUtils.expandedAABB(e.position, root.bounds)
       val newRoot = new QuadBranch[E](newAABB, None, parameters)
       newRoot.setChild(QuadTreeUtils.findQuadrant(root.bounds.center, newRoot.bounds), root)
       root = newRoot
@@ -41,16 +41,16 @@ final class QuadTree[EE <: Float2] private (bb: AABB, val parameters: Parameters
 
 object QuadTree{
 
-  def apply[E <: Float2](bb: AABB, parameters: Parameters): QuadTree[E] = {
+  def apply[E <: HasPosition](bb: AABB, parameters: Parameters): QuadTree[E] = {
     new QuadTree[E](AABB.enclosingSquare(bb), parameters)
   }
 
-  def apply[E <: Float2](bb: AABB = AABB.unit): QuadTree[E] = QuadTree(bb, Parameters(bb))
+  def apply[E <: HasPosition](bb: AABB = AABB.unit): QuadTree[E] = QuadTree(bb, Parameters(bb))
 
-  def apply[E <: Float2](elems: Seq[E]): QuadTree[E] = QuadTree(elems, Parameters())
+  def apply[E <: HasPosition](elems: Seq[E]): QuadTree[E] = QuadTree(elems, Parameters())
 
-  def apply[E <: Float2](elems: Seq[E], parameters: Parameters): QuadTree[E] = {
-    val square = AABB.enclosingSquare(elems)
+  def apply[E <: HasPosition](elems: Seq[E], parameters: Parameters): QuadTree[E] = {
+    val square = AABB.enclosingSquare(elems.map{_.position})
     require(square.area > 0,
       "At least two spatially distinct elements required for creating the initial node.")
 

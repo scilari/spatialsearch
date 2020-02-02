@@ -4,7 +4,6 @@ import com.scilari.geometry.spatialsearch.core.Tree.Node
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
 
 import scala.annotation.tailrec
-import scala.collection.mutable.ArrayBuffer
 
 trait Radius extends DistanceConfig {
   var root: NodeType
@@ -21,23 +20,19 @@ trait Radius extends DistanceConfig {
   }
 
   private def range(queryPoint: Q, rootNodes: List[NodeType], rSq: Float): Seq[E] = {
-    val foundElems = new ArrayBuffer[E](8)
-    @inline def handleElems(e: E): Unit = if (elemDist(queryPoint, e) <= rSq) foundElems += e
-
-    @tailrec
-    def rangeRec(nodes: List[NodeType], foundElems: ArrayBuffer[E]): Seq[E] = {
-      if(nodes.isEmpty){
-        foundElems
-      } else {
-        val h = nodes.head
-        var t = nodes.tail
-        h.forEachElement(handleElems)
-        h.forEachChild((c: NodeType) => if (nodeDist(queryPoint, c) <= rSq) t = c :: t)
-        rangeRec(t, foundElems)
+    val leaves = rangeLeaves(queryPoint, rootNodes, rSq)
+    var foundElems: List[E] = Nil
+    leaves.foreach{ leaf =>
+      val es = leaf.elements
+      val n = es.length
+      var i = 0
+      while (i < n) {
+        val e: E = es(i)
+        if(elemDist(queryPoint, e) <= rSq) foundElems ::= e
+        i += 1
       }
     }
-
-    rangeRec(rootNodes, foundElems)
+    foundElems
   }
 
   private def rangeLeaves(queryPoint: Q, rootNodes: List[NodeType], rSq: Float): Seq[NodeType] = {
@@ -59,7 +54,7 @@ trait Radius extends DistanceConfig {
             val n = cs.length
             while (i < n) {
               val c = cs(i)
-              if (nodeDist(queryPoint, c) <= rSq) ns = c :: ns
+              if (nodeDist(queryPoint, c) <= rSq) ns ::= c
               i += 1
             }
             rangeRecLeaves(ns, foundLeaves)
