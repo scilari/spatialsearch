@@ -45,6 +45,17 @@ object QuadTree{
     new QuadTree[E](AABB.enclosingSquare(bb), parameters)
   }
 
+  def apply[E <: HasPosition](bb: AABB, points: Seq[E], parameters: Parameters): QuadTree[E] = {
+    val tree = QuadTree[E](bb, parameters)
+    points.foreach{ p =>
+      require(bb.contains(p.position))
+      tree.add(p)
+    }
+    tree
+  }
+
+  def apply[E <: HasPosition](bb: AABB, points: Seq[E]): QuadTree[E] = QuadTree[E](bb, points, Parameters())
+
   def apply[E <: HasPosition](bb: AABB = AABB.unit): QuadTree[E] = QuadTree(bb, Parameters(bb))
 
   def apply[E <: HasPosition](elems: Seq[E]): QuadTree[E] = QuadTree(elems, Parameters())

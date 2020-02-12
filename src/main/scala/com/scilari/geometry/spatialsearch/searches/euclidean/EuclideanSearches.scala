@@ -13,6 +13,13 @@ trait EuclideanSearches[EE <: HasPosition] extends EuclideanTypes[EE] {
     radius.search(queryPoint)
   }
 
+  def rangeExcludeNode(queryPoint: Float2, r: Float): Seq[E] = {
+    val radius = new RadiusImpl[EE](root, r)
+    radius.searchExcludeNode(queryPoint)
+  }
+
+
+
   def rangeSearchLeaves[Q <: Float2](queryPoint: Q, r: Float): Seq[NodeType] = {
     val radius = new RadiusImpl[EE](root, r)
     radius.searchLeaves(queryPoint)

@@ -15,7 +15,7 @@ trait PerformanceBase {
   val queryCount: Int = 1000
   val bb: AABB = AABB.positiveSquare(1000f)
   val range: Float = 0.1f*bb.width
-  val queryK: Int = 10 // math.min(pointCount/10, 100)
+  val queryK: Int = 100 // math.min(pointCount/10, 100)
 
   val totalQueryCount: Int = runCount * queryCount
   val totalInsertCount: Int = insertRunCount * pointCount

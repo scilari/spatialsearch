@@ -2,8 +2,9 @@ package com.scilari.geometry.performance
 
 import java.awt.{Color, Graphics2D}
 
-import com.scilari.geometry.collisions.{CollisionCollector, SAT}
-import com.scilari.geometry.models.{AABB, Body, DataPoint, Float2, HasPosition, Polygon, Transform}
+import com.scilari.geometry.collisions.CollisionCollector
+import com.scilari.geometry.models.utils.Float2Utils
+import com.scilari.geometry.models.{AABB, Body, Float2, HasPosition, Polygon, Transform}
 import com.scilari.geometry.plotting.drawPolygon
 import com.scilari.geometry.plotting._
 import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
@@ -24,7 +25,7 @@ class CollisionPerformance extends FlatSpec with Matchers {
   // Find out 60 FPS element count
 
   val bb: AABB = AABB.positiveSquare(750f)
-  val n = 200 // 500
+  val n = 100 // 500
   val timeSteps = 60*120
   val visualize = true
 
@@ -32,15 +33,20 @@ class CollisionPerformance extends FlatSpec with Matchers {
 
   val pentagon = Polygon.Pentagon(1f)
 
+  def createPs2: Array[Body[Polygon]] = {
+    ???
+
+  }
+
 
   def createPs: Array[Body[Polygon]] = {
-    def radius = (2.0 + Math.random () * 10.0)/2
+    def radius = (5.0 + Math.random () * 8.0)/4f
     val radii = Array.fill(n)(radius).sorted.reverse
     radii.zipWithIndex.map{ case(r, ix) =>
       val velBox = AABB.fromMinMax (- 2, - 2, 2, 2)
       val tr = Transform(
         position = bb.randomEnclosedPoint,
-        scale = 5*r.toFloat,
+        scale = (if(ix == 0) 10 else 5)*r.toFloat,
         rotation = (math.random()*2*Math.PI).toFloat
       )
       val shape = Polygon(pentagon, tr)
@@ -52,6 +58,8 @@ class CollisionPerformance extends FlatSpec with Matchers {
 
   def velMove(ps: Array[Body[Polygon]]): Array[Body[Polygon]] ={
     val newBodies = ps.map{_.copy()}
+
+    // if(Math.random() < 0.75) return newBodies
 
     newBodies.foreach{ body =>
 
@@ -71,11 +79,15 @@ class CollisionPerformance extends FlatSpec with Matchers {
 
       v += Float2.randomMinusOneToOne*0.03f
 
+      val drawforce = 0.01f
+      val gravity = 0.00f
+
 
       val leader = ps(0)
-      if(body.ix != leader.ix){
-        val diff = (leader.position - p.position).unit * 0.1f
+      if(body.ix != leader.ix) {
+        val diff = (leader.position - p.position).unit * drawforce
         v += diff
+        v += Float2Utils.down * gravity
       } else {
         v += Float2.randomMinusOneToOne*0.2f
       }
@@ -84,9 +96,9 @@ class CollisionPerformance extends FlatSpec with Matchers {
 
       //tr.rotation += 0.01f
 
-      // body.shape.update()
+      body.shape.update()
     }
-    //if(Math.random() < 0.9) return
+
     newBodies
   }
 
@@ -94,17 +106,18 @@ class CollisionPerformance extends FlatSpec with Matchers {
   def drawPoints[E <: Float2]()(g2d: Graphics2D): Unit ={
     // draw glow
     val glowColor = new Color(1f, 1f, 1f/*, 0.1f*/)
-    ps.foreach { e =>
-      if (collisionCollector.colliding(e.ix)) {
-        drawCircle(e.position, radius = 5f, color = glowColor)(g2d)
-      }
-    }
+//    ps.foreach { e =>
+//      if (collisionCollector.colliding(e.ix)) {
+//        drawCircle(e.position, radius = 5f, color = glowColor)(g2d)
+//      }
+//    }
 
     ps.foreach { e =>
-      val color = if (collisionCollector.colliding(e.ix)) Color.YELLOW else Color.MAGENTA
-      drawEdgeCircle(e.position, radius = 10f, faceColor = color)(g2d)
-      val polyColor = if (collisionCollector.colliding(e.ix)) Color.RED else Color.GREEN
-      drawPolygon(e.shape.asInstanceOf[Polygon], polyColor)(g2d)
+      //val color = if (collisionCollector.colliding(e.ix)) Color.YELLOW else Color.MAGENTA
+      //drawEdgeCircle(e.position, radius = 10f, faceColor = color)(g2d)
+      val polyColor = if(e.ix == 0) Color.RED else if (collisionCollector.colliding(e.ix)) Color.BLUE else Color.CYAN
+      //drawCircle(e.position, radius = e.shape.radius, color = polyColor)(g2d)
+      drawPolygon(e.shape, polyColor)(g2d)
     }
 
     // drawEdgeCircle(ps(0), radius = 20f, faceColor = Color.RED)(g2d)
@@ -190,9 +203,12 @@ class CollisionPerformance extends FlatSpec with Matchers {
     ps = velMove(ps)
     tree = QuadTree[Body[Polygon]](bbWithMargin, treeParams)
     tree.add(ps)
-    ps.foreach{ p =>
-      val neighbors = tree.rangeSearch(p.position, p.shape.radius)
-    }
+
+    collisionCollector.reset()
+    collisionCollector.collect(ps, tree)
+    collisionCollector.handleCollisions()
+
+
     // updateCollisionStatus(tree, ps)
 
 

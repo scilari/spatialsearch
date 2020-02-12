@@ -15,8 +15,8 @@ trait IncrementallySearchable extends SearchConfig{
   @tailrec
   final def search(state: State): Seq[E] = {
     import state._
-    @inline def handleElem(e: E): Unit = if(filterElements(e, state)) elements.enqueue(elemDist(queryPoint, e), e)
-    @inline def handleNode(n: NodeType): Unit = if(filterNodes(n, state)) nodes.enqueue(nodeDist(queryPoint, n), n)
+    //@inline def handleElem(e: E): Unit = if(filterElements(e, state)) elements.enqueue(elemDist(queryPoint, e), e)
+    //@inline def handleNode(n: NodeType): Unit = if(filterNodes(n, state)) nodes.enqueue(nodeDist(queryPoint, n), n)
 
     modifyState(state)
 
@@ -28,8 +28,25 @@ trait IncrementallySearchable extends SearchConfig{
         if (filterElements(candidate, state)) foundElements += candidate
       } else {
         val node = nodes.dequeueValue()
-        node.forEachElement(handleElem)
-        node.forEachChild(handleNode)
+        if(node.isLeaf){
+          val es = node.elements
+          val n = es.length
+          var i = 0
+          while(i < n){
+            val e = es(i)
+            if(filterElements(e, state)) elements.enqueue(elemDist(queryPoint, e), e)
+            i += 1
+          }
+        } else {
+          val cs = node.children
+          val n = cs.length
+          var i = 0
+          while(i < n){
+            val c = cs(i)
+            if(filterNodes(c, state)) nodes.enqueue(nodeDist(queryPoint, c), c)
+            i += 1
+          }
+        }
       }
       search(state)
     }
