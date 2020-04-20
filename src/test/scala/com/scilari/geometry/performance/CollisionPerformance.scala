@@ -1,14 +1,10 @@
 package com.scilari.geometry.performance
 
-import java.awt.{Color, Graphics2D}
-
-import com.scilari.geometry.collisions.CollisionCollector
+import com.scilari.geometry.collisions.Scene
+import com.scilari.geometry.models.shapes.{Polygon, RegularPolygon}
 import com.scilari.geometry.models.utils.Float2Utils
-import com.scilari.geometry.models.{AABB, Body, Float2, HasPosition, Polygon, Transform}
-import com.scilari.geometry.plotting.drawPolygon
+import com.scilari.geometry.models.{AABB, Body, Float2, Material, Shape, Transform}
 import com.scilari.geometry.plotting._
-import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
-import com.scilari.geometry.spatialsearch.trees.quadtree.{Parameters, QuadTree}
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.mutable.ArrayBuffer
@@ -24,50 +20,50 @@ class CollisionPerformance extends FlatSpec with Matchers {
   // Compute FPS for 1k, 10k, 50k, 100k elements
   // Find out 60 FPS element count
 
+
   val bb: AABB = AABB.positiveSquare(750f)
-  val n = 100 // 500
+
+  val bbWithMargin: AABB = AABB.addMargin(bb, 100)
+  val n = 200 // 500
   val timeSteps = 60*120
   val visualize = true
 
-  val collisionCollector = new CollisionCollector(n)
+  val modelScale = 0.5f// 2f
+  val pentagon = RegularPolygon.Pentagon(modelScale)
+  val square = RegularPolygon.Square(modelScale * math.sqrt(2).toFloat)
+  val polygon = RegularPolygon.createModel(10, modelScale)
 
-  val pentagon = Polygon.Pentagon(1f)
-
-  def createPs2: Array[Body[Polygon]] = {
-    ???
-
-  }
-
-
-  def createPs: Array[Body[Polygon]] = {
-    def radius = (5.0 + Math.random () * 8.0)/4f
+  def createPs: Array[Body] = {
+    def radius = (5.0 + Math.random () * 10.0)/4f
     val radii = Array.fill(n)(radius).sorted.reverse
     radii.zipWithIndex.map{ case(r, ix) =>
-      val velBox = AABB.fromMinMax (- 2, - 2, 2, 2)
-      val tr = Transform(
+      val velBox = AABB.fromMinMax (- 120, - 120, 120, 120)
+      val tr = new Transform(
         position = bb.randomEnclosedPoint,
-        scale = (if(ix == 0) 10 else 5)*r.toFloat,
+        scale = (if(ix == 0) 20 else 5)*r.toFloat,
         rotation = (math.random()*2*Math.PI).toFloat
       )
-      val shape = Polygon(pentagon, tr)
-      Body(ix, shape, tr, velBox.randomEnclosedPoint)
+      val material = Material(density = if(ix == 0) 10f else 1f)
+
+      val shape = if(ix % 7 == 6) Polygon(polygon) else if(ix % 2 == 0) Polygon(pentagon) else Polygon(square)
+      Body(shape, tr, velBox.randomEnclosedPoint, if(math.random() < 0.5) 0.01f else -0.01f,
+        static = (ix == 1), material = material)
     }
   }
 
-  var ps = createPs
+  val ps = createPs
+  val scene: Scene = new Scene(bbWithMargin, ps)
 
-  def velMove(ps: Array[Body[Polygon]]): Array[Body[Polygon]] ={
-    val newBodies = ps.map{_.copy()}
+  def velMove(scene: Scene) : Unit ={
 
-    // if(Math.random() < 0.75) return newBodies
+    //Thread.sleep(100)
 
-    newBodies.foreach{ body =>
+    scene.bodies.foreach{ body =>
 
       val tr = body.transform
       val p = tr.position
       val v = body.velocity
 
-      p += v
 
       if(p.x < bb.minX || p.x > bb.maxX){
         v.x = math.signum(bb.centerX - p.x)*math.abs(body.velocity.x)
@@ -79,78 +75,36 @@ class CollisionPerformance extends FlatSpec with Matchers {
 
       v += Float2.randomMinusOneToOne*0.03f
 
-      val drawforce = 0.01f
-      val gravity = 0.00f
+      val drawForce = 0.2f
+      val gravity = 0.1f
 
 
       val leader = ps(0)
       if(body.ix != leader.ix) {
-        val diff = (leader.position - p.position).unit * drawforce
+        val diff = (leader.position - p.position).unit * drawForce
         v += diff
         v += Float2Utils.down * gravity
       } else {
-        v += Float2.randomMinusOneToOne*0.2f
+        v += Float2.randomMinusOneToOne*10f
       }
 
-      v *= 0.9995f
+      v *= 0.9999f
 
-      //tr.rotation += 0.01f
-
-      body.shape.update()
+      body.angularVelocity *= 0.999f
     }
 
-    newBodies
   }
 
+  scene.customUpdates += velMove
 
-  def drawPoints[E <: Float2]()(g2d: Graphics2D): Unit ={
-    // draw glow
-    val glowColor = new Color(1f, 1f, 1f/*, 0.1f*/)
-//    ps.foreach { e =>
-//      if (collisionCollector.colliding(e.ix)) {
-//        drawCircle(e.position, radius = 5f, color = glowColor)(g2d)
-//      }
-//    }
+  val renderer = new SceneRenderer(scene, bb)
 
-    ps.foreach { e =>
-      //val color = if (collisionCollector.colliding(e.ix)) Color.YELLOW else Color.MAGENTA
-      //drawEdgeCircle(e.position, radius = 10f, faceColor = color)(g2d)
-      val polyColor = if(e.ix == 0) Color.RED else if (collisionCollector.colliding(e.ix)) Color.BLUE else Color.CYAN
-      //drawCircle(e.position, radius = e.shape.radius, color = polyColor)(g2d)
-      drawPolygon(e.shape, polyColor)(g2d)
-    }
-
-    // drawEdgeCircle(ps(0), radius = 20f, faceColor = Color.RED)(g2d)
-  }
-
-  def drawTree[E <: HasPosition](tree: QuadTree[E])(g2d: Graphics2D): Unit ={
-    val nodes: Seq[AABB] = tree.root.nodes.map{_.bounds}
-    nodes.foreach(b => drawAABB(b, Color.DARK_GRAY)(g2d))
-  }
-
-  val treeParams = Parameters(nodeElementCapacity = 48)
-
-  val bbWithMargin: AABB = AABB.addMargin(bb, 100)
-
-  var tree: QuadTree[Body[Polygon]] = QuadTree[Body[Polygon]](bbWithMargin, treeParams)
-
-  tree.add(ps)
-
-  val panel = new FlippedDrawingPanel(bb.width.toInt, bb.height.toInt, Color.BLACK,
-    BoundedDrawingFunction(drawTree(tree)(_), () => bb),
-    //BoundedDrawingFunction(drawGlow()(_), () => bb),
-    BoundedDrawingFunction(drawPoints()(_), () => bb)
-  )
-  if (visualize) new Frame("Bouncing", panel)
-
-
-  val msPerFrame = 16
+  val msPerFrame = (scene.dt * 1000).toInt
   var ts: Double = System.nanoTime()/1e6
-
 
   val fpss = ArrayBuffer[Double](240)
 
-  def measureFps(f: Array[Body[Polygon]] => Unit, name: String): Double ={
+  def measureFps(f: Array[Body] => Unit, name: String): Double ={
     val fpss = ArrayBuffer[Double](60)
     val ps = createPs
     for(t <- 0 until timeSteps){
@@ -165,71 +119,36 @@ class CollisionPerformance extends FlatSpec with Matchers {
     msPerUpdate
   }
 
-  //Thread.sleep(10000)
-//  def measureMove(): Double = measureFps(
-//    (ps: Array[Body]) => ps.foreach(_.velMove()), "MOVE"
-//  )
-//
-//
-//  def measureMoveAndInsert(): Double = measureFps(
-//    (ps: Array[VelPoint]) => {
-//      tree = QuadTree[VelPoint](bbWithMargin, treeParams)
-//      tree.add(ps)
-//      ps.foreach(_.velMove())
-//    }, "MOVE AND INSERT")
-//
-//  def measureAllCollisionInnerLeaf(): Double = measureFps(
-//    (ps: Array[VelPoint]) => {
-//      tree = QuadTree[VelPoint](bbWithMargin, treeParams)
-//      tree.add(ps)
-//      ps.foreach(_.velMove())
-//      updateCollisionStatus(tree, ps, true)
-//    }, "MOVE AND INSERT AND INLEAF")
-//
-//  def measureAllCollision(): Double = measureFps(
-//    (ps: Array[VelPoint]) => {
-//      tree = QuadTree[VelPoint](bbWithMargin, treeParams)
-//      tree.add(ps)
-//      ps.foreach(_.velMove())
-//      updateCollisionStatus(tree, ps)
-//    }, "MOVE AND INSERT AND COLLISIONS ALL")
+  val allFps = ArrayBuffer[Double]()
 
-  //measureMove()
-  //measureMoveAndInsert()
-  //measureAllCollisionInnerLeaf()
-  //measureAllCollision()
+  var t = 0
+  while(t < timeSteps){
+    val currentTime = System.nanoTime()/1e6
+    val dt = currentTime - ts
+    if(dt > msPerFrame) {
+      val updateT0 = System.nanoTime()/1e6
+      scene.update()
+      val updateTime = System.nanoTime()/1e6 - updateT0
+      fpss += 1000.0/updateTime
+      ts = currentTime
+      t += 1
 
-  for(t <- 0 until timeSteps){
-    ps = velMove(ps)
-    tree = QuadTree[Body[Polygon]](bbWithMargin, treeParams)
-    tree.add(ps)
+      if(t != 0 && t % 240 == 0) {
+        val fps = fpss.sum/fpss.size
+        allFps += fps
+        println(s"FPS: ${fps.toInt} (${1000/fps})")
+        fpss.clear();
+      }
 
-    collisionCollector.reset()
-    collisionCollector.collect(ps, tree)
-    collisionCollector.handleCollisions()
-
-
-    // updateCollisionStatus(tree, ps)
-
-
-    val dt = System.nanoTime()/1e6 - ts
-
-    if(visualize){
-      val sleepTime = msPerFrame - dt
-      panel.validate()
-      panel.repaint()
-      if(sleepTime > 0) Thread.sleep(sleepTime.toInt)
+      if(visualize){
+        renderer.update()
+      }
     }
 
 
-    //Thread.sleep(200)
-    fpss += 1000.0/dt
-    if(t != 0 && t % 240 == 0) {
-      val fps = fpss.sum/fpss.size
-      println(s"FPS: ${fps.toInt} (${1000/fps})")
-      fpss.clear();
-    }
-
-    ts = System.nanoTime()/1e6
   }
+
+  println(s"Average FPS: ${(allFps.sum/allFps.size).toInt}" )
+
+
 }

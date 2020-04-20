@@ -23,7 +23,7 @@ class QuadTreeTests extends SearchableTests with SpatialContainerTests {
       val leaf = leaves(0)
       val r1 = 0.2f
       val elemsInLeaf = leaf.elements.filter{e => e.position.distance(queryPoint) < r1}
-      val elemsOutsideNode = filledTree.rangeExcludeNode(queryPoint, r1)
+      val elemsOutsideNode = filledTree.rangeExcludeNode(queryPoint, r1, leaf)
       val normalSearchResult = filledTree.rangeSearch(queryPoint, r1)
 
       elemsInLeaf ++ elemsOutsideNode should contain theSameElementsAs(normalSearchResult)

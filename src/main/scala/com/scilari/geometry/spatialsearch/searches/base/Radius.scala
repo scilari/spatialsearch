@@ -13,23 +13,21 @@ trait Radius extends DistanceConfig {
 
   def search(queryPoint: Q): Seq[E] = {
     range(queryPoint, List(root), rSq)
-    // TODO: this is tmp
-    // rangeOuterNodes(queryPoint, List(root), rSq)
   }
 
-  def searchExcludeNode(queryPoint: Q): Seq[E] = {
-    rangeExcludeNode(queryPoint, List(root), rSq)
+  def searchExcludeNode(queryPoint: Q, node: NodeType): Seq[E] = {
+    rangeExcludeNode(queryPoint, List(root), rSq, node)
   }
 
   def searchLeaves(queryPoint: Q): Seq[NodeType] = {
     rangeLeaves(queryPoint, List(root), rSq)
   }
 
-  private def rangeExcludeNode(queryPoint: Q, rootNodes: List[NodeType], rSq: Float): Seq[E] = {
+  private def rangeExcludeNode(queryPoint: Q, rootNodes: List[NodeType], rSq: Float, node: NodeType): Seq[E] = {
     val leaves = rangeLeaves(queryPoint, rootNodes, rSq)
     var foundElems: List[E] = Nil
     leaves.foreach{ leaf =>
-      if(nodeDist(queryPoint, leaf) > 0f){
+      if(leaf != node){
         val es = leaf.elements
         val n = es.length
         var i = 0

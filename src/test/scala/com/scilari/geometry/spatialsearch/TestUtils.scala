@@ -1,5 +1,10 @@
 package com.scilari.geometry.spatialsearch
 
+import java.awt.image.BufferedImage
+import java.io.{File, IOException}
+
+import javax.imageio.ImageIO
+
 /**
   * Created by Ilari.Vallivaara on 1/18/2017.
   */
@@ -12,7 +17,18 @@ object TestUtils {
     val linesAsList = lines.toList
     bufferedSource.close
     linesAsList
+  }
 
+  def loadImage(fileName: String): BufferedImage = {
+    val file = new File(fileName)
+    try {
+      ImageIO.read(file)
+    }
+    catch {
+      case e: IOException =>
+        println(s"Failed to load image: ${file.getAbsoluteFile}, ${e.getMessage}")
+        null
+    }
   }
 
   def readCsvColumns(filename: String): List[List[String]] = {
