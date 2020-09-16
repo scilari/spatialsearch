@@ -11,7 +11,7 @@ lazy val baseSettings = Seq(
 lazy val root = project.in(sbt.file("."))
   .dependsOn(geolib).aggregate(geolib)
   .settings(libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.0.5" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.0" % Test,
     "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
   ))
   .settings(baseSettings: _*)
@@ -19,9 +19,6 @@ lazy val root = project.in(sbt.file("."))
 
 
 lazy val geolib = RootProject(uri("ssh://git@github.com/scilari/geolib.git#master"))
-
-
-addCompilerPlugin("org.psywerx.hairyfotr" %% "linter" % "0.1.17")
 
 publishMavenStyle := true
 

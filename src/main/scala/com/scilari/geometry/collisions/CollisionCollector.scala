@@ -4,10 +4,11 @@ import com.scilari.geometry.models.{AABB, Body, Shape}
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTreeLike.QuadNode
 
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class CollisionCollector() {
-  val collisions: ArrayBuffer[Collision] = new ArrayBuffer[Collision]()
+  val collisions: mutable.Buffer[Collision] = new ArrayBuffer[Collision]()
 
   def reset(): Unit ={
     collisions.clear()
