@@ -43,9 +43,7 @@ class CollisionCollector() {
         if (!leaf.bounds.contains(bb)) {
           val neighbors = tree.rangeExcludeNode(e1.position, twoR, leaf)
           neighbors.foreach{ e2 =>
-            if (possibleCollision(e1, e2)) {
-              collect(e1.computeCollision(e2))
-            }
+            if (possibleCollision(e1, e2)) collect(e1.computeCollision(e2))
           }
         }
         i += 1

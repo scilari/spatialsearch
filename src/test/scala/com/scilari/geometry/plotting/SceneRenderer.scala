@@ -3,6 +3,7 @@ package com.scilari.geometry.plotting
 import java.awt.{Color, Graphics2D}
 
 import com.scilari.geometry.collisions.Scene
+import com.scilari.geometry.models.Material.{BALLOON, PLAYER}
 import com.scilari.geometry.models.shapes.{Circle, Polygon, Segment}
 import com.scilari.geometry.models.{AABB, Body, Float2, HasPosition}
 import com.scilari.geometry.plotting.Panels.{FlippedDrawingPanel, Frame}
@@ -12,8 +13,14 @@ import com.scilari.math.sqrt
 
 class SceneRenderer(val scene: Scene, val bounds: AABB) {
 
-  lazy val boxWood = TestUtils.loadImage("src/test/resources/boxAlt.png")
-  lazy val boxGrass = TestUtils.loadImage("src/test/resources/grassMid.png")
+  val width = 1080
+  val height = 1920
+
+  val boxWood = TestUtils.loadImage("src/test/resources/boxAlt.png")
+  val boxGrass = TestUtils.loadImage("src/test/resources/grassMid.png")
+  val kauris = TestUtils.loadImage("src/test/resources/kauris.png")
+  val kaurisFlipped = TestUtils.loadImage("src/test/resources/kauris_flipped.png")
+  val ball = TestUtils.loadImage("src/test/resources/sun1.png")
 
   var debugString: Seq[String] = Seq("Hello", "World")
 
@@ -28,7 +35,14 @@ class SceneRenderer(val scene: Scene, val bounds: AABB) {
     scene.bodies.foreach { b =>
       b.shape match {
         case p: Polygon => drawPolygonalShape(p,b)(g2d)
-        case c: Circle => drawCircularShape(c)(g2d)
+        case c: Circle => {
+          b.material match {
+            case PLAYER => drawKauris(c, b)(g2d)
+            case BALLOON => drawBall(c)(g2d)
+            case _ => drawCircularShape(c)(g2d)
+          }
+
+        }
         case s: Segment => drawSegmentShape(s)(g2d)
         case _ => ()
       }
@@ -38,8 +52,8 @@ class SceneRenderer(val scene: Scene, val bounds: AABB) {
   }
 
   def drawDebugString(g2d: Graphics2D): Unit ={
-    val base = Float2(10, 20)
-    val offset = Float2(0, 20)
+    val base = Float2(2, 4)
+    val offset = Float2(0, 15)
     debugString.zipWithIndex.foreach{ case (s, i) =>
       drawString(s, base + offset * i, bounds.height)(g2d)
     }
@@ -57,12 +71,22 @@ class SceneRenderer(val scene: Scene, val bounds: AABB) {
     drawLine(c.position, c.position + directedRadius, color = Color.CYAN)(g2d)
   }
 
+  def drawBall(c: Circle)(g2d: Graphics2D): Unit = {
+    drawBitmap(c, ball, 2*c.radius)(g2d)
+  }
+
+  def drawKauris(c: Circle, b: Body)(g2d: Graphics2D): Unit ={
+    drawBitmap(c,
+      if(b.angularVelocity >= 0) kauris else kaurisFlipped,
+      2*c.radius)(g2d)
+  }
+
   def drawPolygonalShape(p: Polygon, b: Body)(g2d: Graphics2D): Unit ={
     if(p.points.length == 4) {
-      drawBitmap(
-        p,
+      drawBitmap(p,
         if(b.static) boxGrass else boxWood,
-        scale = 1f/sqrt(2f))(g2d)
+        scaleX = p.width,
+        scaleY = p.height)(g2d)
     } else {
       val polyColor = if(b.static) Color.BLUE else Color.CYAN
       drawPolygon(p, polyColor)(g2d)
@@ -89,11 +113,11 @@ class SceneRenderer(val scene: Scene, val bounds: AABB) {
   }
 
 
-  val panel = new FlippedDrawingPanel(bounds.width.toInt, bounds.height.toInt, Color.BLACK,
+  val panel = new FlippedDrawingPanel(height, width, Color.BLACK,
     BoundedDrawingFunction(drawTree(scene.tree)(_), () => bounds),
     BoundedDrawingFunction(drawPoints()(_), () => bounds)
   )
 
-  val frame = new Frame("Bouncing", panel)
+  val frame = new Frame("Bouncing", Some(scene.inputHandler), panel)
 
 }

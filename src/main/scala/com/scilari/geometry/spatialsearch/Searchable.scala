@@ -13,7 +13,7 @@ trait Searchable[E] {
 
   def fastPolygonalSearch(queryPoint: Float2): Seq[E]
 
-  def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E]
+  def knnSearchWithFilter(queryPoint: Float2, k: Int, condition: E => Boolean): Seq[E]
 
   def seqKnnSearch(queryPoints: IndexedSeq[Float2], k: Int): Seq[E]
 

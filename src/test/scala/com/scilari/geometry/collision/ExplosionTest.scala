@@ -8,7 +8,7 @@ import scala.util.Random
 
 class ExplosionTest extends  CollisionBaseTest {
   val cols = 10
-  val rows = 100
+  val rows = 50
   val baseX = 150f
   val baseY = 530f
   val dx = 25f
@@ -51,29 +51,34 @@ class ExplosionTest extends  CollisionBaseTest {
     //scene.bodies.foreach(_.angularVelocity += (math.random().toFloat - 0.5f)*0.1f)
     val blastOff = 2000
 
-    if(timer == blastOff) {
-      println("BOOM!")
-      val explosionCenter = Float2(baseX + dx * cols/2, baseY)
+    def boom(explosionCenter: Float2, impulseFactor: Float): Unit ={
       scene.bodies.foreach{ b =>
 
         if(b.position.distance(explosionCenter) < 400f){
           val dir = b.position - explosionCenter
-          val impulse = dir.normalize() * 50000f
+          val impulse = dir.normalize() * impulseFactor //50000f
           b.applyImpulse(impulse, b.position + Float2.randomMinusOneToOne * 2)
         }
       }
+
+    }
+
+    if(timer == blastOff) {
+      println("BOOM 1!")
+      boom(Float2(baseX + dx * cols/2, baseY), 50000f)
     }
 
     if(timer == blastOff + 300) {
       println("BOOM 2!")
-      val explosionCenter = Float2(baseX + 500 + dx * cols/2, baseY)
-      scene.bodies.foreach{ b =>
-        if(b.position.distance(explosionCenter) < 400f){
-          val dir = b.position - explosionCenter
-          val impulse = dir.normalize() * 1.5f*50000f
-          b.applyImpulse(impulse, b.position + Float2.randomMinusOneToOne * 2)
-        }
-      }
+      boom(Float2(baseX + 500 + dx * cols/2, baseY), 1.5f*50000f)
+
+    }
+
+    val input = scene.inputState
+    input.keysReleased.foreach{ case(_, e) =>
+      val durationSec = e.durationTicks/1000.0f
+      println(s"Boom key ($durationSec)")
+      boom(Float2(baseX + 500 + dx * cols/2, baseY), durationSec*50000f)
     }
 
     if(timer % 100 == 0) println("Timer: " + timer)

@@ -1,5 +1,6 @@
 package com.scilari.geometry.collisions
 
+import com.scilari.engine.Input
 import com.scilari.geometry.models.{AABB, Body}
 import com.scilari.geometry.spatialsearch.trees.quadtree.QuadTree
 
@@ -15,6 +16,9 @@ class Scene(
   var tree = QuadTree[Body](bounds)
   val collisionCollector = new CollisionCollector()
 
+  val inputHandler = new Input.Handler()
+  var inputState = inputHandler.state(0)
+
   bodies = bodies.sortWith(_ > _)
 
   val customUpdates = new ArrayBuffer[Scene => Unit]()
@@ -25,6 +29,8 @@ class Scene(
     updateCollisions()
     integrateVelocities()
     applyCustomUpdates()
+
+    inputState = inputHandler.state(System.currentTimeMillis()) // TODO: make this work with ticks
   }
 
   private[this] def updateTree(): Unit ={

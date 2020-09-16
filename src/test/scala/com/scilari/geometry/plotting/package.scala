@@ -25,7 +25,8 @@ package object plotting {
 
   def drawString(str: String, screenPosition: Float2, height: Float)(g2d: Graphics2D): Unit ={
     val tr = g2d.getTransform
-    g2d.scale(1,-1)
+    val scale = 0.1f
+    g2d.scale(scale,-scale)
     g2d.translate(0,-height)
     g2d.setColor(Color.WHITE)
     g2d.drawString(str, screenPosition.x, screenPosition.y)
@@ -43,7 +44,7 @@ package object plotting {
     val xs = polygon.points.map(_.x.toInt)
     val ys = polygon.points.map(_.y.toInt)
     g2d.setColor(edgeColor)
-    g2d.setStroke(new BasicStroke(2))
+    //g2d.setStroke(new BasicStroke(2))
     //g2d.fillPolygon(xs, ys, xs.length)
     g2d.drawPolygon(xs, ys, xs.length)
 
@@ -51,7 +52,7 @@ package object plotting {
 
   def drawLine(p1: Float2, p2: Float2, color: Color)(g2d: Graphics2D): Unit = {
     g2d.setColor(color)
-    g2d.drawLine(p1.x.toInt, p1.y.toInt, p2.x.toInt, p2.y.toInt)
+    g2d.draw(new Line2D.Float(p1.x, p1.y, p2.x, p2.y))
   }
 
   def drawPoints[T <: Float2](points: Traversable[T], color: Color = Color.RED, radius: Float)(
@@ -108,18 +109,16 @@ package object plotting {
     g2d.fill(rect)
   }
 
-  def drawBitmap(shape: ScilariShape, image: BufferedImage, scale: Float = 1.0f)(g2d: Graphics2D): Unit = {
-
-    val d = 2*shape.radius*scale
-    val scaleX = d/image.getWidth()
-    val scaleY = d/image.getHeight()
+  def drawBitmap(shape: ScilariShape, image: BufferedImage, scaleX: Float, scaleY: Float = -1.0f)(g2d: Graphics2D): Unit = {
+    val scX = scaleX/image.getWidth()
+    val scY = if(scaleY < 0f) scaleX/image.getHeight() else scaleY/image.getHeight()
 
     val offset = shape.position
     val centerImage = Float2(-image.getWidth()/2, -image.getHeight()/2)
 
     val tr: AffineTransform = new AffineTransform()
-    tr.scale(scaleX, scaleY)
-    tr.translate(offset.x/scaleX + centerImage.x, offset.y/scaleY + centerImage.y)
+    tr.scale(scX, scY)
+    tr.translate(offset.x/scX + centerImage.x, offset.y/scY + centerImage.y)
     tr.rotate(shape.transform.rotation + com.scilari.math.Pi, image.getWidth / 2, image.getHeight / 2)
 
     g2d.drawImage(image, tr, null)

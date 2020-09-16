@@ -8,6 +8,11 @@ trait EuclideanSearches[EE <: HasPosition] extends EuclideanTypes[EE] {
     knn.search(queryPoint)
   }
 
+  def knnSearchWithFilter(queryPoint: Float2, k: Int, filter: E => Boolean): Seq[E] = {
+    val knn = new KnnWithFilterImpl[E](root, k, filter)
+    knn.search(queryPoint)
+  }
+
   def rangeSearch(queryPoint: Float2, r: Float): Seq[E] = {
     val radius = new RadiusImpl[EE](root, r)
     radius.search(queryPoint)

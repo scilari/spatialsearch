@@ -1,12 +1,14 @@
 package com.scilari.geometry.plotting
 
 import java.awt._
+import java.awt.event.{KeyEvent, KeyListener}
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
+
+import com.scilari.engine.Input
 import javax.imageio.ImageIO
 import javax.swing.{JFrame, JPanel}
-
 import com.scilari.geometry.models.AABB
 import com.scilari.math._
 
@@ -115,11 +117,27 @@ object Panels {
     }
   }
 
-  class Frame(title: String, panels: Panel*) extends JFrame(title) {
+  class Frame(title: String, inputHandler: Option[Input.Handler], panels: Panel*) extends JFrame(title) {
+
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
     panels.foreach(add(_))
     pack()
     setVisible(true)
+    inputHandler.foreach { handler =>
+      addKeyListener(new KeyListener {
+        override def keyTyped(e: KeyEvent): Unit = ()
+
+        override def keyPressed(e: KeyEvent): Unit = {
+          val t = System.currentTimeMillis()
+          handler.keyPressed(e.getKeyCode, t)
+        }
+
+        override def keyReleased(e: KeyEvent): Unit = {
+          val t = System.currentTimeMillis()
+          handler.keyReleased(e.getKeyCode, t)
+        }
+      })
+    }
   }
 
 

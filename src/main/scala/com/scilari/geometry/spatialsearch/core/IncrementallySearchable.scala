@@ -15,8 +15,6 @@ trait IncrementallySearchable extends SearchConfig{
   @tailrec
   final def search(state: State): Seq[E] = {
     import state._
-    //@inline def handleElem(e: E): Unit = if(filterElements(e, state)) elements.enqueue(elemDist(queryPoint, e), e)
-    //@inline def handleNode(n: NodeType): Unit = if(filterNodes(n, state)) nodes.enqueue(nodeDist(queryPoint, n), n)
 
     modifyState(state)
 

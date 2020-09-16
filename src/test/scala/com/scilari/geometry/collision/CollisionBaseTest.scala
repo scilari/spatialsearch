@@ -11,15 +11,15 @@ import scala.collection.mutable.ArrayBuffer
 
 trait CollisionBaseTest extends FlatSpec with Matchers {
 
-  val tinyBox = RegularPolygon.Square(10)
-  val smallBox = RegularPolygon.Square(25)
-  val mediumBox = RegularPolygon.Square(50)
-  val largeBox = RegularPolygon.Square(200)
-  val hugeBox = RegularPolygon.Square(500)
-  val smallPentagon = RegularPolygon.Pentagon(30)
+  val tinyBox = RegularPolygon.Square(0.5f)
+  val smallBox = RegularPolygon.Square(1f)
+  val mediumBox = RegularPolygon.Square(5f)
+  val largeBox = RegularPolygon.Square(20f)
+  val hugeBox = RegularPolygon.Square(50f)
+  val smallPentagon = RegularPolygon.Pentagon(1f)
 
-  def smallCircle: Circle = Circle(25)
-  def tinyCircle: Circle = Circle(10)
+  def smallCircle: Circle = Circle(1f)
+  def tinyCircle: Circle = Circle(0.2f)
 
   def gravity(scene: Scene) : Unit ={
     scene.bodies.foreach{ b =>
@@ -31,13 +31,14 @@ trait CollisionBaseTest extends FlatSpec with Matchers {
   val fpsForBatch = ArrayBuffer[Double]()
 
   def createBodies: Array[Body]
+  def bbForRenderer: AABB = AABB.positiveSquare(100f)
+  def bbForBodies: AABB = AABB.addMargin(bbForRenderer, 10)
 
   def run(customUpdates: Seq[Scene =>  Unit] = Seq()): Unit ={
     val bodies = createBodies
 
     val time = 120 // s
-    val bbForRenderer: AABB = AABB.positiveSquare(1200f)
-    val bbForBodies: AABB = AABB.apply(bodies.map{_.position})
+
 
     val scene = new Scene(bbForBodies, bodies)
     val timeSteps = (time / scene.dt).toInt

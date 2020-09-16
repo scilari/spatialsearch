@@ -28,13 +28,13 @@ final class QuadTree[EE <: HasPosition] private (bb: AABB, val parameters: Param
       addEnclose(e)
     }
   }
-
-  override def knnSearchWithCondition(queryPoint: Float2, k: Int, condition: EE => Boolean): Seq[EE] = ???
-
+  // TODO
   override def seqKnnSearch(queryPoints: IndexedSeq[Float2], k: Int): Seq[EE] = ???
 
+  // TODO
   override def seqRangeSearch(queryPoints: IndexedSeq[Float2], r: Float): Seq[EE] = ???
 
+  // TODO
   override def isEmptyRange(queryPoint: Float2, r: Float): Boolean = ???
 
 }

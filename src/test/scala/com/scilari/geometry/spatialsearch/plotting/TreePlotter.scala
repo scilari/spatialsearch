@@ -18,7 +18,7 @@ object TreePlotter {
     val bb = AABB.enclosingSquare(tree.root.bounds.corners, margin = 0.02f*tree.root.bounds.width)
     val panel = new FlippedDrawingPanel(width, height, Color.WHITE,
       BoundedDrawingFunction(drawTree(tree, elemRadius)(_), bb))
-    new Frame(frameName, panel)
+    new Frame(frameName, None, panel)
   }
 
   def drawTree[E <: Float2](tree: QuadTree[E], elemRadius: Float)(g2d: Graphics2D): Unit ={
