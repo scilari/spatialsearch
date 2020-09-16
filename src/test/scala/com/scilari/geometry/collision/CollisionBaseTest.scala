@@ -1,7 +1,7 @@
 package com.scilari.geometry.collision
 
 import com.scilari.geometry.collisions.Scene
-import com.scilari.geometry.models.shapes.{Circle, RegularPolygon}
+import com.scilari.geometry.models.shapes.{Circle, Polygon, RegularPolygon}
 import com.scilari.geometry.models.utils.Float2Utils
 import com.scilari.geometry.models.{AABB, Body}
 import com.scilari.geometry.plotting.SceneRenderer
@@ -11,12 +11,12 @@ import scala.collection.mutable.ArrayBuffer
 
 trait CollisionBaseTest extends FlatSpec with Matchers {
 
-  val tinyBox = RegularPolygon.Square(0.5f)
-  val smallBox = RegularPolygon.Square(1f)
-  val mediumBox = RegularPolygon.Square(5f)
-  val largeBox = RegularPolygon.Square(20f)
-  val hugeBox = RegularPolygon.Square(50f)
-  val smallPentagon = RegularPolygon.Pentagon(1f)
+  val tinyBox: Polygon.Model = RegularPolygon.Square(0.5f)
+  val smallBox: Polygon.Model = RegularPolygon.Square(1f)
+  val mediumBox: Polygon.Model = RegularPolygon.Square(5f)
+  val largeBox: Polygon.Model = RegularPolygon.Square(20f)
+  val hugeBox: Polygon.Model = RegularPolygon.Square(50f)
+  val smallPentagon: Polygon.Model = RegularPolygon.Pentagon(1f)
 
   def smallCircle: Circle = Circle(1f)
   def tinyCircle: Circle = Circle(0.2f)
@@ -56,7 +56,7 @@ trait CollisionBaseTest extends FlatSpec with Matchers {
       scene.update()
       val dt = System.nanoTime()/1e6 - ts
       val sleepTime = msPerFrame - dt
-      if(dtForUi < 0.0) dtForUi = dt else dtForUi = 0.99 * dtForUi + 0.01*dt
+      dtForUi = if(dtForUi < 0.0)  dt else 0.99 * dtForUi + 0.01*dt
       usedTimeForBundle += dt
       renderer.update()
       if(sleepTime > 0) Thread.sleep(sleepTime.toInt)

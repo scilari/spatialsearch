@@ -65,7 +65,7 @@ class GroundTest extends CollisionBaseTest {
       col <- 0 until cols
       row <- 0 until cols - col
     } yield {
-      val offSetX = centerX -cols/2 * dx + col * smallW
+      val offSetX = centerX -cols/2f * dx + col * smallW
       val x = offSetX + row * dx
       val y = baseY + col * dy
       val pos = Float2(x, y)

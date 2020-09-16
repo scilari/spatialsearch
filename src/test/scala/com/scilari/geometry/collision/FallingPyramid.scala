@@ -29,7 +29,7 @@ class FallingPyramid extends  CollisionBaseTest {
       col <- 0 until columns
       row <- 0 until columns - col
     } yield {
-      val offSetX = centerX -columns/2 * dx + col * boxWidth
+      val offSetX = centerX -columns/2f * dx + col * boxWidth
       val x = offSetX + row * dx
       val y = baseY + col * dy
       val pos = Float2(x, y)
