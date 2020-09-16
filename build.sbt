@@ -4,7 +4,7 @@ lazy val baseSettings = Seq(
   name := "spatialsearch",
   organization := "com.scilari",
   version := "0.3.3-SNAPSHOT",
-  scalaVersion := "2.12.8"
+  scalaVersion := "2.13.3"
 )
 
 
