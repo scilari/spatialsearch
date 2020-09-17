@@ -10,10 +10,10 @@ import scala.annotation.tailrec
 trait IncrementallySearchable extends SearchConfig{
   type NodeType <: Tree.Node[E, NodeType]
 
-  def search(queryPoint: Q): Seq[E] = search(initialState(queryPoint))
+  def search(queryPoint: Q): collection.Seq[E] = search(initialState(queryPoint))
 
   @tailrec
-  final def search(state: State): Seq[E] = {
+  final def search(state: State): collection.Seq[E] = {
     import state._
 
     modifyState(state)
