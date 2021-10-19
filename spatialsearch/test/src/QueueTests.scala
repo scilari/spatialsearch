@@ -19,23 +19,20 @@ class QueueTests extends AnyFlatSpec with should.Matchers {
     heap.enqueue(-0.1f, "a")
     heap.enqueue(-0.3f, "c")
 
-
-    heap.size should be (10)
+    heap.size should be(10)
     assert(heap.nonEmpty)
 
     val correctOrder = Seq("e", "d", "c", "b", "a", "A", "B", "C", "D", "E")
-    val dequeued = for(_ <- 0 until heap.size) yield {
+    val dequeued = for (_ <- 0 until heap.size) yield {
       heap.dequeueValue()
     }
 
-    dequeued.zip(correctOrder).foreach{ case(s1, s2) =>
-      s1 should be (s2)
+    dequeued.zip(correctOrder).foreach { case (s1, s2) =>
+      s1 should be(s2)
     }
 
-    heap.size should be (0)
+    heap.size should be(0)
     assert(heap.isEmpty)
 
   }
 }
-
-
