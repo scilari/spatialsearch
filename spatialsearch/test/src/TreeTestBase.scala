@@ -1,6 +1,6 @@
 package com.scilari.geometry.spatialsearch
 
-import com.csdgn.util.KDTree
+// import com.csdgn.util.KDTree
 import com.scilari.geometry.models.{DataPoint, Float2}
 import com.scilari.geometry.spatialsearch.TestResources.City
 import com.scilari.geometry.spatialsearch.core.SearchableContainer
@@ -26,10 +26,10 @@ trait TreeTestBase extends AnyFlatSpec with should.Matchers {
   val filledTree: TreeType  = createFilledTree
   val searchableCityTree: QuadTree[CityPoint] = createCityTree
 
-  val kdTree = new KDTree[Float2](2, 48)
+  // val kdTree = new KDTree[Float2](2, 48)
 
-  points.foreach { p =>
-    kdTree.add(p.toDoubleArray, p)
-  }
+  // points.foreach { p =>
+  //   kdTree.add(p.toDoubleArray, p)
+  // }
 
 }

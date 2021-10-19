@@ -47,19 +47,19 @@ abstract class SearchableTests extends TreeTestBase {
     }
   }
 
-  it should "find same neighbors as KdTree inside range" in {
-    val range = 0.2f
-    for(queryPoint <- queryPoints) {
-      val pointsInRange = filledTree.rangeSearch(queryPoint, range)
-      val q = queryPoint.toDoubleArray
-      val kdRangeLow = Array(q(0) - range, q(1) - range)
-      val kdRangeHigh = Array(q(0) + range, q(1) + range)
-      import collection.JavaConverters._
-      val kdPointsInRange = kdTree.getRange(kdRangeLow, kdRangeHigh).asScala
-      val filteredPoints = kdPointsInRange.filter(p => p.distance(queryPoint) <= range)
-      pointsInRange should have size filteredPoints.size
-    }
-  }
+  // it should "find same neighbors as KdTree inside range" in {
+  //   val range = 0.2f
+  //   for(queryPoint <- queryPoints) {
+  //     val pointsInRange = filledTree.rangeSearch(queryPoint, range)
+  //     val q = queryPoint.toDoubleArray
+  //     val kdRangeLow = Array(q(0) - range, q(1) - range)
+  //     val kdRangeHigh = Array(q(0) + range, q(1) + range)
+  //     import collection.JavaConverters._
+  //     val kdPointsInRange = kdTree.getRange(kdRangeLow, kdRangeHigh).asScala
+  //     val filteredPoints = kdPointsInRange.filter(p => p.distance(queryPoint) <= range)
+  //     pointsInRange should have size filteredPoints.size
+  //   }
+  // }
 
   it should "find all neighbors when radius is infinite" in {
     for(queryPoint <- queryPoints.take(10)) {
