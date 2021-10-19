@@ -20,6 +20,4 @@ trait ContainerBase extends TreeTestBase {
     val searchableCityContainer: CityContainerType = createCityContainer
 
     def createEmptyUnitContainer: QuadTree[Float2]
-
-
 }

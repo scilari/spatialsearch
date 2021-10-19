@@ -1,7 +1,7 @@
 import mill._, scalalib._
 
 object spatialsearch extends ScalaModule {
-  def scalaVersion = "3.1.0"
+  def scalaVersion = "3.1.0-RC3"
 
   object test extends Tests with TestModule.ScalaTest {
       override def ivyDeps =
