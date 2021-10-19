@@ -7,7 +7,7 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 class CompressedQuadTreeTest extends QuadTreeTests {
   override def treeName = "Compressed QuadTree"
   
-  override def createFilledTree: QuadTree[Float2] = {
+  override def createPointTree: QuadTree[Float2] = {
     val bb = AABB.unit
     val tree = QuadTree(AABB.unit, points)
     tree.root.compress()
@@ -19,5 +19,7 @@ class CompressedQuadTreeTest extends QuadTreeTests {
     tree.root.compress()
     tree
   }
+
+ 
 
 }

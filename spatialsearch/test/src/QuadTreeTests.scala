@@ -5,17 +5,19 @@ import com.scilari.geometry.spatialsearch.TestResources.{City, cityData}
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 
 class QuadTreeTests extends SearchableTests with SpatialContainerTests {
-  override type TreeType = QuadTree[Float2]
   def treeName: String = "QuadTree"
 
-  def createEmptyUnitTree: QuadTree[Float2] = QuadTree(AABB.unit)
+  def createEmptyUnitContainer: QuadTree[Float2] = QuadTree(AABB.unit)
   
-  def createFilledTree: QuadTree[Float2] = {
+  def createPointTree: QuadTree[Float2] = {
     val bb = AABB.unit
     QuadTree(AABB.unit, points)
   }
   
   def createCityTree: QuadTree[DataPoint[City]] = QuadTree(cityData)
+
+  override def createCityContainer = createCityTree
+  override def createPointContainer = createPointTree
 
   treeName should "find same elements using in-node brute-force + search excluding the node" in {
     for(queryPoint <- queryPoints) {

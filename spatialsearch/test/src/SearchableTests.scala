@@ -4,7 +4,7 @@ import com.scilari.geometry.models.{Float2, DataPoint}
 import com.scilari.math.FloatMath
 
 
-abstract class SearchableTests extends TreeTestBase {
+abstract class SearchableTests extends SearchableBase {
   treeName should "find k neighbors" in {
     val k = pointCount / 10
     for(queryPoint <- queryPoints) {

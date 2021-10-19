@@ -7,9 +7,9 @@ import scala.collection.mutable.Buffer
 class FloatMinHeap[E](initialCapacity: Int = FloatMinHeap.defaultInitialCapacity) {
 
   val firstIndex = 1
-  inline private[this] def left(k: Int): Int = k << 1
-  inline private[this] def right(k: Int): Int = (k << 1) + 1
-  inline private[this] def parent(k: Int): Int = k >> 1
+  private[this] def left(k: Int): Int = k << 1
+  private[this] def right(k: Int): Int = (k << 1) + 1
+  private[this] def parent(k: Int): Int = k >> 1
   
   protected var capacity: Int = initialCapacity + 1
   protected var values = new Array[Any](capacity)
@@ -20,12 +20,12 @@ class FloatMinHeap[E](initialCapacity: Int = FloatMinHeap.defaultInitialCapacity
 
   keys(0) = if(cmp(0f, 1f)) Float.MinValue else Float.MaxValue // use as a sentinel in bubbleUp
 
-  inline private[this] def move(to: Int, from: Int): Unit ={
+  private[this] def move(to: Int, from: Int): Unit ={
     keys(to) = keys(from)
     values(to) = values(from)
   }
 
-  inline private[this] def update(i: Int, key: Float, value: E): Unit ={
+  private[this] def update(i: Int, key: Float, value: E): Unit ={
     keys(i) = key
     values(i) = value
   }
@@ -88,7 +88,7 @@ class FloatMinHeap[E](initialCapacity: Int = FloatMinHeap.defaultInitialCapacity
     bubbleDown(keys(maxIndex + 1), getValue(maxIndex + 1))
   }
 
-  inline private[this] def bubbleUp(key: Float, value: E): Unit ={
+  private[this] def bubbleUp(key: Float, value: E): Unit ={
 
     @tailrec
     def makeRoomUp(pos: Int): Int = {

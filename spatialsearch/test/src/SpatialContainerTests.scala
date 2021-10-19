@@ -4,10 +4,10 @@ import com.scilari.geometry.models.{AABB, DataPoint, Float2}
 import com.scilari.geometry.spatialsearch.TestResources._
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 
-trait SpatialContainerTests extends TreeTestBase {
+trait SpatialContainerTests extends ContainerBase {
 
   treeName should "be nonEmpty after adding points" in {
-    val tree = createEmptyUnitTree
+    val tree = createEmptyUnitContainer
     assert(tree.isEmpty)
     points.foreach {
       tree.add
@@ -16,7 +16,7 @@ trait SpatialContainerTests extends TreeTestBase {
   }
 
   it should "be nonEmptyIfNotEmptied after adding points and also after removing all points" in {
-    val tree = createEmptyUnitTree
+    val tree = createEmptyUnitContainer
     assert(tree.isEmpty)
     assert(!tree.nonEmptyIfNotEmptied)
     points.foreach {
@@ -30,7 +30,7 @@ trait SpatialContainerTests extends TreeTestBase {
   }
 
 
-  val cityTree = createCityTree
+  val cityTree = createCityContainer
 
   it should "contain all elements" in {
     cityTree.size should be (cityData.size)
@@ -44,7 +44,7 @@ trait SpatialContainerTests extends TreeTestBase {
   }
 
   it should "have removal functionality" in {
-    val cityTree = createCityTree
+    val cityTree = createCityContainer
     val toBeRemoved = cityData.take(3)
     for(e <- toBeRemoved){
       cityTree.remove(e)
@@ -57,7 +57,7 @@ trait SpatialContainerTests extends TreeTestBase {
   }
 
   it should "have simultaneous removal functionality" in {
-    val cityTree = createCityTree
+    val cityTree = createCityContainer
     val toBeRemoved = cityData.take(10)
     cityTree.remove(toBeRemoved)
     val treeNames = cityTree.elements.toList.map{_.data.name}
