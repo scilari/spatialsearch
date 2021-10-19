@@ -9,7 +9,7 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 
 // TODO: make this object
 object PerformanceBase {
-  val plotting = true
+  val plotting = false
 
   val runCount: Int = 500
   val insertRunCount: Int = 10*runCount

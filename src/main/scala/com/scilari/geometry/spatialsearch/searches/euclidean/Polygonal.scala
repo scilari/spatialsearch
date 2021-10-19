@@ -5,13 +5,14 @@ import com.scilari.geometry.spatialsearch.core.IncrementalSearch
 import com.scilari.geometry.spatialsearch.core.SearchState.DefaultInitialState
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree.Node
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig.Euclidean
+import com.scilari.geometry.spatialsearch.core.SearchConfig
 import com.scilari.geometry.spatialsearch.core.Rooted
 
 
 object Polygonal{
 
   final class PolygonalImpl[E <: Position](var root: Node[E])
-    extends IncrementalSearch[Float2, E] with Euclidean[E] with DefaultInitialState[Float2, E] with Rooted[E] {
+    extends SearchConfig.DefaultFiltering[Float2, E] with IncrementalSearch[Float2, E] with Euclidean[E] with DefaultInitialState[Float2, E] with Rooted[E] {
 
     override def filterElements(e: E, s: State): Boolean = {
       !isDominatedBy(e.position, s.queryPoint, s.foundElements)
@@ -23,7 +24,7 @@ object Polygonal{
   }
 
   final class PolygonalDynamicMaxRange[E <: Position](var root: Node[E], maxRangeFactor: Float)
-    extends IncrementalSearch[Float2, E] with Euclidean[E] with DefaultInitialState[Float2, E] with Rooted[E] {
+    extends SearchConfig.DefaultFiltering[Float2, E] with IncrementalSearch[Float2, E] with Euclidean[E] with DefaultInitialState[Float2, E] with Rooted[E] {
     private[this] val rangeFactorSq: Float = maxRangeFactor*maxRangeFactor
     private[this] var maxRangeSq: Float = Float.PositiveInfinity
 

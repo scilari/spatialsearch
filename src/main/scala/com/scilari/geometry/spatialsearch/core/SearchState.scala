@@ -18,8 +18,7 @@ final class SearchState[Q, E <: Position] (
 
   def minElemDist: Float = if(elements.nonEmpty) elements.minKey else Float.MaxValue
   def minNodeDist: Float = if(nodes.nonEmpty) nodes.minKey else Float.MaxValue
-  
-  var elemCloserThanNode: Boolean = _
+  def elemCloserThanNode: Boolean = minElemDist <= minNodeDist
 }
 
 object SearchState{

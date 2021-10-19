@@ -2,6 +2,7 @@ package com.scilari.geometry.spatialsearch.searches.euclidean
 
 import com.scilari.geometry.models.{Float2, Position}
 import com.scilari.geometry.spatialsearch.core.IncrementalSearch
+import com.scilari.geometry.spatialsearch.core.SearchConfig
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
 import com.scilari.geometry.spatialsearch.core.SearchState.DefaultInitialState
 import com.scilari.geometry.spatialsearch.core.Rooted
@@ -36,14 +37,14 @@ object SeqSearches {
   }
   
   final class SeqKnn[E <: Position](var root: QuadTree.Node[E], val k: Int) extends SeqDistanceConfig[E]
-    with IncrementalSearch[Q, E] with DefaultInitialState[Q, E] with Rooted[E] {
+    with SearchConfig.DefaultFiltering[Q, E] with IncrementalSearch[Q, E] with DefaultInitialState[Q, E] with Rooted[E] {
 
     override def endCondition(s: State): Boolean = s.foundElements.length >= k
     override val foundElemSizeHint: Int = k
   }
   
   final class SeqRange[E <: Position](var root: QuadTree.Node[E], r: Float) extends SeqDistanceConfig[E]
-  with IncrementalSearch[Q, E] with DefaultInitialState[Q, E] with Rooted[E] {
+  with SearchConfig.DefaultFiltering[Q, E] with IncrementalSearch[Q, E] with DefaultInitialState[Q, E] with Rooted[E] {
     val rSq = r*r
 
     override def filterElements(e: E, s: State): Boolean = elemMinDist(s.queryPoint, e) <= rSq
