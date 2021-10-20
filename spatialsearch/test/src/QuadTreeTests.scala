@@ -21,7 +21,7 @@ class QuadTreeTests extends SearchableTests with SpatialContainerTests {
 
   treeName should "find same elements using in-node brute-force + search excluding the node" in {
     for(queryPoint <- queryPoints) {
-      val r0 = 0
+      val r0 = 0f
       val leaves = filledTree.rangeSearchLeaves(queryPoint, r0)
       if (treeName == "QuadTree") {
         leaves should have size 1
