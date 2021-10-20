@@ -6,8 +6,8 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 import com.scilari.geometry.spatialsearch.quadtree.MultiTree
 import scala.collection.mutable.ArraySeq
 
-class MultiQuadTreeTest extends SearchableTests with SearchableBase {
-  override def treeName = "MultiQuadTree"
+class MultiTreeTest extends SearchableTests with SearchableBase {
+  override def treeName = "MultiTree"
 
   override def createPointTree: MultiTree[Float2] = {
     val ps1 = points.filter(p => p.x < p.y)
