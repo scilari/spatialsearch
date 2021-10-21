@@ -3,3 +3,4 @@
 * QuadTree based
 * Highly optimized kNN and range search (see legacy_results folder)
 * Implements also searches for multiple trees simultaenously
+* Work in progress
