@@ -1,9 +1,5 @@
-## sbt project compiled with Dotty
-
-### Usage
-
-This is a normal sbt project, you can compile code with `sbt compile` and run it
-with `sbt run`, `sbt console` will start a Dotty REPL.
-
-For more information on the sbt-dotty plugin, see the
-[dotty-example-project](https://github.com/lampepfl/dotty-example-project/blob/master/README.md).
+# Incremental Spatial Search Scala implementation
+* Incremental Spatial Search (Samet et al.)
+* QuadTree based
+* Highly optimized kNN and range search
+* Implements also searches for multiple trees simultaenously
