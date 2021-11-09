@@ -43,7 +43,7 @@ object FloatMath {
 
   @inline def clamp(x: Float, floor: Float, ceil: Float): Float = min(max(x, floor), ceil)
 
-  @inline def clampNormalize(x: Float, floor: Float, ceil: Float): Float = clamp(x, floor, ceil) / (ceil - floor)
+  @inline def clampNormalize(x: Float, floor: Float, ceil: Float): Float = (clamp(x, floor, ceil) - floor) / (ceil - floor)
 
   @inline def mean(xs: Seq[Float]): Float = xs.sum / xs.length
 
