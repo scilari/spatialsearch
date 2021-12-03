@@ -27,6 +27,7 @@ trait AABB extends Support {
   def maxY: Float = centerY + halfHeight
 
   def area: Float = width * height
+  def diagonal: Float = sqrt(width*width + height*height)
 
   def corners: Array[Float2] = Array(bottomLeft, bottomRight, topRight, topLeft)
 
