@@ -21,6 +21,7 @@ final case class Float2(x: Float = 0f, y: Float = 0f) extends Support with Posit
   def +(c: Float): Float2 = Float2(x + c, y + c)
   def -(c: Float): Float2 = Float2(x - c, y - c)
   def *(c: Float): Float2 = Float2(c * x, c * y)
+  def *(c: Double): Float2 = Float2(c * x, c * y)
   def /(c: Float): Float2 = { val cc = 1f / c; Float2(x * cc, y * cc) }
 
   def dot(that: Float2): Float = x * that.x + y * that.y
@@ -82,6 +83,14 @@ object Float2 {
   def apply(that: Float2): Float2 = Float2(that.x, that.y)
   def apply(xy: Float): Float2 = new Float2(xy, xy)
   def apply(x: Double, y: Double): Float2 = new Float2(x.toFloat, y.toFloat)
+
+  extension (x: Float) {
+    def *(p: Float2): Float2 = p * x
+  }
+
+  extension (x: Double) {
+    def *(p: Float2): Float2 = p * x
+  }
 
   def zero: Float2 = Float2(0f, 0f)
   def one: Float2 = Float2(1f, 1f)
