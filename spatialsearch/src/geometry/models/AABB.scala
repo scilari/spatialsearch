@@ -27,7 +27,7 @@ trait AABB extends Support {
   def maxY: Float = centerY + halfHeight
 
   def area: Float = width * height
-  def diagonal: Float = sqrt(width*width + height*height)
+  def diagonal: Float = sqrt(width * width + height * height)
 
   def corners: Array[Float2] = Array(bottomLeft, bottomRight, topRight, topLeft)
 
@@ -128,7 +128,7 @@ object AABB {
 
   def square(center: Float2, halfWidth: Float): AABB = new Square(center.x, center.y, halfWidth)
 
-  def fromPoints(points: collection.Seq[Float2]): AABB = {
+  def fromPoints(points: Iterable[Float2]): AABB = {
     var minX, minY = Float.MaxValue
     var maxX, maxY = Float.MinValue
     points.foreach { p =>
