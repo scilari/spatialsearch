@@ -5,6 +5,7 @@ import com.scilari.geometry.spatialsearch.core.RootedContainer
 import com.scilari.geometry.spatialsearch.searches.euclidean.{EuclideanSearches, SeqSearches}
 
 import scala.collection.mutable.{ArrayBuffer, ArraySeq}
+import com.scilari.geometry.spatialsearch.core.Tree
 
 /** Concrete QuadTree implementation
   * @param bb
@@ -17,6 +18,8 @@ final class QuadTree[E <: Position] private (bb: AABB, val parameters: Parameter
     with EuclideanSearches[E]
     with SeqSearches[E] {
 
+  type RootType = QuadTree.Node[E]
+
   var root: QuadTree.Node[E] = QuadTree.Leaf(bb, None, parameters)
 }
 
@@ -28,7 +31,7 @@ object QuadTree {
 
   def apply[E <: Position](
       bb: AABB,
-      points: collection.Seq[E],
+      points: Iterable[E],
       parameters: Parameters
   ): QuadTree[E] = {
     val tree = QuadTree[E](bb, parameters)
@@ -43,13 +46,13 @@ object QuadTree {
 
   def apply[E <: Position](bb: AABB): QuadTree[E] = apply(bb, Parameters(bb))
 
-  def apply[E <: Position](bb: AABB, points: collection.Seq[E]): QuadTree[E] =
+  def apply[E <: Position](bb: AABB, points: Iterable[E]): QuadTree[E] =
     QuadTree[E](bb, points, Parameters(bb))
 
-  def apply[E <: Position](elems: collection.Seq[E]): QuadTree[E] =
+  def apply[E <: Position](elems: Iterable[E]): QuadTree[E] =
     QuadTree(elems, Parameters.default)
 
-  def apply[E <: Position](elems: collection.Seq[E], parameters: Parameters): QuadTree[E] = {
+  def apply[E <: Position](elems: Iterable[E], parameters: Parameters): QuadTree[E] = {
     val square = AABB.enclosingSquare(elems.map { _.position })
     require(
       square.area > 0,
@@ -87,10 +90,10 @@ object QuadTree {
   ) extends Node[E]
       with Tree.Branch[E, Node[E]] {
 
-    var children: ArraySeq[Node[E]] = {
+    var children: ArrayBuffer[Node[E]] = {
       val thisAsParent = Some[Node[E]](this)
       def hhw = bounds.halfWidth / 2
-      ArraySeq(
+      ArrayBuffer(
         Leaf(topLeftAABB(bounds.center, hhw), thisAsParent, parameters),
         Leaf(topRightAABB(bounds.center, hhw), thisAsParent, parameters),
         Leaf(bottomLeftAABB(bounds.center, hhw), thisAsParent, parameters),

@@ -1,24 +1,31 @@
 package com.scilari.geometry.spatialsearch.core
 
 import com.scilari.geometry.models.Float2
+import scala.collection.mutable.ArrayBuffer
+import com.scilari.geometry.models.Position
 
-trait SearchableContainer[E] {
+trait SearchableContainer[E <: Position] {
+  private type Result = ArrayBuffer[E]
 
-  def knnSearch(queryPoint: Float2, k: Int): collection.Seq[E]
+  def knnSearch(queryPoint: Float2, k: Int): Result
 
-  def knnSearchWithFilter(queryPoint: Float2, k: Int, filter: E => Boolean): collection.Seq[E]
+  def nearest(queryPoint: Float2): Option[E] = knnSearch(queryPoint, 1).headOption
 
-  def knnWithinRadius(queryPoint: Float2, k: Int, r: Float): collection.Seq[E]
+  def nearestAndDist(queryPoint: Float2): Option[(E, Double)] = nearest(queryPoint).map{n => (n, queryPoint.distance(n.position))}
 
-  def rangeSearch(queryPoint: Float2, r: Float): collection.Seq[E]
+  def knnSearchWithFilter(queryPoint: Float2, k: Int, filter: E => Boolean): Result
 
-  // def rangeExcludeNode(queryPoint: Float2, r: Float, node: Node[E]): collection.Seq[E]
+  def knnWithinRadius(queryPoint: Float2, k: Int, r: Float): Result
 
-  // def rangeSearchLeaves(queryPoint: Float2, r: Float): collection.Seq[Node[E]]
+  def rangeSearch(queryPoint: Float2, r: Float): Result
 
-  def polygonalSearch(queryPoint: Float2): collection.Seq[E]
+  // def rangeExcludeNode(queryPoint: Float2, r: Float, node: Node[E]): ArraySeq[E]
 
-  def fastPolygonalSearch(queryPoint: Float2): collection.Seq[E]
+  // def rangeSearchLeaves(queryPoint: Float2, r: Float): ArraySeq[Node[E]]
+
+  def polygonalSearch(queryPoint: Float2): Result
+
+  def fastPolygonalSearch(queryPoint: Float2): Result
 
   def isEmptyRange(queryPoint: Float2, r: Float): Boolean
 

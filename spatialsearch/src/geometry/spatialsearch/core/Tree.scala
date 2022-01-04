@@ -1,33 +1,32 @@
 package com.scilari.geometry.spatialsearch.core
 
 import scala.collection.mutable
-import scala.collection.mutable.{ArraySeq, Buffer}
+import scala.collection.mutable.ArrayBuffer
 
+object Tree {
 
-object Tree{
-
-  trait Node[E, NodeType <: Node[E, NodeType]]{
+  trait Node[E, NodeType <: Node[E, NodeType]] {
     this: NodeType =>
-    
+
     def foreach[U](f: E => U): Unit = elements.foreach(f)
-    
+
     def size: Int = elementCount
-    
+
     def isEmpty: Boolean = size == 0
-    
+
     def nonEmpty: Boolean = !isEmpty
 
-    def elements: Buffer[E]
+    def elements: ArrayBuffer[E]
 
-    def children: ArraySeq[NodeType]
+    def children: ArrayBuffer[NodeType]
 
     def nonEmptyIfNotEmptied: Boolean
 
     def elementCount: Int
 
-    def nodes: collection.Seq[NodeType]
+    def nodes: ArrayBuffer[NodeType]
 
-    def leaves: Buffer[NodeType]
+    def leaves: ArrayBuffer[NodeType]
 
     def depth: Int
 
@@ -37,7 +36,7 @@ object Tree{
 
     def add(elems: Seq[E]): NodeType = {
       var node: NodeType = this
-      elems.foreach{ e =>
+      elems.foreach { e =>
         node = add(e)
       }
       node
@@ -54,21 +53,21 @@ object Tree{
     def encloses(e: E): Boolean
 
     def remove(e: E): Unit
-  }
 
+  }
 
   trait Branch[E, NodeType <: Node[E, NodeType]] {
     this: NodeType =>
-    
-    def elements: Buffer[E] = children.flatMap(_.elements).toBuffer
+
+    def elements: ArrayBuffer[E] = children.flatMap(_.elements)
 
     def nonEmptyIfNotEmptied: Boolean = true
 
-    def elementCount: Int = children.map{_.elementCount}.sum
+    def elementCount: Int = children.map { _.elementCount }.sum
 
-    def nodes: collection.Seq[NodeType] = collection.Seq(this) ++ children.flatMap{ _.nodes }
+    def nodes: ArrayBuffer[NodeType] = children.flatMap { _.nodes } += this
 
-    def leaves: Buffer[NodeType] = children.flatMap {c => c.leaves }.toBuffer
+    def leaves: ArrayBuffer[NodeType] = children.flatMap { c => c.leaves }
 
     def depth: Int = children.map {
       _.depth
@@ -78,7 +77,7 @@ object Tree{
 
     def isLeaf: Boolean = false
 
-    def remove(e: E): Unit = children.filter{_.encloses(e)}.foreach(_.remove(e))
+    def remove(e: E): Unit = children.filter { _.encloses(e) }.foreach(_.remove(e))
 
     def findChildIndex(e: E): Int
 
@@ -99,22 +98,22 @@ object Tree{
   trait Leaf[E, NodeType <: Node[E, NodeType]] {
     this: NodeType =>
 
-    val elements: Buffer[E]
+    val elements: ArrayBuffer[E]
 
-    override def children: ArraySeq[NodeType] = ???
+    override def children: ArrayBuffer[NodeType] = ???
 
     def nonEmptyIfNotEmptied: Boolean = elements.nonEmpty
 
     def elementCount: Int = elements.length
 
-    def nodes: collection.Seq[NodeType] = collection.Seq(this)
+    def nodes: ArrayBuffer[NodeType] = ArrayBuffer(this)
 
-    def leaves: Buffer[NodeType] = Buffer(this)
+    def leaves: ArrayBuffer[NodeType] = ArrayBuffer(this)
 
     def depth: Int = 1
-    
+
     def childCount: Int = ???
-    
+
     def isLeaf: Boolean = true
 
     def remove(e: E): Unit = elements -= e
@@ -133,6 +132,6 @@ object Tree{
     }
 
     def toNode: NodeType
- }
+  }
 
 }

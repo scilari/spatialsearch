@@ -6,25 +6,25 @@ import com.scilari.geometry.spatialsearch.quadtree.QuadTree.Node
 
 import scala.annotation.tailrec
 import scala.collection.mutable.Buffer
+import scala.collection.mutable.ArrayBuffer
 
-/**
- * Functionality for the incremental knn search described e.g. in
- * Samet: "Multidimensional and Metric Data Structures".
- * Provides highly versatile searches via modifiable search configurations.
- */
-trait IncrementalSearch[Q, E <: Position] extends SearchConfig[Q, E]  {
+/** Functionality for the incremental knn search described e.g. in Samet: "Multidimensional and
+  * Metric Data Structures". Provides highly versatile searches via modifiable search
+  * configurations.
+  */
+trait IncrementalSearch[Q, E <: Position] extends SearchConfig[Q, E] {
 
-  def search(queryPoint: Q): collection.Seq[E] = search(initialState(queryPoint))
-  
+  def search(queryPoint: Q): ArrayBuffer[E] = search(initialState(queryPoint))
+
   @tailrec
-  private[this] def search(state: State): collection.Seq[E] = {
+  private[this] def search(state: State): ArrayBuffer[E] = {
     import state._
 
     if (collectFoundOrDone(state)) {
       foundElements
     } else {
       val node = nodes.dequeueValue()
-      if(node.isLeaf){
+      if (node.isLeaf) {
         val es = node.elements
         val n = es.length
         var i = 0

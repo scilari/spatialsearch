@@ -13,7 +13,7 @@ final class SearchState[Q, E <: Position] (
   val queryPoint: Q,
   val nodes: FloatMinHeap[Node[E]],
   val elements: FloatMinHeap[E],
-  var foundElements: mutable.Buffer[E]
+  var foundElements: ArrayBuffer[E]
 ) {
 
   def minElemDist: Float = if(elements.nonEmpty) elements.minKey else Float.MaxValue

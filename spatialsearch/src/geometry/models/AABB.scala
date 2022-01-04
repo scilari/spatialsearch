@@ -151,7 +151,7 @@ object AABB {
   def addMargin(b: AABB, margin: Float): AABB =
     AABB(b.centerX, b.centerY, b.halfWidth + margin, b.halfHeight + margin)
 
-  def enclosingSquare(points: collection.Seq[Float2], margin: Float = 0f): AABB = {
+  def enclosingSquare(points: Iterable[Float2], margin: Float = 0f): AABB = {
     val fitBox = AABB.fromPoints(points)
     val square =
       AABB.square(fitBox.centerX, fitBox.centerY, Math.max(fitBox.halfWidth, fitBox.halfHeight))
