@@ -120,4 +120,14 @@ object Float2 {
   def distance(a: Float2, b: Float2): Float = sqrt(distanceSq(a, b))
 
   def manhattan(a: Float2, b: Float2): Float = abs(a.x - b.x) + abs(a.y - b.y)
+
+  def rotateAround(p: Float2, ps: Iterable[Float2], a: Float) = {
+    val c = cos(a)
+    val s = sin(a)
+    ps.map{q => (q-p).rotated(c, s) + p}
+  }
+
+  def scaleAround(p: Float, ps: Iterable[Float2], scale: Float) = {
+    ps.map{ q => ((q - p)*scale) + p}
+  }
 }
