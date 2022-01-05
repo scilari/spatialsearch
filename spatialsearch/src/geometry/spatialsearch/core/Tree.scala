@@ -1,7 +1,7 @@
 package com.scilari.geometry.spatialsearch.core
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ArraySeq}
 
 object Tree {
 
@@ -18,7 +18,7 @@ object Tree {
 
     def elements: ArrayBuffer[E]
 
-    def children: ArrayBuffer[NodeType]
+    def children: ArraySeq[NodeType]
 
     def nonEmptyIfNotEmptied: Boolean
 
@@ -59,15 +59,15 @@ object Tree {
   trait Branch[E, NodeType <: Node[E, NodeType]] {
     this: NodeType =>
 
-    def elements: ArrayBuffer[E] = children.flatMap(_.elements)
+    def elements: ArrayBuffer[E] = ArrayBuffer.from(children).flatMap(_.elements)
 
     def nonEmptyIfNotEmptied: Boolean = true
 
     def elementCount: Int = children.map { _.elementCount }.sum
 
-    def nodes: ArrayBuffer[NodeType] = children.flatMap { _.nodes } += this
+    def nodes: ArrayBuffer[NodeType] = ArrayBuffer.from(children).flatMap { _.nodes } += this
 
-    def leaves: ArrayBuffer[NodeType] = children.flatMap { c => c.leaves }
+    def leaves: ArrayBuffer[NodeType] = ArrayBuffer.from(children).flatMap { c => c.leaves }
 
     def depth: Int = children.map {
       _.depth
@@ -100,7 +100,7 @@ object Tree {
 
     val elements: ArrayBuffer[E]
 
-    override def children: ArrayBuffer[NodeType] = ???
+    override def children: ArraySeq[NodeType] = ???
 
     def nonEmptyIfNotEmptied: Boolean = elements.nonEmpty
 

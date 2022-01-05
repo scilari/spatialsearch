@@ -90,10 +90,10 @@ object QuadTree {
   ) extends Node[E]
       with Tree.Branch[E, Node[E]] {
 
-    var children: ArrayBuffer[Node[E]] = {
+    var children: ArraySeq[Node[E]] = {
       val thisAsParent = Some[Node[E]](this)
       def hhw = bounds.halfWidth / 2
-      ArrayBuffer(
+      ArraySeq(
         Leaf(topLeftAABB(bounds.center, hhw), thisAsParent, parameters),
         Leaf(topRightAABB(bounds.center, hhw), thisAsParent, parameters),
         Leaf(bottomLeftAABB(bounds.center, hhw), thisAsParent, parameters),
