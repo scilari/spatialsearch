@@ -106,9 +106,14 @@ object QuadTree {
 
     def findChildIndex(elem: E): Int = findQuadrant(elem.position, bounds)
 
+    // Note: this breaks the tree structure for future additions
     def compress(): Unit = {
-      children = children.filter(_.nonEmpty) // TODO: reorder: this is wasteful
       children.foreach(_.compress())
+      val nonEmptyChildren = children.filter(_.nonEmpty)
+      children =
+        if (nonEmptyChildren.size == 1 && !nonEmptyChildren.head.isLeaf)
+          nonEmptyChildren.head.children
+        else nonEmptyChildren
       bounds = AABB.fromPoints(children.map { _.bounds }.map { _.corners }.flatten)
     }
   }
