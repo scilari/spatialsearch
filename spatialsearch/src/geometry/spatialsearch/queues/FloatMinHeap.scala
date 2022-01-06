@@ -68,7 +68,7 @@ class FloatMinHeap[E](initialCapacity: Int = FloatMinHeap.defaultInitialCapacity
     b
   }
 
-  def peekValues: ArrayBuffer[E] = peekValuesToBuffer(ArrayBuffer[E]())
+  def peekValues: ArrayBuffer[E] = peekValuesToBuffer(new ArrayBuffer[E](maxIndex))
 
   def getKeysAndValues: ArrayBuffer[FloatKey[E]] = {
     val b = ArrayBuffer[Any]()
