@@ -130,26 +130,6 @@ abstract class SearchableTests extends SearchableBase {
     names should contain theSameElementsAs List("Oulu", "Haukipudas", "Raahe")
   }
 
-  it should "find k closest cities to a sequence of points" in {
-    val queryPoints = TestResources.cityData
-      .filter(c => Set("Oulu", "Helsinki").contains(c.data.name))
-      .map { c => c.position }
-    val cities: collection.Seq[CityPoint] = searchableCityTree.seqKnnSearch(queryPoints.toBuffer, 5)
-
-    val names = cities.map { _.data.name }
-    names should contain theSameElementsAs List("Oulu", "Helsinki", "Kempele", "Vantaa", "Espoo")
-  }
-
-  it should "find cities within a radius from a sequence of points" in {
-    val queryPoints = TestResources.cityData
-      .filter(c => Set("Oulu", "Helsinki").contains(c.data.name))
-      .map { c => c.position }
-    val cities: collection.Seq[CityPoint] =
-      searchableCityTree.seqRangeSearch(queryPoints.toBuffer, 16.5f)
-    val names = cities.map { _.data.name }
-    names should contain theSameElementsAs List("Oulu", "Helsinki", "Kempele", "Vantaa", "Espoo")
-  }
-
   it should "find cities within sector from Oulu to Kemi" in {
     import com.scilari.math.FloatMath.Pi
     val ouluPos = TestResources.cityData.find(_.data.name == "Oulu").get.position

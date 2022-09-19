@@ -14,7 +14,7 @@ class MultiTreeTest extends SearchableTests with SearchableBase {
     val ps2 = points.filter(p => p.x >= p.y)
     val tree1 = QuadTree(AABB.unit, ps1)
     val tree2 = QuadTree(AABB.unit, ps2)
-    MultiTree.fromTrees(Seq(tree1, tree2))
+    MultiTree.fromTrees(List(tree1, tree2))
   }
 
   override def createCityTree: MultiTree[CityPoint] = {
@@ -22,7 +22,7 @@ class MultiTreeTest extends SearchableTests with SearchableBase {
     val d2 = cityData.filter { d => d.data.name.size >= 5 }
     val tree1 = QuadTree(d1)
     val tree2 = QuadTree(d2)
-    MultiTree.fromTrees(Seq(tree1, tree2))
+    MultiTree.fromTrees(List(tree1, tree2))
   }
 
 }
