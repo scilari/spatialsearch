@@ -4,7 +4,7 @@ import com.scilari.geometry.models.{Float2, Position}
 import com.scilari.geometry.spatialsearch.core.SearchConfig.InitialState
 import com.scilari.geometry.spatialsearch.queues.FloatMinHeap
 import com.scilari.math.FloatMath.sqrt
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.Node
+import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, ListBuffer}

@@ -2,7 +2,7 @@ package com.scilari.geometry.spatialsearch.searches.base
 
 import com.scilari.geometry.models.{Float2, Position}
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.Node
+import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ArrayBuffer

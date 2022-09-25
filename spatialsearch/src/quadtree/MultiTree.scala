@@ -1,7 +1,7 @@
 package com.scilari.geometry.spatialsearch.quadtree
 
 import com.scilari.geometry.spatialsearch.searches.EuclideanSearches
-import QuadTreeStructure.Node
+import Tree.Node
 import com.scilari.geometry.models.{AABB, Position}
 import scala.collection.mutable.{ArrayBuffer, ArraySeq}
 

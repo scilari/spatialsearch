@@ -6,7 +6,7 @@ import com.scilari.geometry.spatialsearch.core.SearchConfig.{
   InitialState,
   SearchParameters
 }
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.Node
+import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 import com.scilari.geometry.spatialsearch.core.State
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 import com.scilari.geometry.models.AABB

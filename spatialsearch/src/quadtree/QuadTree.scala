@@ -8,11 +8,7 @@ import com.scilari.geometry.spatialsearch.core.SearchConfig
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
 import com.scilari.geometry.spatialsearch.searches.EuclideanSearches
 import com.scilari.geometry.spatialsearch.searches.ManhattanSearches
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.{Node, Leaf}
-
-
-
-
+import com.scilari.geometry.spatialsearch.quadtree.Tree.{Node, Leaf}
 
 /** Concrete QuadTree implementation
   * @param bb
@@ -75,7 +71,5 @@ object QuadTree {
     q.add(elems)
     q
   }
-
-  
 
 }

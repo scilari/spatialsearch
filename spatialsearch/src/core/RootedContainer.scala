@@ -4,7 +4,7 @@ import com.scilari.geometry.models.Position
 import scala.collection.immutable.ArraySeq
 import scala.collection.mutable.ArrayBuffer
 import com.scilari.geometry.spatialsearch.quadtree.QuadTreeUtils
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.{Node, Branch}
+import com.scilari.geometry.spatialsearch.quadtree.Tree.{Node, Branch}
 import com.scilari.geometry.spatialsearch.quadtree.Parameters
 
 trait RootedContainer[E <: Position] {
@@ -57,7 +57,10 @@ trait RootedContainer[E <: Position] {
     } else {
       val newAABB = QuadTreeUtils.expandedAABB(e.position, root.bounds)
       val newRoot = new Branch[E](newAABB, None, parameters)
-      newRoot.setChild(QuadTreeUtils.Quadrants.findQuadrant(root.bounds.center, newRoot.bounds), root)
+      newRoot.setChild(
+        QuadTreeUtils.Quadrants.findQuadrant(root.bounds.center, newRoot.bounds),
+        root
+      )
       root = newRoot
       addEnclose(e)
     }

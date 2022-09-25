@@ -4,14 +4,14 @@ import com.scilari.geometry.models.{Float2, Position}
 import com.scilari.geometry.spatialsearch.core.State.DefaultInitialState
 import com.scilari.geometry.spatialsearch.core.{IncrementalSearch, SearchConfig, State}
 import com.scilari.geometry.spatialsearch.core.SearchConfig.{InitialState, SearchParameters}
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.Node
+import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree
 import com.scilari.geometry.spatialsearch.queues.{FloatMaxHeapK, FloatMinHeap}
 
 import scala.collection.mutable.ArrayBuffer
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
 
-trait KnnSearches[E <: Position] (using DistanceConfig) {
+trait KnnSearches[E <: Position](using DistanceConfig) {
 
   def initialNodes: List[Node[E]]
   import KnnSearches._

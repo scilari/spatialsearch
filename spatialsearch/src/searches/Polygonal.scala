@@ -3,7 +3,7 @@ import com.scilari.geometry.models.{Float2, Position, Support}
 import com.scilari.geometry.spatialsearch.core.IncrementalSearch
 import com.scilari.geometry.spatialsearch.core.State.DefaultInitialState
 import com.scilari.geometry.spatialsearch.core.State
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.Node
+import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 import com.scilari.geometry.spatialsearch.core.SearchConfig
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
 

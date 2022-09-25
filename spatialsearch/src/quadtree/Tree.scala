@@ -8,7 +8,7 @@ import com.scilari.geometry.spatialsearch.quadtree.Parameters
 
 // TODO: optimize elements and leaves etc.
 
-object QuadTreeStructure {
+object Tree {
 
   trait Node[E <: Position] {
     type NodeType = Node[E]

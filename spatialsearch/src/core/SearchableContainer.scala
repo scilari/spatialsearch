@@ -4,7 +4,7 @@ import com.scilari.geometry.models.Float2
 import scala.collection.mutable.ArrayBuffer
 import com.scilari.geometry.models.Position
 import com.scilari.geometry.spatialsearch.quadtree.QuadTree
-import com.scilari.geometry.spatialsearch.quadtree.QuadTreeStructure.Node
+import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 
 trait SearchableContainer[E <: Position] {
   protected def initialNodes: List[Node[E]]
