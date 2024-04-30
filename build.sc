@@ -2,7 +2,7 @@ import mill._, scalalib._
 import mill.scalalib.publish._
 
 object spatialsearch extends ScalaModule /* with PublishModule */ {
-  def scalaVersion = "3.0.2"
+  def scalaVersion = "3.3.3"
 
   def publishVersion = "0.0.1"
   def pomSettings = PomSettings(
@@ -16,7 +16,7 @@ object spatialsearch extends ScalaModule /* with PublishModule */ {
     )
   )
 
-  object test extends Tests with TestModule.ScalaTest {
+  object test extends ScalaTests with TestModule.ScalaTest {
     override def ivyDeps =
       Agg(
         ivy"org.scalatest::scalatest:3.2.10",
