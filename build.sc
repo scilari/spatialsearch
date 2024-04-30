@@ -3,6 +3,7 @@ import mill.scalalib.publish._
 
 object spatialsearch extends ScalaModule with ScalaJSModule /* with PublishModule */ {
   def scalaVersion = "3.3.3"
+  def scalaJSVersion = T { "1.16.0" }
 
   def publishVersion = "0.0.1"
   def pomSettings = PomSettings(
