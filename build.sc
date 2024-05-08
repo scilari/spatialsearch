@@ -2,7 +2,6 @@
 // import $ivy.`com.lihaoyi::mill-contrib-bloop:$MILL_VERSION`
 
 import mill._, scalalib._
-import mill.scalajslib._
 
 trait BaseModule extends ScalaModule {
   def scalaVersion = "3.3.3"
@@ -17,7 +16,7 @@ object geometry extends BaseModule {
 object spatialsearch extends BaseModule {
   def moduleDeps = Seq(geometry)
 
-  object test extends Tests with TestModule.ScalaTest {
+  object test extends ScalaTests with TestModule.ScalaTest {
     override def ivyDeps =
       Agg(
         ivy"org.scalatest::scalatest:3.2.10",
