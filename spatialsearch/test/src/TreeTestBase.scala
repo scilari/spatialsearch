@@ -21,12 +21,4 @@ trait TreeTestBase extends AnyFlatSpec with should.Matchers {
 
   val queryPoints: Seq[Float2] = Seq.fill(2000)(Float2.randomMinusOneToOne)
 
-  // def createEmptyUnitTree: TreeType
-
-  // val kdTree = new KDTree[Float2](2, 48)
-
-  // points.foreach { p =>
-  //   kdTree.add(p.toDoubleArray, p)
-  // }
-
 }

@@ -9,18 +9,24 @@ class CompressedQuadTreeTest extends QuadTreeTests {
   override def createPointTree: QuadTree[Float2] = {
     val bb = AABB.unit
     val tree = QuadTree(AABB.unit, points)
-    println(s"Before compression: nodes = ${tree.root.nodes.size}, nodeArea = ${tree.root.nodes.map { _.bounds.area }.sum}")
     tree.root.compress()
-    println(s"After compression: nodes = ${tree.root.nodes.size}, nodeArea = ${tree.root.nodes.map { _.bounds.area }.sum}")
     tree
   }
 
   override def createCityTree: QuadTree[DataPoint[City]] = {
     val tree = QuadTree(cityData)
-    println(s"Before compression: nodes = ${tree.root.nodes.size}, nodeArea = ${tree.root.nodes.map { _.bounds.area }.sum}")
     tree.root.compress()
-    println(s"After compression: nodes = ${tree.root.nodes.size}, nodeArea = ${tree.root.nodes.map { _.bounds.area }.sum}")
     tree
+  }
+
+  treeName should "have smaller node area after compression" in {
+    val bb = AABB.unit
+    val tree = QuadTree(AABB.unit, points)
+    val areaBefore = tree.root.nodes.map { _.bounds.area }.sum
+    tree.root.compress()
+    val areaAfter = tree.root.nodes.map { _.bounds.area }.sum
+    assert(areaAfter < areaBefore, "Does not have smaller area")
+    info(s"Node area reduction: ${areaBefore} -> ${areaAfter}")
   }
 
 }
