@@ -5,15 +5,7 @@ import mill._, scalalib._
 import mill.scalajslib._
 
 trait BaseModule extends ScalaModule {
-  def scalaVersion = "3.2.0"
-}
-
-trait BaseJSModule extends ScalaJSModule with BaseModule {
-  def scalaJSVersion = T { "1.10.0" }
-  def ivyDeps = Agg(
-    ivy"org.scala-js::scalajs-dom::2.1.0",
-    ivy"com.lihaoyi::scalatags::0.11.1"
-  )
+  def scalaVersion = "3.3.3"
 }
 
 object math extends BaseModule
@@ -34,27 +26,11 @@ object spatialsearch extends BaseModule {
   }
 }
 
-object mathJS extends BaseJSModule {
-  def millSourcePath = os.pwd / 'math
-}
+object examples extends BaseModule {
+  def moduleDeps = Seq(spatialsearch)
 
-object geometryJS extends BaseJSModule {
-  def millSourcePath = os.pwd / 'geometry
-  def moduleDeps = Seq(mathJS)
-}
+  override def ivyDeps = Agg(
+    ivy"org.creativescala::doodle:0.22.0"
+  )
 
-object spatialsearchJS extends BaseJSModule {
-  def millSourcePath = os.pwd / 'spatialsearch
-  def moduleDeps = Seq(geometryJS)
-}
-
-object renderer extends BaseJSModule {
-  def moduleDeps = Seq(geometry)
-}
-
-object examples extends BaseJSModule {
-
-  object image extends BaseJSModule {
-    def moduleDeps = Seq(renderer, spatialsearchJS)
-  }
 }
