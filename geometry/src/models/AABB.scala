@@ -103,7 +103,7 @@ trait AABB extends Support {
   def scale(scale: Double) = this * scale
 
   def withWidth(w: Float): AABB = AABB(this.center, w / 2, this.halfHeight)
-  def withHeight(h: Float): AABB = AABB(this.center, this.halfHeight, h / 2)
+  def withHeight(h: Float): AABB = AABB(this.center, this.halfWidth, h / 2)
 
 }
 
