@@ -93,11 +93,29 @@ trait AABB extends Support {
   def withMargin(margin: Float): AABB = AABB.addMargin(this, margin)
 
   def *(scale: Float): AABB = AABB(this.center, scale * this.halfWidth, scale * this.halfWidth)
-  def +(translation: Float): AABB = AABB(this.center + translation, this.halfWidth, this.halfHeight)
+  def *(scale: Double): AABB =
+    AABB(this.center, scale.toFloat * this.halfWidth, scale.toFloat * this.halfWidth)
+  def +(translation: Float2): AABB =
+    AABB(this.center + translation, this.halfWidth, this.halfHeight)
+
+  def at(p: Float2): AABB = AABB(p, this.halfWidth, this.halfHeight)
+  def scale(scale: Float) = this * scale
+  def scale(scale: Double) = this * scale
+
+  def withWidth(w: Float): AABB = AABB(this.center, w / 2, this.halfHeight)
+  def withHeight(h: Float): AABB = AABB(this.center, this.halfHeight, h / 2)
 
 }
 
 object AABB {
+  extension (x: Float) {
+    def *(box: AABB): AABB = box * x
+  }
+
+  extension (x: Double) {
+    def *(box: AABB): AABB = box * x
+  }
+
   private class AABBImpl(
       val centerX: Float,
       val centerY: Float,
@@ -121,6 +139,8 @@ object AABB {
     AABB(center.x, center.y, halfWidth, halfHeight)
 
   def apply(box: AABB): AABB = AABB(box.centerX, box.centerY, box.halfWidth, box.halfHeight)
+
+  def apply(): AABB = AABB.unit
 
   // Square implementations
   def square(centerX: Float, centerY: Float, halfWidth: Float): AABB =
@@ -173,6 +193,6 @@ object AABB {
   def unit: AABB = AABB(0, 0, 1, 1)
   def zero: AABB = AABB(0, 0, 0, 0)
 
-  def empty(): AABB = AABB(0, 0, Float.NegativeInfinity, Float.NegativeInfinity)
+  def empty(): AABB = AABB(Float2.zero, Float.NegativeInfinity, Float.NegativeInfinity)
 
 }
