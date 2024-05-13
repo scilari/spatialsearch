@@ -8,7 +8,7 @@ case class LineSegment(p1: Float2, p2: Float2) {
   def lengthSq: Float = Float2.distanceSq(p1, p2)
   def length: Float = sqrt(lengthSq)
   def dir: Float2 = p2 - p1
-  def dirNormalized: Float2 = dir/length
+  def dirNormalized: Float2 = dir / length
   def normal: Float2 = dir.perp
   def center: Float2 = (p1 + p2) * 0.5f
 
@@ -56,6 +56,8 @@ case class LineSegment(p1: Float2, p2: Float2) {
     val vec = (p2 - p1).normalized
     LineSegment(p1 - vec * dx1, p2 + vec * dx2)
   }
+
+  def scale(scale: Float): LineSegment = LineSegment(scale * this.p1, scale * this.p2)
 
   override def toString: String = s"LineSegment[$p1, $p2]"
 }
