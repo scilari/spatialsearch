@@ -6,4 +6,5 @@ case class Circle(center: Float2, r: Float) extends Position {
   def contains(p: Float2) = center.distanceSq(p) <= r2
 
   def scale(scale: Float): Circle = Circle(scale * this.center, scale * this.r)
+  def scale(scale: Double): Circle = Circle(scale * this.center, scale.toFloat * this.r)
 }
