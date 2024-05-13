@@ -58,6 +58,7 @@ case class LineSegment(p1: Float2, p2: Float2) {
   }
 
   def scale(scale: Float): LineSegment = LineSegment(scale * this.p1, scale * this.p2)
+  def scale(scale: Double): LineSegment = LineSegment(scale * this.p1, scale * this.p2)
 
   override def toString: String = s"LineSegment[$p1, $p2]"
 }
