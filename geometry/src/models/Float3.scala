@@ -4,24 +4,18 @@ import com.scilari.math.FloatMath.{sqrt, clamp => floatClamp}
 
 /** Data structure representing a vector of three floating points
   */
-class Float3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
+final case class Float3(x: Float, y: Float, z: Float) {
 
   def +(that: Float3): Float3 = Float3(x + that.x, y + that.y, z + that.z)
   def -(that: Float3): Float3 = Float3(x - that.x, y - that.y, z - that.z)
   def *(that: Float3): Float3 = Float3(x * that.x, y * that.y, z * that.z)
   def /(that: Float3): Float3 = Float3(x / that.x, y / that.y, z / that.z)
 
-  def +=(that: Float3): Float3 = { x += that.x; y += that.y; z += that.z; this }
-  def -=(that: Float3): Float3 = { x -= that.x; y -= that.y; z -= that.z; this }
-  def *=(that: Float3): Float3 = { x *= that.x; y *= that.y; z *= that.z; this }
-  def /=(that: Float3): Float3 = { x /= that.x; y /= that.y; z /= that.z; this }
-
   def +(c: Float): Float3 = Float3(x + c, y + c, z + c)
   def -(c: Float): Float3 = Float3(x - c, y - c, z - c)
   def *(c: Float): Float3 = Float3(x * c, y * c, z * c)
   def *(c: Double): Float3 = Float3(x * c, y * c, z * c)
   def /(c: Float): Float3 = { val cc = 1f / c; Float3(x * cc, y * cc, z * cc) }
-  def *=(c: Float): Float3 = { x *= c; y *= c; z *= c; this }
 
   def length: Float = sqrt(lengthSq)
   def lengthSq: Float = x * x + y * y + z * z
@@ -29,8 +23,6 @@ class Float3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 
   def toArray: Array[Float] = Array(x, y, z)
   def toDoubleArray: Array[Double] = Array(x.toDouble, y.toDouble, z.toDouble)
-
-  def copy: Float3 = Float3(this)
 
   def xy: Float2 = Float2(x, y)
   def yx: Float2 = Float2(y, x)
@@ -45,7 +37,7 @@ class Float3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
   }
 
   def clamp(floor: Float3, ceil: Float3): Float3 =
-    new Float3(
+    Float3(
       floatClamp(x, floor.x, ceil.x),
       floatClamp(y, floor.y, ceil.y),
       floatClamp(z, floor.z, ceil.z)
@@ -58,7 +50,7 @@ class Float3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
 }
 
 object Float3 {
-  def apply(x: Float, y: Float, z: Float): Float3 = new Float3(x, y, z)
+  def apply(x: Float, y: Float, z: Float): Float3 = Float3(x, y, z)
   def apply(x: Double, y: Double, z: Double): Float3 = Float3(x.toFloat, y.toFloat, z.toFloat)
   def apply(f: Float3): Float3 = Float3(f.x, f.y, f.z)
   def apply(value: Float): Float3 = Float3(value, value, value)
@@ -69,6 +61,9 @@ object Float3 {
     scala.util.Random.nextFloat(),
     scala.util.Random.nextFloat()
   )
+
+  val zero = Float3(0f, 0f, 0f)
+  val one = Float3(1f, 1f, 1f)
   def randomMinusOneToOne: Float3 = Float3(1f) - Float3.random * 2f
 
   extension (x: Float) {
@@ -82,5 +77,6 @@ object Float3 {
   import scala.language.implicitConversions
   implicit def fromArray(a: Array[Float]): Float3 = Float3(a)
   implicit def fromTuple(t: (Float, Float, Float)): Float3 = Float3(t._1, t._2, t._3)
-  def fromDoubleArray(a: Array[Double]): Float3 = Float3(a(0).toFloat, a(1).toFloat, a(2).toFloat)
+  implicit def fromDoubleArray(a: Array[Double]): Float3 =
+    Float3(a(0).toFloat, a(1).toFloat, a(2).toFloat)
 }
