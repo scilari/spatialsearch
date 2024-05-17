@@ -50,9 +50,7 @@ final case class Float3(x: Float, y: Float, z: Float) {
 }
 
 object Float3 {
-  def apply(x: Float, y: Float, z: Float): Float3 = Float3(x, y, z)
   def apply(x: Double, y: Double, z: Double): Float3 = Float3(x.toFloat, y.toFloat, z.toFloat)
-  def apply(f: Float3): Float3 = Float3(f.x, f.y, f.z)
   def apply(value: Float): Float3 = Float3(value, value, value)
   def apply(a: Array[Float]): Float3 = Float3(a(0), a(1), a(2))
   def apply(a: Array[Double]): Float3 = Float3(a(0), a(1), a(2))
