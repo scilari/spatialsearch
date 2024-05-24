@@ -20,6 +20,12 @@ final case class Float3(x: Float, y: Float, z: Float) {
   def length: Float = sqrt(lengthSq)
   def lengthSq: Float = x * x + y * y + z * z
   def distance(that: Float3): Float = (this - that).length
+  def distanceSq(that: Float3): Float = {
+    val dx = this.x - that.x
+    val dy = this.y - that.y
+    val dz = this.z - that.z
+    dx * dx + dy * dy + dz * dz
+  }
 
   def toArray: Array[Float] = Array(x, y, z)
   def toDoubleArray: Array[Double] = Array(x.toDouble, y.toDouble, z.toDouble)
