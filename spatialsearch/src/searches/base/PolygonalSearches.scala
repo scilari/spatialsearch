@@ -8,20 +8,27 @@ import com.scilari.geometry.spatialsearch.core.SearchConfig
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
 import scala.collection.mutable.ArrayBuffer
 
-trait Polygonal[E <: Position](using DistanceConfig) {
+trait PolygonalSearches[E <: Position](using DistanceConfig) {
   def initialNodes: List[Node[E]]
 
   def polygonalSearch(queryPoint: Float2): ArrayBuffer[E] =
-    Polygonal.PolygonalImpl[E](initialNodes).search(queryPoint)
+    PolygonalSearches.PolygonalImpl[E](initialNodes).search(queryPoint)
 
   def fastPolygonalSearch(queryPoint: Float2): ArrayBuffer[E] =
-    Polygonal.PolygonalDynamicMaxRange[E](initialNodes, maxRangeFactor = 3).search(queryPoint)
+    PolygonalSearches
+      .PolygonalDynamicMaxRange[E](initialNodes, maxRangeFactor = 3)
+      .search(queryPoint)
 
   def polygonalWithFilter(queryPoint: Float2, filter: E => Boolean): ArrayBuffer[E] =
-    Polygonal.PolygonalWithFilter[E](initialNodes, filter).search(queryPoint)
+    PolygonalSearches.PolygonalWithFilter[E](initialNodes, filter).search(queryPoint)
+
+  def fastPolygonalWithFilter(queryPoint: Float2, filter: E => Boolean): ArrayBuffer[E] =
+    PolygonalSearches
+      .PolygonalDynamicMaxRangeWithFilter[E](initialNodes, filter, maxRangeFactor = 3)
+      .search(queryPoint)
 }
 
-object Polygonal {
+object PolygonalSearches {
 
   class PolygonalImpl[E <: Position](val initialNodes: List[Node[E]])(using DistanceConfig)
       extends SearchConfig.DefaultFiltering[E]

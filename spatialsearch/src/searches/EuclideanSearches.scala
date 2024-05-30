@@ -11,4 +11,4 @@ abstract class EuclideanSearches[E <: Position]
     extends SearchableContainer[E],
       RadiusSearches[E],
       KnnSearches[E],
-      Polygonal[E] {}
+      PolygonalSearches[E] {}
