@@ -46,13 +46,13 @@ object Float2Utils {
   }
 
   @inline
-  def sortByAngle[E <: Float2](queryPoint: Float2, points: Seq[E]): Seq[E] = {
+  def sortByAngle[E <: Position](queryPoint: Float2, points: Array[E]): Array[E] = {
     val q = queryPoint
     def isUp(p: Float2): Boolean = p.y - q.y > 0f || (p.y - q.y == 0f && p.x - q.y > 0f)
-    def angleComparator(p1: Float2, p2: Float2): Boolean = {
-      val u1 = isUp(p1)
-      val u2 = isUp(p2)
-      (u1 && !u2) || (u1 == u2 && (p1 - q).perpDot(p2 - q) > 0f)
+    def angleComparator(p1: Position, p2: Position): Boolean = {
+      val u1 = isUp(p1.position)
+      val u2 = isUp(p2.position)
+      (u1 && !u2) || (u1 == u2 && (p1.position - q.position).perpDot(p2.position - q.position) > 0f)
     }
 
     points.sortWith(angleComparator)
