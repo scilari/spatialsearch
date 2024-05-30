@@ -10,12 +10,5 @@ import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig.eucli
 abstract class EuclideanSearches[E <: Position]
     extends SearchableContainer[E],
       RadiusSearches[E],
-      KnnSearches[E] {
-
-  def polygonalSearch(queryPoint: Float2): ArrayBuffer[E] =
-    Polygonal.PolygonalImpl[E](initialNodes).search(queryPoint)
-
-  def fastPolygonalSearch(queryPoint: Float2): ArrayBuffer[E] =
-    Polygonal.PolygonalDynamicMaxRange[E](initialNodes, maxRangeFactor = 3).search(queryPoint)
-
-}
+      KnnSearches[E],
+      Polygonal[E] {}

@@ -6,10 +6,24 @@ import com.scilari.geometry.spatialsearch.core.State
 import com.scilari.geometry.spatialsearch.quadtree.Tree.Node
 import com.scilari.geometry.spatialsearch.core.SearchConfig
 import com.scilari.geometry.spatialsearch.core.SearchConfig.DistanceConfig
+import scala.collection.mutable.ArrayBuffer
+
+trait Polygonal[E <: Position](using DistanceConfig) {
+  def initialNodes: List[Node[E]]
+
+  def polygonalSearch(queryPoint: Float2): ArrayBuffer[E] =
+    Polygonal.PolygonalImpl[E](initialNodes).search(queryPoint)
+
+  def fastPolygonalSearch(queryPoint: Float2): ArrayBuffer[E] =
+    Polygonal.PolygonalDynamicMaxRange[E](initialNodes, maxRangeFactor = 3).search(queryPoint)
+
+  def polygonalWithFilter(queryPoint: Float2, filter: E => Boolean): ArrayBuffer[E] =
+    Polygonal.PolygonalWithFilter[E](initialNodes, filter).search(queryPoint)
+}
 
 object Polygonal {
 
-  final class PolygonalImpl[E <: Position](val initialNodes: List[Node[E]])(using DistanceConfig)
+  class PolygonalImpl[E <: Position](val initialNodes: List[Node[E]])(using DistanceConfig)
       extends SearchConfig.DefaultFiltering[E]
       with IncrementalSearch[E]
       with DefaultInitialState[E] {
@@ -23,7 +37,27 @@ object Polygonal {
     }
   }
 
-  final class PolygonalDynamicMaxRange[E <: Position](
+  final class PolygonalWithFilter[E <: Position](initialNodes: List[Node[E]], filter: E => Boolean)(
+      using DistanceConfig
+  ) extends PolygonalImpl[E](initialNodes) {
+    override def filterElements(e: E, s: State[E]): Boolean = {
+      filter(e) && super.filterElements(e, s)
+    }
+  }
+
+  final class PolygonalDynamicMaxRangeWithFilter[E <: Position](
+      initialNodes: List[Node[E]],
+      filter: E => Boolean,
+      maxRangeFactor: Float = 3.0f
+  )(using
+      DistanceConfig
+  ) extends PolygonalDynamicMaxRange[E](initialNodes, maxRangeFactor) {
+    override def filterElements(e: E, s: State[E]): Boolean = {
+      filter(e) && super.filterElements(e, s)
+    }
+  }
+
+  class PolygonalDynamicMaxRange[E <: Position](
       val initialNodes: List[Node[E]],
       maxRangeFactor: Float
   )(using DistanceConfig)
@@ -58,11 +92,11 @@ object Polygonal {
 
   }
 
-  private def isDominatedBy(e: Support, queryPoint: Float2, dominator: Float2): Boolean = {
+  private inline def isDominatedBy(e: Support, queryPoint: Float2, dominator: Float2): Boolean = {
     !e.intersectsHalfPlane(queryPoint, dominator)
   }
 
-  private def isDominatedBy[E <: Position](
+  private inline def isDominatedBy[E <: Position](
       e: Support,
       queryPoint: Float2,
       dominators: collection.Seq[E]

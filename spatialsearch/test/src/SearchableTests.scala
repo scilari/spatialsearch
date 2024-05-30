@@ -2,6 +2,7 @@ package com.scilari.geometry.spatialsearch
 
 import com.scilari.geometry.models.{Float2, DataPoint}
 import com.scilari.math.FloatMath
+import com.scilari.geometry.spatialsearch.TestResources.City
 
 abstract class SearchableTests extends SearchableBase {
   treeName should "find k neighbors" in {
@@ -128,6 +129,13 @@ abstract class SearchableTests extends SearchableBase {
     val cities = searchableCityTree.polygonalSearch(Float2(0, 0))
     val names = cities.map { _.data.name }
     names should contain theSameElementsAs List("Oulu", "Haukipudas", "Raahe")
+  }
+
+  it should "find filtered polygonal neighborhood around ENU origo" in {
+    def filter(city: DataPoint[City]): Boolean = city.data.name != "Oulu"
+    val cities = searchableCityTree.polygonalWithFilter(Float2(0, 0), filter)
+    val names = cities.map { _.data.name }
+    names should contain theSameElementsAs List( /*"Oulu"*/ "Kempele", "Haukipudas", "Raahe")
   }
 
   it should "find cities within sector from Oulu to Kemi" in {
