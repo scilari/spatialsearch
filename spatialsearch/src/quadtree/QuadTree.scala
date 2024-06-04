@@ -55,14 +55,18 @@ object QuadTree {
   def apply[E <: Position](bb: AABB, points: Iterable[E]): QuadTree[E] =
     QuadTree[E](bb, points, Parameters(bb))
 
-  def apply[E <: Position](elems: Iterable[E]): QuadTree[E] =
-    QuadTree(elems, Parameters.default)
+  def apply[E <: Position](elems: Iterable[E], margin: Float = 0f): QuadTree[E] =
+    QuadTree(elems, Parameters.default, margin)
 
-  def apply[E <: Position](elems: Iterable[E], parameters: Parameters): QuadTree[E] = {
-    val square = AABB.enclosingSquare(elems.map { _.position })
+  def apply[E <: Position](
+      elems: Iterable[E],
+      parameters: Parameters,
+      margin: Float
+  ): QuadTree[E] = {
+    val square = AABB.enclosingSquare(elems.map { _.position }, margin)
     require(
-      square.area > 0,
-      "At least two spatially distinct elements required for creating the initial node."
+      square.area > 0f || margin > 0f,
+      "At least two spatially distinct elements or margin required for creating the initial node."
     )
 
     // if default, use params depending on root node size
