@@ -58,6 +58,9 @@ object QuadTree {
   def apply[E <: Position](elems: Iterable[E], margin: Float = 0f): QuadTree[E] =
     QuadTree(elems, Parameters.default, margin)
 
+  def fromPoints[E <: Position](points: Iterable[E], margin: Float = 0f): QuadTree[E] =
+    QuadTree(points, margin)
+
   def apply[E <: Position](
       elems: Iterable[E],
       parameters: Parameters,
