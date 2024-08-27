@@ -92,9 +92,9 @@ trait AABB extends Support {
 
   def withMargin(margin: Float): AABB = AABB.addMargin(this, margin)
 
-  def *(scale: Float): AABB = AABB(scale * this.center, scale * this.halfWidth, scale * this.halfWidth)
+  def *(scale: Float): AABB = AABB(scale * this.center, scale * this.halfWidth, scale * this.halfHeight)
   def *(scale: Double): AABB = 
-    AABB(scale * this.center, scale.toFloat * this.halfWidth, scale.toFloat * this.halfWidth)
+    AABB(scale * this.center, scale.toFloat * this.halfWidth, scale.toFloat * this.halfHeight)
   def +(translation: Float2): AABB =
     AABB(this.center + translation, this.halfWidth, this.halfHeight)
 
