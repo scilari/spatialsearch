@@ -4,7 +4,7 @@
 import mill._, scalalib._
 
 trait BaseModule extends ScalaModule {
-  def scalaVersion = "3.3.3"
+  def scalaVersion = "3.3.5"
 }
 
 object math extends BaseModule
