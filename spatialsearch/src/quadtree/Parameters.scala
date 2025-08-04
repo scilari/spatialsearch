@@ -4,7 +4,8 @@ import com.scilari.geometry.models.AABB
 
 case class Parameters(
     nodeElementCapacity: Int = Parameters.defaultNodeCapacity,
-    minNodeSize: Float = Parameters.defaultMinNodeSize
+    minNodeSize: Float = Parameters.defaultMinNodeSize,
+    maxNodeSize: Float = Float.MaxValue,
 )
 
 object Parameters {

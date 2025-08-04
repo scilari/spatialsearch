@@ -136,7 +136,8 @@ object Tree {
     def children = ??? // TODO: clean up at some point
 
     def splitCondition: Boolean =
-      elementCount >= parameters.nodeElementCapacity && bounds.width > parameters.minNodeSize
+      (bounds.width <= parameters.maxNodeSize && elementCount > 0) ||
+        (elementCount >= parameters.nodeElementCapacity && bounds.width > parameters.minNodeSize)
 
     def compress(): Unit = {
       bounds = AABB.fromPoints(elements.map { _.position })
