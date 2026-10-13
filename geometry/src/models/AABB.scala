@@ -41,7 +41,7 @@ trait AABB extends Support {
 
   def manhattan(p: Float2): Float = {
     val dx = math.abs(x - p.x) - halfWidth
-    val dy = math.abs(y - p.y) - halfWidth
+    val dy = math.abs(y - p.y) - halfHeight
     math.max(dx, 0f) + math.max(dy, 0f)
   }
 
